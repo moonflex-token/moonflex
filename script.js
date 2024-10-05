@@ -19,7 +19,7 @@ nav {
 }
 
 nav h1 {
-    font-size: 24px;
+    font-size: 28px;
     float: left;
 }
 
@@ -30,16 +30,18 @@ nav ul {
 
 nav ul li {
     display: inline;
-    margin-left: 20px;
+    margin-left: 25px;
 }
 
 nav a {
     color: white;
     text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
 }
 
 nav a:hover {
-    text-decoration: underline;
+    color: #ff6600; /* Highlight color on hover */
 }
 
 .section {
@@ -48,8 +50,9 @@ nav a:hover {
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 60px 20px;
+    padding: 80px 20px;
     position: relative;
+    transition: background-color 0.5s;
 }
 
 #home {
@@ -57,7 +60,7 @@ nav a:hover {
 }
 
 .content {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     opacity: 0;
     animation: fadeIn 1s forwards;
@@ -75,23 +78,25 @@ nav a:hover {
 }
 
 h2 {
-    font-size: 36px;
+    font-size: 40px;
     margin-bottom: 20px;
+    color: #ff6600; /* Highlight color for headings */
 }
 
 h3 {
-    font-size: 28px;
+    font-size: 32px;
     margin: 15px 0;
 }
 
 p {
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 18px;
+    line-height: 1.6;
     margin-bottom: 20px;
 }
 
 .highlight {
     font-weight: bold;
+    font-size: 22px;
     color: #ff6600; /* Highlight color */
 }
 
@@ -100,54 +105,50 @@ p {
     padding: 15px 30px;
     background-color: #ff6600;
     color: white;
-    text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-.cta:hover {
-    background-color: #e65c00;
-    transform: scale(1.05);
-}
-
-#dots {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-}
-
-.dot {
-    height: 15px;
-    width: 15px;
-    margin: 0 5px;
-    background-color: white;
-    border-radius: 50%;
-    display: inline-block;
-    cursor: pointer;
+    text-decoration: none;
     transition: background-color 0.3s;
 }
 
-.dot:hover {
+.cta:hover {
+    background-color: #e65c00; /* Darker shade on hover */
+}
+
+#dots {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.dot.active {
     background-color: #ff6600;
 }
 
 #cta-sticky {
     position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 30px;
+    right: 30px;
+}
+
+#ido-link-sticky {
     background-color: #ff6600;
-    padding: 10px 20px;
+    color: white;
+    padding: 15px 30px;
     border-radius: 5px;
+    text-decoration: none;
     transition: background-color 0.3s;
 }
 
-#cta-sticky a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-#cta-sticky:hover {
-    background-color: #e65c00;
+#ido-link-sticky:hover {
+    background-color: #e65c00; /* Darker shade on hover */
 }
