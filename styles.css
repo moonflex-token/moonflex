@@ -1,84 +1,154 @@
-body {
+* {
     margin: 0;
-    font-family: 'Arial', sans-serif; /* Change font family */
-    line-height: 1.6; /* Improve readability */
-    background-color: #000; /* Black background */
-    color: #fff; /* White text color */
-    overflow: hidden; /* Prevent scrolling */
+    padding: 0;
+    box-sizing: border-box;
 }
 
-h1 {
-    font-size: 3em; /* Increase size of main heading */
-    text-align: center;
-    margin-top: 50px; /* Space above the title */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: black;
+    color: white;
 }
 
-h2 {
-    font-size: 2em; /* Size for section headings */
-    margin: 20px 0; /* Space above and below */
+nav {
+    position: fixed;
+    width: 100%;
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
 }
 
-p {
-    font-size: 1.2em; /* Size of normal text */
-    padding: 0 20px; /* Add padding for better reading */
+nav h1 {
+    font-size: 28px;
+    float: left;
+}
+
+nav ul {
+    list-style-type: none;
+    float: right;
+}
+
+nav ul li {
+    display: inline;
+    margin-left: 25px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #ff6600; /* Highlight color on hover */
 }
 
 .section {
-    display: none; /* Hide all sections by default */
-    padding: 20px; /* Padding for all sections */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 80px 20px;
+    position: relative;
+    transition: background-color 0.5s;
 }
 
-#home, #roadmap, #ido {
-    display: block; /* Show home section by default */
+#home {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url('background-image.jpg') no-repeat center center / cover;
+}
+
+.content {
+    max-width: 900px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h2 {
+    font-size: 40px;
+    margin-bottom: 20px;
+    color: #ff6600; /* Highlight color for headings */
+}
+
+h3 {
+    font-size: 32px;
+    margin: 15px 0;
+}
+
+p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.highlight {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff6600; /* Highlight color for important text */
+}
+
+.cta {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #ff6600;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.cta:hover {
+    background-color: #e65c00; /* Darker shade on hover */
 }
 
 #dots {
-    position: fixed; /* Make it fixed to the viewport */
-    top: 50%; /* Center it vertically */
-    right: 20px; /* Space from the right */
-    transform: translateY(-50%); /* Adjust position to truly center it */
-    display: flex;
-    flex-direction: column; /* Align dots vertically */
-    gap: 10px; /* Space between dots */
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
 }
 
 .dot {
-    height: 15px; /* Size of the dots */
-    width: 15px; /* Size of the dots */
-    background-color: #fff; /* Dot color */
-    border-radius: 50%; /* Make dots circular */
-    cursor: pointer; /* Change cursor to pointer on hover */
-    opacity: 0.5; /* Slightly transparent */
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
 }
 
 .dot.active {
-    opacity: 1; /* Fully opaque for active dot */
+    background-color: #ff6600;
 }
 
-.call-to-action {
-    position: fixed; /* Keep it fixed on the screen */
-    bottom: 20px; /* Space from bottom */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Adjust to truly center */
-    background-color: #ff007f; /* Call to action background */
-    color: #fff; /* Call to action text color */
-    padding: 15px 30px; /* Padding for call to action */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    font-size: 1.2em; /* Font size for button */
-    cursor: pointer; /* Pointer cursor for button */
-    transition: background-color 0.3s; /* Smooth transition */
+#cta-sticky {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
 }
 
-.call-to-action:hover {
-    background-color: #e6006f; /* Darker shade on hover */
+#ido-link-sticky {
+    background-color: #ff6600;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
 }
 
-footer {
-    text-align: center; /* Center the footer text */
-    position: absolute; /* Position it at the bottom */
-    bottom: 10px; /* Space from bottom */
-    width: 100%; /* Full width */
-    font-size: 0.9em; /* Smaller font size */
-    color: #bbb; /* Light grey text */
+#ido-link-sticky:hover {
+    background-color: #e65c00; /* Darker shade on hover */
 }
