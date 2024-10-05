@@ -95,9 +95,9 @@ p {
 }
 
 .highlight {
+    font-size: 24px;
     font-weight: bold;
-    font-size: 22px;
-    color: #ff6600; /* Highlight color */
+    color: #ff6600; /* Highlight color for important text */
 }
 
 .cta {
