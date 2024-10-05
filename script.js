@@ -18,8 +18,28 @@ nav {
     z-index: 1000;
 }
 
-h1 {
+nav h1 {
     font-size: 24px;
+    float: left;
+}
+
+nav ul {
+    list-style-type: none;
+    float: right;
+}
+
+nav ul li {
+    display: inline;
+    margin-left: 20px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
 }
 
 .section {
@@ -29,14 +49,29 @@ h1 {
     align-items: center;
     text-align: center;
     padding: 60px 20px;
+    position: relative;
 }
 
 #home {
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url('background-image.jpg') no-repeat center center / cover; /* Optional background image */
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url('background-image.jpg') no-repeat center center / cover;
 }
 
 .content {
-    max-width: 600px;
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 h2 {
@@ -55,6 +90,11 @@ p {
     margin-bottom: 20px;
 }
 
+.highlight {
+    font-weight: bold;
+    color: #ff6600; /* Highlight color */
+}
+
 .cta {
     display: inline-block;
     padding: 15px 30px;
@@ -62,11 +102,12 @@ p {
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 .cta:hover {
     background-color: #e65c00;
+    transform: scale(1.05);
 }
 
 #dots {
@@ -83,6 +124,11 @@ p {
     border-radius: 50%;
     display: inline-block;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot:hover {
+    background-color: #ff6600;
 }
 
 #cta-sticky {
