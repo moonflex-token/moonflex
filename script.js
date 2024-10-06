@@ -1,30 +1,20 @@
-let currentSection = 0;
-const sections = document.querySelectorAll('.section');
-const dots = document.querySelectorAll('.dot');
+function scrollToSection(index) {
+    const sections = document.querySelectorAll('.section');
+    sections[index].scrollIntoView({ behavior: 'smooth' });
+}
 
-function showSection(index) {
-    sections.forEach((section, i) => {
-        section.style.display = i === index ? 'flex' : 'none';
-        dots[i].classList.toggle('active', i === index);
+window.onscroll = function () {
+    const sections = document.querySelectorAll('.section');
+    const dots = document.querySelectorAll('.dot');
+    let currentIndex = 0;
+
+    sections.forEach((section, index) => {
+        const sectionTop = section.offsetTop - window.innerHeight / 3;
+        if (window.scrollY >= sectionTop) {
+            currentIndex = index;
+        }
     });
-}
 
-function nextSection() {
-    currentSection = (currentSection + 1) % sections.length;
-    showSection(currentSection);
-}
-
-function previousSection() {
-    currentSection = (currentSection - 1 + sections.length) % sections.length;
-    showSection(currentSection);
-}
-
-dots.forEach((dot, index) => {
-    dot.addEventListener('click', () => {
-        currentSection = index;
-        showSection(currentSection);
-    });
-});
-
-// Initial display
-showSection(currentSection);
+    dots.forEach(dot => dot.classList.remove('active'));
+    dots[currentIndex].classList.add('active');
+};
