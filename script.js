@@ -1,20 +1,17 @@
+// Scroll to the correct section when clicking dots
 function scrollToSection(index) {
     const sections = document.querySelectorAll('.section');
     sections[index].scrollIntoView({ behavior: 'smooth' });
 }
 
-window.onscroll = function () {
-    const sections = document.querySelectorAll('.section');
+// Activate the correct dot
+window.addEventListener('scroll', function() {
     const dots = document.querySelectorAll('.dot');
-    let currentIndex = 0;
+    const sections = document.querySelectorAll('.section');
+    let index = sections.length;
 
-    sections.forEach((section, index) => {
-        const sectionTop = section.offsetTop - window.innerHeight / 3;
-        if (window.scrollY >= sectionTop) {
-            currentIndex = index;
-        }
-    });
+    while(--index && window.scrollY + 100 < sections[index].offsetTop) {}
 
     dots.forEach(dot => dot.classList.remove('active'));
-    dots[currentIndex].classList.add('active');
-};
+    dots[index].classList.add('active');
+});
