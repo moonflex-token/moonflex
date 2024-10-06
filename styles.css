@@ -162,3 +162,21 @@ ul li::before {
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
 }
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #000; /* Track color */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ff6600; /* Thumb color */
+    border-radius: 10px; /* Rounded edges for the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ffcc00; /* Hover color */
+}
