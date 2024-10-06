@@ -21,6 +21,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 nav ul {
@@ -126,14 +127,18 @@ ul li::before {
 /* Navigation Dots */
 #dots {
     display: flex;
-    justify-content: center;
-    margin: 20px 0;
+    flex-direction: column;
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
 }
 
 .dot {
     height: 15px;
     width: 15px;
-    margin: 0 5px;
+    margin: 10px 0;
     background-color: #bbb;
     border-radius: 50%;
     display: inline-block;
@@ -157,23 +162,23 @@ ul li::before {
     font-size: 1.5em;
     text-align: center;
     z-index: 1000;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    animation: pulse 2s infinite;
 }
 
 #cta-sticky a {
     color: #000;
     text-decoration: none;
     font-weight: bold;
-    letter-spacing: 1px;
-    transition: color 0.3s;
 }
 
 #cta-sticky a:hover {
     color: #fff;
 }
 
-/* Pulse animation */
+/* Pulse Animation for CTA Button */
+#cta-sticky {
+    animation: pulse 2s infinite;
+}
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
