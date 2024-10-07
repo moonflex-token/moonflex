@@ -12,7 +12,10 @@
     <!-- Menu -->
     <header>
         <nav>
-            <ul>
+            <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+                &#9776; <!-- Hamburger icon -->
+            </div>
+            <ul id="menu" class="hidden">
                 <li><a href="#page-1">Home</a></li>
                 <li><a href="#page-2">Tokenomics</a></li>
                 <li><a href="#page-3">Roadmap</a></li>
@@ -130,8 +133,19 @@
             <span class="dot" onclick="scrollToSection(4)"></span>
             <span class="dot" onclick="scrollToSection(5)"></span>
         </div>
+
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function scrollToSection(index) {
+            const sections = document.querySelectorAll('.section');
+            sections[index].scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>
