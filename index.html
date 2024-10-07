@@ -7,6 +7,31 @@
     <title>MoonFlex Tokens - To the Moon and Beyond!</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* FAQ Styles */
+        .faq-question {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #ff6600;
+            margin: 5px 0;
+            border-radius: 5px;
+            text-align: left;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+        
+        .faq-question:hover {
+            background-color: #ffcc00;
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 10px;
+            background-color: rgba(255, 102, 0, 0.2);
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <!-- Menu -->
@@ -99,20 +124,22 @@
         <section class="section" id="page-6">
             <div class="content">
                 <h2>FAQ</h2>
-                <h3>What is MoonFlex?</h3>
-                <p>MoonFlex (MFX) is a deflationary token built on the XRP Ledger. Our goal is to push the boundaries of tokenomics and create a new standard for interstellar digital assets.</p>
+                <div class="faq">
+                    <div class="faq-question" onclick="toggleAnswer(this)">What is MoonFlex?</div>
+                    <div class="faq-answer">MoonFlex (MFX) is a deflationary token built on the XRP Ledger. Our goal is to push the boundaries of tokenomics and create a new standard for interstellar digital assets.</div>
 
-                <h3>How can I participate in the liquidity incentive?</h3>
-                <p>By providing liquidity to our pool, you can qualify for bonus tokens. Bonuses are distributed based on the amount of liquidity provided, starting from $10,000.</p>
+                    <div class="faq-question" onclick="toggleAnswer(this)">How can I participate in the liquidity incentive?</div>
+                    <div class="faq-answer">By providing liquidity to our pool, you can qualify for bonus tokens. Bonuses are distributed based on the amount of liquidity provided, starting from $10,000.</div>
 
-                <h3>When will I receive my liquidity bonus?</h3>
-                <p>Your bonus will be released monthly, with 10% of the bonus distributed each month over a 10-month period.</p>
+                    <div class="faq-question" onclick="toggleAnswer(this)">When will I receive my liquidity bonus?</div>
+                    <div class="faq-answer">Your bonus will be released monthly, with 10% of the bonus distributed each month over a 10-month period.</div>
 
-                <h3>What happens to the founder's tokens?</h3>
-                <p>The founder's tokens are subject to a vesting schedule, with 1% unlocked every 6 months to ensure investor confidence.</p>
+                    <div class="faq-question" onclick="toggleAnswer(this)">What happens to the founder's tokens?</div>
+                    <div class="faq-answer">The founder's tokens are subject to a vesting schedule, with 1% unlocked every 6 months to ensure investor confidence.</div>
 
-                <h3>Can I sell my tokens anytime?</h3>
-                <p>Yes, you can sell your tokens anytime, including any tokens you've received as part of your liquidity bonus.</p>
+                    <div class="faq-question" onclick="toggleAnswer(this)">Can I sell my tokens anytime?</div>
+                    <div class="faq-answer">Yes, you can sell your tokens anytime, including any tokens you've received as part of your liquidity bonus.</div>
+                </div>
             </div>
         </section>
 
@@ -132,6 +159,19 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // JavaScript for FAQ toggle functionality
+        function toggleAnswer(questionElement) {
+            const answerElement = questionElement.nextElementSibling;
+            const isVisible = answerElement.style.display === 'block';
+            answerElement.style.display = isVisible ? 'none' : 'block';
+        }
+
+        // Smooth scrolling to sections
+        function scrollToSection(index) {
+            const sections = document.querySelectorAll('.section');
+            sections[index].scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>
