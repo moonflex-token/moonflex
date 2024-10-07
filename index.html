@@ -11,15 +11,14 @@
         /* FAQ Styles */
         .faq-question {
             cursor: pointer;
-            padding: 10px;
+            padding: 15px; /* Increased padding for larger size */
             background-color: #ff6600;
             margin: 5px 0;
             border-radius: 5px;
             text-align: left;
             color: #fff;
             transition: background-color 0.3s;
-            height: 50px; /* Fixed height for the question */
-            line-height: 50px; /* Center text vertically */
+            font-size: 1.2em; /* Increased font size for better visibility */
         }
         
         .faq-question:hover {
@@ -134,19 +133,24 @@
                     <div class="faq-answer">By providing liquidity to our pool, you can qualify for bonus tokens. Bonuses are distributed based on the amount of liquidity provided, starting from $10,000.</div>
 
                     <div class="faq-question" onclick="toggleAnswer(this)">When will I receive my liquidity bonus?</div>
-                    <div class="faq-answer">Bonuses will be released in tranches over a 10-month period, with 10% of your bonus distributed each month.</div>
+                    <div class="faq-answer">Your bonus will be released monthly, with 10% of the bonus distributed each month over a 10-month period.</div>
 
-                    <div class="faq-question" onclick="toggleAnswer(this)">How do I buy MoonFlex tokens?</div>
-                    <div class="faq-answer">You can buy MFX tokens through decentralized exchanges once they are listed on the XRP Ledger. Keep an eye on our updates for the listing date!</div>
+                    <div class="faq-question" onclick="toggleAnswer(this)">What happens to the founder's tokens?</div>
+                    <div class="faq-answer">The founder's tokens are subject to a vesting schedule, with 1% unlocked every 6 months to ensure investor confidence.</div>
 
-                    <div class="faq-question" onclick="toggleAnswer(this)">What happens after the liquidity pool reaches $500,000?</div>
-                    <div class="faq-answer">Once the liquidity pool reaches $500,000, a different bonus structure will apply to ensure sustainable growth for MoonFlex.</div>
+                    <div class="faq-question" onclick="toggleAnswer(this)">Can I sell my tokens anytime?</div>
+                    <div class="faq-answer">Yes, you can sell your tokens anytime, including any tokens you've received as part of your liquidity bonus.</div>
                 </div>
             </div>
         </section>
 
-        <!-- Scroll Indicators -->
-        <div class="scroll-indicators">
+        <!-- Sticky Call to Action Button -->
+        <div id="cta-sticky">
+            <a href="#" target="_blank">Participate in our IDO!</a>
+        </div>
+
+        <!-- Dot Navigation for Sections -->
+        <div class="dot-navigation">
             <span class="dot" onclick="scrollToSection(0)"></span>
             <span class="dot" onclick="scrollToSection(1)"></span>
             <span class="dot" onclick="scrollToSection(2)"></span>
