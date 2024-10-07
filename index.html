@@ -12,10 +12,7 @@
     <!-- Menu -->
     <header>
         <nav>
-            <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-                &#9776; <!-- Hamburger icon -->
-            </div>
-            <ul id="menu" class="hidden">
+            <ul>
                 <li><a href="#page-1">Home</a></li>
                 <li><a href="#page-2">Tokenomics</a></li>
                 <li><a href="#page-3">Roadmap</a></li>
@@ -133,19 +130,28 @@
             <span class="dot" onclick="scrollToSection(4)"></span>
             <span class="dot" onclick="scrollToSection(5)"></span>
         </div>
-
     </div>
 
-    <script>
-        function toggleMenu() {
-            const menu = document.getElementById('menu');
-            menu.classList.toggle('hidden');
-        }
-
-        function scrollToSection(index) {
-            const sections = document.querySelectorAll('.section');
-            sections[index].scrollIntoView({ behavior: 'smooth' });
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
+
+script.js
+
+// Scroll to the correct section when clicking dots
+function scrollToSection(index) {
+    const sections = document.querySelectorAll('.section');
+    sections[index].scrollIntoView({ behavior: 'smooth' });
+}
+
+// Activate the correct dot
+window.addEventListener('scroll', function() {
+    const dots = document.querySelectorAll('.dot');
+    const sections = document.querySelectorAll('.section');
+    let index = sections.length;
+
+    while(--index && window.scrollY + 100 < sections[index].offsetTop) {}
+
+    dots.forEach(dot => dot.classList.remove('active'));
+    dots[index].classList.add('active');
+});
