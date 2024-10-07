@@ -18,6 +18,9 @@
             text-align: left;
             color: #fff;
             transition: background-color 0.3s;
+            font-size: 16px; /* Set font size */
+            height: 40px; /* Set fixed height */
+            line-height: 40px; /* Center text vertically */
         }
         
         .faq-question:hover {
@@ -144,18 +147,17 @@
         </section>
 
         <!-- Sticky Call to Action Button -->
-        <div id="cta-sticky">
-            <a href="#" target="_blank">Participate in our IDO!</a>
+        <div class="cta">
+            <a href="whitepaper.pdf" class="cta-button">Read Our Whitepaper</a>
         </div>
 
-        <!-- Dots for Navigation -->
-        <div id="dots">
+        <!-- Scroll Indicators -->
+        <div class="scroll-indicators">
             <span class="dot" onclick="scrollToSection(0)"></span>
             <span class="dot" onclick="scrollToSection(1)"></span>
             <span class="dot" onclick="scrollToSection(2)"></span>
             <span class="dot" onclick="scrollToSection(3)"></span>
             <span class="dot" onclick="scrollToSection(4)"></span>
-            <span class="dot" onclick="scrollToSection(5)"></span>
         </div>
     </div>
 
