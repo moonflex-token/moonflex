@@ -191,6 +191,19 @@
             const sections = document.querySelectorAll('.section');
             sections[index].scrollIntoView({ behavior: 'smooth' });
         }
+        // JavaScript for "Read More" functionality
+        function toggleReadMore(buttonElement) {
+            const moreContent = buttonElement.previousElementSibling;
+            const isVisible = moreContent.style.display === 'inline';
+
+            if (isVisible) {
+                moreContent.style.display = 'none';
+                buttonElement.textContent = 'Read More';
+            } else {
+                moreContent.style.display = 'inline';
+                buttonElement.textContent = 'Read Less';
+            }
+        }
     </script>
 </body>
 </html>
