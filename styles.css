@@ -79,8 +79,8 @@ h1, h2 {
 }
 h3 {
     color: #ff6600; /* Orange */
-    margin-bottom: 12px;
-    font-size: 3em;
+    margin-bottom: 20px;
+    font-size: 2em;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
