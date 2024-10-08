@@ -96,7 +96,6 @@ ul li {
     font-size: 1.5em;
     margin: 15px 0;
     display: flex;
-    flex-direction: column; /* Stack label and content vertically */
     align-items: center;
     justify-content: center;
     text-align: center;
