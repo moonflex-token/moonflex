@@ -77,7 +77,13 @@ h1, h2 {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
-
+h3 {
+    color: #ff6600; /* Orange */
+    margin-bottom: 12px;
+    font-size: 3em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
 p {
     font-size: 1.3em;
     line-height: 1.8;
