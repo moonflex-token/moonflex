@@ -1,5 +1,15 @@
-[METADATA]
-token_name = "MoonFlex"
-token_symbol = "MFX"
-token_image = "https://moonflex.xyz/moonflex-token-256.png"
-twitter = "https://x.com/moonflextoken" 
+[[ISSUERS]]
+address = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"
+name = "MoonFlex"
+
+[[TOKENS]]
+issuer = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"
+currency = "MFX"
+name = "MoonFlex"
+desc = "Interstellar token on the XRP Ledger."
+icon = "https://moonflex.xyz/moonflex-token-256.png"
+
+[[TOKENS.WEBLINKS]]
+url = "https://x.com/moonflextoken"
+type = "socialmedia"
+title = "Twitter"
