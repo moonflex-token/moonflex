@@ -10,6 +10,10 @@ desc = "Interstellar token on the XRP Ledger."
 icon = "https://moonflex.xyz/moonflex-token-256.png"
 
 [[TOKENS.WEBLINKS]]
+url = "https://moonflex.xyz"
+type = "website"
+title = "Official Website"
+
+[[TOKENS.WEBLINKS]]
 url = "https://x.com/moonflextoken"
 type = "socialmedia"
-title = "Twitter"
