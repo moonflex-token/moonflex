@@ -191,7 +191,9 @@ ul li::before {
     display: flex; /* Aligns the logos in a row */
     justify-content: center; /* Centers the logos */
     gap: 20px; /* Space between logos */
-    flex-wrap: nowrap; /* Prevents logos from wrapping */
+    flex-wrap: nowrap; /* Prevents wrapping to a new line */
+    overflow-x: auto; /* Allows horizontal scrolling if needed */
+    padding: 10px 0; /* Adds some vertical spacing */
 }
 
 .social-item {
@@ -201,7 +203,6 @@ ul li::before {
 .social-item img {
     width: 100px; /* Set the width of the logos */
     height: auto; /* Maintains aspect ratio */
-    flex-shrink: 0; /* Prevents logos from shrinking */
 }
 
 /* Ensure link text is white */
@@ -214,16 +215,3 @@ ul li::before {
 .social-item a:hover {
     color: #ffcc00; /* Optional: Change color on hover */
 }
-
-/* Responsive Design for smaller screens */
-@media (max-width: 600px) {
-    .social-links {
-        flex-direction: column; /* Stack logos vertically on small screens */
-        align-items: center; /* Center the logos */
-    }
-
-    .social-item img {
-        width: 80px; /* Smaller width for smaller screens */
-    }
-}
-
