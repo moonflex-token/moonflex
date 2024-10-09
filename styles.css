@@ -198,6 +198,6 @@ ul li::before {
 }
 
 .social-item img {
-    width: 100px; /* Set the width of the logos */
-    height: auto; /* Maintains aspect ratio */
+    width: 20px; /* Set the width of the logos */
+    height: 20; /* Maintains aspect ratio */
 }
