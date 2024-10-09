@@ -203,14 +203,14 @@ ul li::before {
     height: auto; /* Maintains aspect ratio */
 }
 
+/* Ensure link text is white */
 .social-item a {
-    color: #fff; /* Sets the text color to white */
-    text-decoration: none; /* Removes underline */
+    color: #ffffff; /* White color for link text */
+    text-decoration: none; /* Remove underline from links */
     font-size: 1em; /* Adjust font size as needed */
-    transition: color 0.3s ease; /* Smooth color transition on hover */
 }
 
 .social-item a:hover {
-    color: #ffcc00; /* Change text color on hover (optional) */
+    color: #ffcc00; /* Optional: Change color on hover */
 }
 
