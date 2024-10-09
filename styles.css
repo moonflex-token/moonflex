@@ -186,3 +186,18 @@ ul li::before {
 ::-webkit-scrollbar-thumb:hover {
     background: #ffcc00; /* Hover color */
 }
+.social-links {
+    display: flex; /* Aligns the logos in a row */
+    justify-content: center; /* Centers the logos */
+    gap: 20px; /* Space between logos */
+    flex-wrap: wrap; /* Allows logos to wrap on smaller screens */
+}
+
+.social-item {
+    text-align: center; /* Centers the text below each logo */
+}
+
+.social-item img {
+    width: 100px; /* Set the width of the logos */
+    height: auto; /* Maintains aspect ratio */
+}
