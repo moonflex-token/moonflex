@@ -17,11 +17,16 @@ body {
 /* Menu */
 header {
     background-color: #ff6600;
-    padding: 2px 0;
+    padding: 4px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+/* Allow scrolling in mobile menu */
+.mobile-menu {
+    max-height: 70vh; /* Set a max height for the menu */
+    overflow-y: auto; /* Allow vertical scrolling */
 }
 
 nav ul {
