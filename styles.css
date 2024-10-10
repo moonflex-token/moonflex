@@ -13,6 +13,49 @@ body {
     margin: 0;
     padding: 0;
 }
+/* Hamburger menu styles */
+.hamburger {
+    display: none;
+    font-size: 30px;
+    cursor: pointer;
+    color: #fff;
+}
+
+/* Navigation menu styles */
+nav {
+    background-color: #333; /* Adjust background as necessary */
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline; /* Default display for larger screens */
+}
+
+nav ul.hidden {
+    display: none; /* Hide menu on mobile */
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .hamburger {
+        display: block; /* Show hamburger menu on mobile */
+    }
+
+    nav ul {
+        display: block; /* Stack menu items on top of each other */
+        width: 100%;
+    }
+
+    nav ul li {
+        display: block; /* Stack items vertically */
+        text-align: center;
+    }
+}
 
 /* Menu */
 header {
