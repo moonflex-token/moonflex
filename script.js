@@ -14,4 +14,15 @@ window.addEventListener('scroll', function() {
 
     dots.forEach(dot => dot.classList.remove('active'));
     dots[index].classList.add('active');
+}
+// script.js
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+
+    hamburger.addEventListener('click', () => {
+        navMenu.classList.toggle('hidden');
+    });
 });
+
+                        
