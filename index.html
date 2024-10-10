@@ -9,6 +9,71 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* Add the styles for the mobile hamburger menu */
+        nav {
+            position: relative;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .bar {
+            height: 3px;
+            width: 25px;
+            background-color: #fff;
+            margin: 4px 0;
+            transition: 0.4s;
+        }
+
+        /* Navigation styles */
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        /* Styles for mobile view */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 60px; /* Adjust based on header height */
+                left: 0;
+                background-color: rgba(0, 0, 0, 0.8);
+                z-index: 1;
+            }
+
+            nav ul.show {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
+        }
+
         /* FAQ Styles */
         .faq-question {
             cursor: pointer;
@@ -38,7 +103,12 @@
     <!-- Menu -->
     <header>
         <nav>
-            <ul>
+            <div class="hamburger" id="hamburger">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <ul id="menu">
                 <li><a href="#page-1">Home</a></li>
                 <li><a href="#page-2">Tokenomics</a></li>
                 <li><a href="#page-3">Roadmap</a></li>
@@ -51,6 +121,7 @@
             </ul>
         </nav>
     </header>
+
 
     <div class="container">
         <!-- Page 1 - Welcome -->
@@ -266,6 +337,15 @@
             const sections = document.querySelectorAll('.section');
             sections[index].scrollIntoView({ behavior: 'smooth' });
         }
+    </script>
+        <script>
+        // JavaScript to handle the hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const menu = document.getElementById('menu');
+
+        hamburger.addEventListener('click', () => {
+            menu.classList.toggle('show');
+        });
     </script>
 </body>
 </html>
