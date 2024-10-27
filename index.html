@@ -10,6 +10,17 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure body takes full height of the viewport */
+    margin: 0; /* Remove default margin */
+}
+
+.container {
+    flex: 1; /* This allows the container to grow and take available space */
+}
+
         /* Add the styles for the mobile hamburger menu */
         nav {
             position: relative;
