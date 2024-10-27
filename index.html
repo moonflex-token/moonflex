@@ -115,7 +115,22 @@
 .tokenomics-item .description {
     width: 65%; /* Adjust width as needed */
 }
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .tokenomics-item {
+        flex-direction: column; /* Stack items vertically */
+        align-items: flex-start; /* Align items to the start */
+    }
 
+    .tokenomics-item .title {
+        width: 100%; /* Full width for title */
+        margin-bottom: 5px; /* Add spacing below title */
+    }
+
+    .tokenomics-item .description {
+        width: 100%; /* Full width for description */
+    }
+}
     </style>
 </head>
 <body>
