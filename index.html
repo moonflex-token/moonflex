@@ -446,11 +446,27 @@
                 </div>
             </div>
         </section>
-<div class="footer" style="background-color: #333; color: white; text-align: center; padding: 20px; width: 100%;">
+<!-- Footer Section -->
+<div class="footer" style="background-color: #333; color: white; text-align: center; padding: 20px; position: relative; bottom: 0; left: 0; width: 100%; margin-top: auto;">
     <div style="max-width: 1200px; margin: 0 auto;">
         <p style="margin: 0;">© 2024 MoonFlex.xyz | All Rights Reserved</p>
         <p style="margin: 0;">Follow us on <a href="#" style="color: #ff6600;">Twitter</a> | <a href="#" style="color: #ff6600;">Discord</a></p>
     </div>
+</div>
+
+<!-- Additional CSS to ensure the footer stays at the bottom -->
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* Ensures the body takes up the full height of the viewport */
+        margin: 0; /* Resets default margin */
+    }
+
+    .footer {
+        margin-top: auto; /* Pushes footer to the bottom */
+    }
+</style>
 </div>
         <!-- Sticky Call to Action Button -->
         <div id="cta-sticky">
