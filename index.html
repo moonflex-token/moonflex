@@ -97,6 +97,28 @@
             border-radius: 5px;
             margin: 5px 0;
         }
+        .tokenomics-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ff6600;
+    border-radius: 5px;
+    margin: 5px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.tokenomics-item .title {
+    font-weight: bold;
+    color: #ff6600;
+    width: 30%; /* Adjust width as needed */
+}
+
+.tokenomics-item .description {
+    width: 65%; /* Adjust width as needed */
+}
+
     </style>
 </head>
 <body>
@@ -138,12 +160,30 @@
     <div class="content">
         <h2>Tokenomics</h2>
         <p>Here’s how the MoonFlex universe is structured:</p>
-        <ul>
-            <li>📊 <strong>Total Supply:</strong> 100,000,000 MFX. This limit ensures a defined quantity of tokens, fostering a balanced ecosystem and maintaining value.</li>
-            <li>🚀 <strong>Circulating Supply:</strong> The circulating supply for the Sologenic IDO will be 10,000,000 MFX.</li>
-            <li>⏭️ <strong>Future Circulating Supply:</strong> The circulating supply will increase gradually with a controlled release schedule and a strong market-making strategy to avoid negatively impacting the token price.</li>
-            <li>🔒 <strong>Security:</strong> Our smart contract, deployed via the Xaman Wallet on the XRPL, ensures top-tier security, transparency, and immutability, with the issuer address blackholed to prevent additional token minting.</li>
-        </ul>
+
+        <div class="tokenomics-item">
+            <div class="title">Total Supply:</div>
+            <div class="description">100,000,000 MFX. This limit ensures a defined quantity of tokens, fostering a balanced ecosystem and maintaining value.</div>
+        </div>
+
+        <div class="tokenomics-item">
+            <div class="title">Circulating Supply:</div>
+            <div class="description">The circulating supply for the Sologenic IDO will be 10,000,000 MFX.</div>
+        </div>
+
+        <div class="tokenomics-item">
+            <div class="title">Future Circulating Supply:</div>
+            <div class="description">The circulating supply will increase gradually with a controlled release schedule and a strong market-making strategy to avoid negatively impacting the token price.</div>
+        </div>
+
+        <div class="tokenomics-item">
+            <div class="title">Security:</div>
+            <div class="description">Our smart contract, deployed via the Xaman Wallet on the XRPL, ensures top-tier security, transparency, and immutability, with the issuer address blackholed to prevent additional token minting.</div>
+        </div>
+
+        <!-- Add more rows as needed -->
+    </div>
+</section>
         <h3>Token Allocation Breakdown</h3>
         <ul>      
          <li>🎉 <strong>Community Rewards:</strong> 5% (5,000,000 MFX) to incentivize community engagement and offer bonus tokens for liquidity providers.</li>
