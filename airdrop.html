@@ -127,6 +127,36 @@
         .airdrop-instructions li {
             margin: 10px 0;
         }
+    .airdrop-form-container {
+        background-color: #333;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+        color: #fff;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .airdrop-form-container input,
+    .airdrop-form-container button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .airdrop-form-container button {
+        background-color: #ff6600;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .airdrop-form-container button:hover {
+        background-color: #ffcc00;
+    }
     </style>
 </head>
 
@@ -264,17 +294,16 @@ To complete your entry, visit: https://moonflex.xyz/airdrop
     }
 </style>
         
-        <div class="airdrop-form">
-            <form action="submit_airdrop.php" method="POST">
-                <input type="text" name="surname" placeholder="Surname" required><br>
-                <input type="email" name="email" placeholder="Email Address (with consent for marketing)" required><br>
-                <input type="text" name="twitter_handle" placeholder="Twitter Handle @example" required><br>
-                <input type="text" name="xrp_address" placeholder="Your XRP Address" required><br>
-                <input type="url" name="tweet_url" placeholder="Your Tweet URL" required><br>
-                <button type="submit">Claim My Airdrop</button>
-            </form>
-        </div>
-    </div>
+<div class="airdrop-form-container">
+    <form action="submit_airdrop.php" method="POST">
+        <input type="text" name="surname" placeholder="Surname" required><br>
+        <input type="email" name="email" placeholder="Email Address (with consent for marketing)" required><br>
+        <input type="text" name="twitter_handle" placeholder="Twitter Handle @example" required><br>
+        <input type="text" name="xrp_address" placeholder="Your XRP Address" required><br>
+        <input type="url" name="tweet_url" placeholder="Your Tweet URL" required><br>
+        <button type="submit">Claim My Airdrop</button>
+    </form>
+</div>
 
 </body>
 
