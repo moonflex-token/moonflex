@@ -167,6 +167,75 @@
             </ul>
         </div>
 
+<div class="airdrop-instructions">
+    <h2 style="font-size: 40px; text-align: center;">X Templates</h2>
+
+    <p><strong>Free 100,000 $MFX Giveaway</strong></p>
+    <p><strong>To enter:</strong></p>
+    <ul style="text-align: left; padding-left: 20px;">
+        <li>Like, RT</li>
+        <li>Follow @moonflextoken</li>
+        <li>Tag 2 Friends</li>
+    </ul>
+    <p>Spread the word to complete your participation: <a href="https://moonflex.xyz/airdrop" target="_blank">https://moonflex.xyz/airdrop</a></p>
+    <p>#XRP #MFX #giveaway #airdrop</p>
+
+    <div class="tweet-template">
+        <p><strong>Template 1:</strong></p>
+        <textarea id="template1" rows="6" readonly>Free 100 000 $MFX Giveaway
+To enter:
+Like, RT
+Follow @moonflextoken
+Tag 2 Fren
+
+Spread the word to complete your participation: https://moonflex.xyz/airdrop
+
+#XRP #MFX #giveaway #airdrop</textarea>
+        <button onclick="copyText('template1')">Copy Template 1</button>
+    </div>
+
+    <div class="tweet-template">
+        <p><strong>Template 2:</strong></p>
+        <textarea id="template2" rows="6" readonly>Enter the Free 100,000 $MFX Giveaway
+1. Like, RT, Follow @moonflextoken
+2. Tag 2 friends
+3. Spread the word!
+
+Visit the link to participate: https://moonflex.xyz/airdrop
+
+#XRP #MFX #giveaway #airdrop</textarea>
+        <button onclick="copyText('template2')">Copy Template 2</button>
+    </div>
+
+    <div class="tweet-template">
+        <p><strong>Template 3:</strong></p>
+        <textarea id="template3" rows="6" readonly>Get your hands on Free 100,000 MFX Tokens!
+1. Like & RT this post
+2. Follow @moonflextoken
+3. Tag 2 friends
+
+To complete your entry, visit: https://moonflex.xyz/airdrop
+
+#XRP #MFX #giveaway #airdrop</textarea>
+        <button onclick="copyText('template3')">Copy Template 3</button>
+    </div>
+
+    <p><strong>Note:</strong> You can slightly modify these templates to fit your style and audience.</p>
+</div>
+
+<script>
+    function copyText(templateId) {
+        var copyText = document.getElementById(templateId);
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        document.execCommand("copy");
+        alert("Copied the text: " + copyText.value);
+    }
+</script>
+
+
+        
         <div class="airdrop-form">
             <form action="submit_airdrop.php" method="POST">
                 <input type="text" name="surname" placeholder="Surname" required><br>
