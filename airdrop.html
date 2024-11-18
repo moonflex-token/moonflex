@@ -10,81 +10,45 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Add the styles for the mobile hamburger menu */
-        nav {
-            position: relative;
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            margin: 10px;
-        }
-
-        .bar {
-            height: 3px;
-            width: 25px;
-            background-color: #fff;
-            margin: 4px 0;
-            transition: 0.4s;
-        }
-
-        /* Navigation styles */
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
+        /* General reset */
+        body, h1, h2, p, ul, li, form {
             margin: 0;
+            padding: 0;
+            font-family: 'Orbitron', sans-serif;
         }
 
-        nav ul li {
-            margin: 0 15px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #fff;
-        }
-
-        /* Styles for mobile view */
-        @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
-            }
-
-            nav ul {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                position: absolute;
-                top: 60px; /* Adjust based on header height */
-                left: 0;
-                background-color: rgba(0, 0, 0, 0.8);
-                z-index: 1;
-            }
-
-            nav ul.show {
-                display: flex;
-            }
-
-            nav ul li {
-                margin: 0px 0;
-            }
-        }
-
+        /* Container for the 3 squares */
         .airdrop-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+            gap: 20px; /* space between squares */
             padding: 30px;
             background-color: #1e1e1e;
             color: #fff;
-            text-align: center;
         }
 
-        .airdrop-section h1 {
-            font-size: 36px;
-            margin-bottom: 20px;
+        /* Each square style */
+        .square {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .square h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .square ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .square ul li {
+            margin: 10px 0;
         }
 
         .airdrop-form input,
@@ -110,23 +74,13 @@
             background-color: #ffcc00;
         }
 
-        .airdrop-instructions {
-            text-align: left;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #333;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .airdrop-section {
+                grid-template-columns: 1fr; /* Stack squares vertically */
+            }
         }
 
-        .airdrop-instructions ul {
-            padding-left: 20px;
-        }
-
-        .airdrop-instructions li {
-            margin: 10px 0;
-        }
     </style>
 </head>
 
@@ -154,21 +108,43 @@
     </header>
 
     <div class="airdrop-section">
-        <h1>MoonFlex Airdrop - 100,000 MFX Tokens 🚀</h1>
-        <p>Enter your details below to participate in the MoonFlex airdrop and earn free MFX tokens by spreading the word!</p>
-
-        <div class="airdrop-instructions">
-            <h2 style="font-size: 40px; text-align: center;">How to Participate</h2>
+        <!-- Square 1: Information -->
+        <div class="square">
+            <h2>Step 1: Information</h2>
+            <p>Follow the instructions to tweet about the MoonFlex airdrop.</p>
             <ul>
-                <li>1. Follow the instructions to tweet about the MoonFlex airdrop.</li>
-                <li>2. For 100 Likes and Retweets, you'll earn 10 MFX tokens.</li>
-                <li>3. For 1,000 Likes and Retweets, you'll earn 100 MFX tokens.</li>
-                <li>4. Complete your registration by submitting your tweet URL, email, and XRP address.</li>
+                <li>For 100 Likes and Retweets, you'll earn 10 MFX tokens.</li>
+                <li>For 1,000 Likes and Retweets, you'll earn 100 MFX tokens.</li>
+                <li>Complete your registration by submitting your tweet URL, email, and XRP address.</li>
             </ul>
         </div>
 
-        <div class="airdrop-form">
-            <form action="submit_airdrop.php" method="POST">
+        <!-- Square 2: X Post Templates -->
+        <div class="square">
+            <h2>Step 2: X Post Templates</h2>
+            <p>Here are templates for your tweet:</p>
+            <h3>Template 1</h3>
+            <p>Free 100,000 $MFX Giveaway</p>
+            <p>To enter:</p>
+            <ul>
+                <li>Like, RT</li>
+                <li>Follow @moonflextoken</li>
+                <li>Tag 2 Friends</li>
+            </ul>
+            <p>Spread the word to complete your participation: https://moonflex.xyz/airdrop</p>
+            <p>#XRP #MFX #giveaway #airdrop</p>
+            <h3>Template 2</h3>
+            <p>Create your own template.</p>
+            <h3>Template 3</h3>
+            <p>Create your own template.</p>
+            <p>Note: You can modify these templates to fit your style and audience.</p>
+        </div>
+
+        <!-- Square 3: Airdrop Form -->
+        <div class="square">
+            <h2>Step 3: Airdrop Form</h2>
+            <p>Complete the form below to claim your MFX tokens:</p>
+            <form action="submit_airdrop.php" method="POST" class="airdrop-form">
                 <input type="text" name="surname" placeholder="Surname" required><br>
                 <input type="email" name="email" placeholder="Email Address (with consent for marketing)" required><br>
                 <input type="text" name="twitter_handle" placeholder="Twitter Handle @example" required><br>
@@ -178,7 +154,6 @@
             </form>
         </div>
     </div>
-
 </body>
 
 </html>
