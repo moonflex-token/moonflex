@@ -180,7 +180,8 @@
     <p>Spread the word to complete your participation: <a href="https://moonflex.xyz/airdrop" target="_blank">https://moonflex.xyz/airdrop</a></p>
     <p>#XRP #MFX #giveaway #airdrop</p>
 
-    <div class="tweet-template">
+    <!-- Template 1 Box -->
+    <div class="tweet-template-box">
         <p><strong>Template 1:</strong></p>
         <textarea id="template1" rows="6" readonly>Free 100 000 $MFX Giveaway
 To enter:
@@ -194,7 +195,8 @@ Spread the word to complete your participation: https://moonflex.xyz/airdrop
         <button onclick="copyText('template1')">Copy Template 1</button>
     </div>
 
-    <div class="tweet-template">
+    <!-- Template 2 Box -->
+    <div class="tweet-template-box">
         <p><strong>Template 2:</strong></p>
         <textarea id="template2" rows="6" readonly>Enter the Free 100,000 $MFX Giveaway
 1. Like, RT, Follow @moonflextoken
@@ -207,7 +209,8 @@ Visit the link to participate: https://moonflex.xyz/airdrop
         <button onclick="copyText('template2')">Copy Template 2</button>
     </div>
 
-    <div class="tweet-template">
+    <!-- Template 3 Box -->
+    <div class="tweet-template-box">
         <p><strong>Template 3:</strong></p>
         <textarea id="template3" rows="6" readonly>Get your hands on Free 100,000 MFX Tokens!
 1. Like & RT this post
@@ -233,6 +236,42 @@ To complete your entry, visit: https://moonflex.xyz/airdrop
         alert("Copied the text: " + copyText.value);
     }
 </script>
+
+<style>
+    .tweet-template-box {
+        background-color: #1e1e1e;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: left;
+        color: #fff;
+    }
+
+    .tweet-template-box textarea {
+        width: 100%;
+        padding: 10px;
+        background-color: #333;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        font-family: 'Courier New', Courier, monospace;
+        resize: none;
+    }
+
+    .tweet-template-box button {
+        background-color: #ff6600;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .tweet-template-box button:hover {
+        background-color: #ffcc00;
+    }
+</style>
 
 
         
