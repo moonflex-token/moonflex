@@ -10,44 +10,49 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* General reset */
-        body, h1, h2, p, ul, li, form {
-            margin: 0;
-            padding: 0;
+        body {
             font-family: 'Orbitron', sans-serif;
-        }
-
-        /* Container for the 3 squares */
-        .airdrop-section {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
-            gap: 20px; /* space between squares */
-            padding: 30px;
             background-color: #1e1e1e;
-            color: #fff;
-        }
-
-        /* Each square style */
-        .square {
-            background-color: #333;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .square h2 {
-            font-size: 22px;
-            margin-bottom: 10px;
-        }
-
-        .square ul {
-            list-style: none;
-            padding: 0;
             margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
-        .square ul li {
+        .airdrop-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            width: 80%;
+            max-width: 1200px;
+            flex-wrap: wrap;
+        }
+
+        .airdrop-square {
+            background-color: #333;
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            width: 30%;
+            min-width: 300px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .airdrop-square h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .airdrop-square ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .airdrop-square ul li {
             margin: 10px 0;
         }
 
@@ -74,10 +79,22 @@
             background-color: #ffcc00;
         }
 
-        /* Mobile responsiveness */
+        .airdrop-section h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* For mobile responsiveness */
         @media (max-width: 768px) {
-            .airdrop-section {
-                grid-template-columns: 1fr; /* Stack squares vertically */
+            .airdrop-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .airdrop-square {
+                width: 100%;
+                margin-bottom: 20px;
             }
         }
 
@@ -85,75 +102,65 @@
 </head>
 
 <body>
-    <!-- Menu -->
-    <header>
-        <nav>
-            <div class="hamburger" id="hamburger">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-            <ul id="menu">
-                <li><a href="#page-1">Home</a></li>
-                <li><a href="#page-2">Tokenomics</a></li>
-                <li><a href="#page-3">Roadmap</a></li>
-                <li><a href="#page-4">Liquidity Incentive</a></li>
-                <li><a href="#page-5">Founder Vesting</a></li>
-                <li><a href="#page-6">Token Utility</a></li>
-                <li><a href="#page-7">Lunar Link-Up</a></li>
-                <li><a href="#page-8">FAQ</a></li>
-                <li><a href="whitepaper.pdf">Whitepaper</a></li>
-            </ul>
-        </nav>
-    </header>
 
     <div class="airdrop-section">
-        <!-- Square 1: Information -->
-        <div class="square">
-            <h2>Step 1: Information</h2>
-            <p>Follow the instructions to tweet about the MoonFlex airdrop.</p>
-            <ul>
-                <li>For 100 Likes and Retweets, you'll earn 10 MFX tokens.</li>
-                <li>For 1,000 Likes and Retweets, you'll earn 100 MFX tokens.</li>
-                <li>Complete your registration by submitting your tweet URL, email, and XRP address.</li>
-            </ul>
-        </div>
+        <h1>MoonFlex Airdrop - 100,000 MFX Tokens 🚀</h1>
+        <p>Enter your details below to participate in the MoonFlex airdrop and earn free MFX tokens by spreading the word!</p>
 
-        <!-- Square 2: X Post Templates -->
-        <div class="square">
-            <h2>Step 2: X Post Templates</h2>
-            <p>Here are templates for your tweet:</p>
-            <h3>Template 1</h3>
-            <p>Free 100,000 $MFX Giveaway</p>
-            <p>To enter:</p>
-            <ul>
-                <li>Like, RT</li>
-                <li>Follow @moonflextoken</li>
-                <li>Tag 2 Friends</li>
-            </ul>
-            <p>Spread the word to complete your participation: https://moonflex.xyz/airdrop</p>
-            <p>#XRP #MFX #giveaway #airdrop</p>
-            <h3>Template 2</h3>
-            <p>Create your own template.</p>
-            <h3>Template 3</h3>
-            <p>Create your own template.</p>
-            <p>Note: You can modify these templates to fit your style and audience.</p>
-        </div>
+        <div class="airdrop-container">
+            <!-- Square 1: Information -->
+            <div class="airdrop-square">
+                <h2>How to Participate</h2>
+                <ul>
+                    <li>1. Follow the instructions to tweet about the MoonFlex airdrop.</li>
+                    <li>2. For 100 Likes and Retweets, you'll earn 10 MFX tokens.</li>
+                    <li>3. For 1,000 Likes and Retweets, you'll earn 100 MFX tokens.</li>
+                    <li>4. Complete your registration by submitting your tweet URL, email, and XRP address.</li>
+                </ul>
+            </div>
 
-        <!-- Square 3: Airdrop Form -->
-        <div class="square">
-            <h2>Step 3: Airdrop Form</h2>
-            <p>Complete the form below to claim your MFX tokens:</p>
-            <form action="submit_airdrop.php" method="POST" class="airdrop-form">
-                <input type="text" name="surname" placeholder="Surname" required><br>
-                <input type="email" name="email" placeholder="Email Address (with consent for marketing)" required><br>
-                <input type="text" name="twitter_handle" placeholder="Twitter Handle @example" required><br>
-                <input type="text" name="xrp_address" placeholder="Your XRP Address" required><br>
-                <input type="url" name="tweet_url" placeholder="Your Tweet URL" required><br>
-                <button type="submit">Claim My Airdrop</button>
-            </form>
+            <!-- Square 2: X Post Templates -->
+            <div class="airdrop-square">
+                <h2>X Post Templates</h2>
+                <h3>Template 1</h3>
+                <p>Free 100 000 $MFX Giveaway</p>
+                <p>To enter:</p>
+                <ul>
+                    <li>Like, RT</li>
+                    <li>Follow @moonflextoken</li>
+                    <li>Tag 2 Fren</li>
+                </ul>
+                <p>Spread the word to complete your participation: https://moonflex.xyz/airdrop</p>
+                <p>#XRP #MFX #giveaway #airdrop</p>
+
+                <!-- Template 2 -->
+                <h3>Template 2</h3>
+                <p>To be designed...</p>
+
+                <!-- Template 3 -->
+                <h3>Template 3</h3>
+                <p>To be designed...</p>
+
+                <p><em>Be noted: You can slightly modify these templates to fit your style and audience.</em></p>
+            </div>
+
+            <!-- Square 3: Airdrop Form -->
+            <div class="airdrop-square">
+                <h2>Airdrop Form</h2>
+                <div class="airdrop-form">
+                    <form action="submit_airdrop.php" method="POST">
+                        <input type="text" name="surname" placeholder="Surname" required><br>
+                        <input type="email" name="email" placeholder="Email Address (with consent for marketing)" required><br>
+                        <input type="text" name="twitter_handle" placeholder="Twitter Handle @example" required><br>
+                        <input type="text" name="xrp_address" placeholder="Your XRP Address" required><br>
+                        <input type="url" name="tweet_url" placeholder="Your Tweet URL" required><br>
+                        <button type="submit">Claim My Airdrop</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+
 </body>
 
 </html>
