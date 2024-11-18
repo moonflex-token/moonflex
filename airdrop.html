@@ -10,155 +10,182 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* General Reset */
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: 'Orbitron', sans-serif;
-            background-color: #111;
-            color: #fff;
-            box-sizing: border-box;
+        /* Add the styles for the mobile hamburger menu */
+        nav {
+            position: relative;
         }
 
-        /* Container for Airdrop Form */
-        .airdrop-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px;
-            background-color: #222;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-        }
-
-        h1, h2 {
-            text-align: center;
-            color: #ff6600;
-        }
-
-        .how-to-participate {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: rgba(255, 102, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        /* Form Styles */
-        .airdrop-form {
-            display: flex;
+        .hamburger {
+            display: none;
             flex-direction: column;
-            gap: 15px;
+            cursor: pointer;
+            margin: 10px;
         }
 
-        .airdrop-form input, .airdrop-form textarea {
-            padding: 10px;
-            border: 1px solid #ff6600;
-            background-color: #333;
+        .bar {
+            height: 3px;
+            width: 25px;
+            background-color: #fff;
+            margin: 4px 0;
+            transition: 0.4s;
+        }
+
+        /* Navigation styles */
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
             color: #fff;
+        }
+
+        /* Styles for mobile view */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 60px; /* Adjust based on header height */
+                left: 0;
+                background-color: rgba(0, 0, 0, 0.8);
+                z-index: 1;
+            }
+
+            nav ul.show {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 0px 0;
+            }
+        }
+
+        .airdrop-section {
+            padding: 30px;
+            background-color: #1e1e1e;
+            color: #fff;
+            text-align: center;
+        }
+
+        .airdrop-section h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .airdrop-form input,
+        .airdrop-form select,
+        .airdrop-form button {
+            padding: 10px;
+            margin: 10px;
+            border: none;
             border-radius: 5px;
-            width: 100%;
+            width: 80%;
+            max-width: 400px;
+            font-size: 16px;
         }
 
         .airdrop-form button {
             background-color: #ff6600;
-            border: none;
-            padding: 15px;
-            border-radius: 5px;
-            color: white;
-            font-size: 18px;
+            color: #fff;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        /* Checkbox Label Alignment Fix */
-        .consent-checkbox {
-            display: flex;
-            align-items: center;
+        .airdrop-form button:hover {
+            background-color: #ffcc00;
         }
 
-        .consent-checkbox input {
-            margin-right: 10px;
+        .airdrop-instructions {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
 
-        .how-to-participate ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
+        .airdrop-instructions ul {
+            padding-left: 20px;
         }
 
-        .how-to-participate ul li {
+        .airdrop-instructions li {
             margin: 10px 0;
-            font-size: 16px;
-        }
-
-        .airdrop-link {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 18px;
-        }
-
-        .airdrop-link a {
-            color: #ff6600;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .airdrop-container {
-                padding: 20px;
-            }
-
-            .airdrop-form button {
-                font-size: 16px;
-                padding: 12px;
-            }
         }
     </style>
 </head>
 
 <body>
-    <div class="airdrop-container">
-        <h1>MoonFlex Airdrop 🎉</h1>
-        <h2>Claim Your 100,000 MFX Tokens Now!</h2>
+    <!-- Menu -->
+    <header>
+        <nav>
+            <div class="hamburger" id="hamburger">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <ul id="menu">
+                <li><a href="#page-1">Home</a></li>
+                <li><a href="#page-2">Tokenomics</a></li>
+                <li><a href="#page-3">Roadmap</a></li>
+                <li><a href="#page-4">Liquidity Incentive</a></li>
+                <li><a href="#page-5">Founder Vesting</a></li>
+                <li><a href="#page-6">Token Utility</a></li>
+                <li><a href="#page-7">Lunar Link-Up</a></li>
+                <li><a href="#page-8">FAQ</a></li>
+                <li><a href="whitepaper.pdf">Whitepaper</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <div class="how-to-participate">
-            <h3>How to Participate:</h3>
+    <div class="airdrop-section">
+        <h1>MoonFlex Airdrop - 100,000 MFX Tokens 🚀</h1>
+        <p>Enter your details below to participate in the MoonFlex airdrop and earn free MFX tokens by spreading the word!</p>
+
+        <div class="airdrop-instructions">
+            <h2>How to Participate:</h2>
             <ul>
-                <li>1. Follow the steps to claim your MFX tokens.</li>
-                <li>2. Tweet about the airdrop asking people to enter the giveaway.</li>
-                <li>3. Make sure your tweet gets a minimum of 100 likes and retweets for 10 MFX, or 1000 likes and retweets for 100 MFX.</li>
-                <li>4. Tag two friends in your tweet and ask them to participate too!</li>
-                <li>5. Complete the form below to claim your tokens.</li>
+                <li>1. Follow the instructions below to tweet about the MoonFlex airdrop.</li>
+                <li>2. For 100 Likes and Retweets, you'll earn 10 MFX tokens.</li>
+                <li>3. For 1,000 Likes and Retweets, you'll earn 100 MFX tokens.</li>
+                <li>4. Complete your registration by submitting your tweet URL, email, and XRP address.</li>
+                <li>5. Share this link with your audience to get more likes and retweets for a higher airdrop amount.</li>
             </ul>
         </div>
 
         <div class="airdrop-form">
-            <label for="surname">Surname:</label>
-            <input type="text" id="surname" name="surname" placeholder="Enter your surname" required>
+            <form action="submit_airdrop.php" method="POST">
+                <input type="text" name="surname" placeholder="Surname" required><br>
+                <input type="email" name="email" placeholder="Email Address (with consent for marketing)" required><br>
+                <input type="text" name="twitter_handle" placeholder="Twitter Handle @example" required><br>
+                <input type="text" name="xrp_address" placeholder="Your XRP Address" required><br>
+                <input type="url" name="tweet_url" placeholder="Your Tweet URL" required><br>
 
-            <label for="email">Email Address (for marketing consent):</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <label>
+                    <input type="checkbox" name="consent" required>
+                    I consent to receiving marketing emails.
+                </label><br>
 
-            <label for="twitter">Twitter Handle (@):</label>
-            <input type="text" id="twitter" name="twitter" placeholder="Enter your Twitter handle" required>
-
-            <label for="xrp-address">XRP Address:</label>
-            <input type="text" id="xrp-address" name="xrp-address" placeholder="Enter your XRP address" required>
-
-            <!-- Consent Checkbox -->
-            <div class="consent-checkbox">
-                <input type="checkbox" id="consent" name="consent" required>
-                <label for="consent">I consent to receiving marketing emails.</label>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit">Claim Airdrop</button>
-        </div>
-
-        <div class="airdrop-link">
-            <p>Once you've completed the steps, share your link with your followers and get your airdrop!</p>
-            <a href="#">Share your link</a>
+                <button type="submit">Claim My Airdrop</button>
+            </form>
         </div>
     </div>
+
 </body>
 
 </html>
