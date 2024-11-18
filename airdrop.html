@@ -169,6 +169,7 @@
 
 <div class="airdrop-instructions">
     <h2 style="font-size: 40px; text-align: center;">X Templates</h2>
+
     <!-- Template 1 Box -->
     <div class="tweet-template-box">
         <p><strong>Template 1:</strong></p>
@@ -181,7 +182,7 @@ Tag 2 Fren
 Spread the word to complete your participation: https://moonflex.xyz/airdrop
 
 #XRP #MFX #giveaway #airdrop</textarea>
-        <button onclick="copyText('template1')">Copy Template 1</button>
+        <button onclick="postNow('template1')">Post Now on X</button>
     </div>
 
     <!-- Template 2 Box -->
@@ -195,7 +196,7 @@ Spread the word to complete your participation: https://moonflex.xyz/airdrop
 Visit the link to participate: https://moonflex.xyz/airdrop
 
 #XRP #MFX #giveaway #airdrop</textarea>
-        <button onclick="copyText('template2')">Copy Template 2</button>
+        <button onclick="postNow('template2')">Post Now on X</button>
     </div>
 
     <!-- Template 3 Box -->
@@ -209,20 +210,17 @@ Visit the link to participate: https://moonflex.xyz/airdrop
 To complete your entry, visit: https://moonflex.xyz/airdrop
 
 #XRP #MFX #giveaway #airdrop</textarea>
-        <button onclick="copyText('template3')">Copy Template 3</button>
+        <button onclick="postNow('template3')">Post Now on X</button>
     </div>
 
     <p><strong>Note:</strong> You can slightly modify these templates to fit your style and audience.</p>
 </div>
 
 <script>
-    function copyText(templateId) {
-        var copyText = document.getElementById(templateId);
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); // For mobile devices
-
-        document.execCommand("copy");
-        alert("Copied the text: " + copyText.value);
+    function postNow(templateId) {
+        var templateText = document.getElementById(templateId).value;
+        var tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(templateText);
+        window.open(tweetUrl, '_blank');
     }
 </script>
 
@@ -261,8 +259,6 @@ To complete your entry, visit: https://moonflex.xyz/airdrop
         background-color: #ffcc00;
     }
 </style>
-
-
         
         <div class="airdrop-form">
             <form action="submit_airdrop.php" method="POST">
