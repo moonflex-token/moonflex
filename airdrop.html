@@ -10,67 +10,81 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Orbitron', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #121212;
-            color: #fff;
-            display: flex;
+        /* Add the styles for the mobile hamburger menu */
+        nav {
+            position: relative;
+        }
+
+        .hamburger {
+            display: none;
             flex-direction: column;
-            justify-content: center;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .bar {
+            height: 3px;
+            width: 25px;
+            background-color: #fff;
+            margin: 4px 0;
+            transition: 0.4s;
+        }
+
+        /* Navigation styles */
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
             align-items: center;
-            min-height: 100vh;
+            margin: 0;
         }
 
-        .airdrop-header {
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        /* Styles for mobile view */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 60px; /* Adjust based on header height */
+                left: 0;
+                background-color: rgba(0, 0, 0, 0.8);
+                z-index: 1;
+            }
+
+            nav ul.show {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 0px 0;
+            }
+        }
+
+        .airdrop-section {
+            padding: 30px;
+            background-color: #1e1e1e;
+            color: #fff;
             text-align: center;
-            margin-bottom: 40px;
         }
 
-        .airdrop-header h1 {
+        .airdrop-section h1 {
             font-size: 36px;
             margin-bottom: 20px;
-        }
-
-        .airdrop-header p {
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
-
-        .airdrop-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            width: 100%;
-            max-width: 700px;
-        }
-
-        .airdrop-square {
-            background-color: #333;
-            border-radius: 10px;
-            padding: 30px;
-            width: 100%;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .airdrop-square h2 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .airdrop-square ul {
-            list-style-type: none;
-            padding-left: 0;
-            font-size: 16px;
-            text-align: left;
-        }
-
-        .airdrop-square ul li {
-            margin: 10px 0;
         }
 
         .airdrop-form input,
@@ -94,6 +108,24 @@
 
         .airdrop-form button:hover {
             background-color: #ffcc00;
+        }
+
+        .airdrop-instructions {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .airdrop-instructions ul {
+            padding-left: 20px;
+        }
+
+        .airdrop-instructions li {
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -121,52 +153,22 @@
         </nav>
     </header>
 
-    <div class="airdrop-header">
+    <div class="airdrop-section">
         <h1>MoonFlex Airdrop - 100,000 MFX Tokens 🚀</h1>
         <p>Enter your details below to participate in the MoonFlex airdrop and earn free MFX tokens by spreading the word!</p>
-    </div>
 
-    <div class="airdrop-container">
-        <!-- Information Square -->
-        <div class="airdrop-square">
-            <h2>Information</h2>
+        <div class="airdrop-instructions">
+            <h2 style="font-size: 40px; text-align: center;">How to Participate</h2>
             <ul>
-                <li>Follow the instructions to tweet about the MoonFlex airdrop.</li>
-                <li>For 100 Likes and Retweets, you'll earn 10 MFX tokens.</li>
-                <li>For 1,000 Likes and Retweets, you'll earn 100 MFX tokens.</li>
-                <li>Complete your registration by submitting your tweet URL, email, and XRP address.</li>
+                <li>1. Follow the instructions to tweet about the MoonFlex airdrop.</li>
+                <li>2. For 100 Likes and Retweets, you'll earn 10 MFX tokens.</li>
+                <li>3. For 1,000 Likes and Retweets, you'll earn 100 MFX tokens.</li>
+                <li>4. Complete your registration by submitting your tweet URL, email, and XRP address.</li>
             </ul>
         </div>
 
-        <!-- X Post Template Square -->
-        <div class="airdrop-square">
-            <h2>X Post Template</h2>
-            <p><strong>Template 1:</strong></p>
-            <p>Free 100,000 $MFX Giveaway</p>
-            <p>To enter:</p>
-            <ul>
-                <li>Like, RT</li>
-                <li>Follow @moonflextoken</li>
-                <li>Tag 2 Friends</li>
-            </ul>
-            <p>Spread the word to complete your participation: https://moonflex.xyz/airdrop</p>
-            <p>#XRP #MFX #giveaway #airdrop</p>
-
-            <p><strong>Template 2:</strong></p>
-            <!-- Placeholder for Template 2 -->
-            <p>Insert Template 2 Content Here</p>
-
-            <p><strong>Template 3:</strong></p>
-            <!-- Placeholder for Template 3 -->
-            <p>Insert Template 3 Content Here</p>
-
-            <p><strong>Note:</strong> You can slightly modify these templates to fit your style and audience.</p>
-        </div>
-
-        <!-- Airdrop Form Square -->
-        <div class="airdrop-square">
-            <h2>Airdrop Form</h2>
-            <form class="airdrop-form" action="submit_airdrop.php" method="POST">
+        <div class="airdrop-form">
+            <form action="submit_airdrop.php" method="POST">
                 <input type="text" name="surname" placeholder="Surname" required><br>
                 <input type="email" name="email" placeholder="Email Address (with consent for marketing)" required><br>
                 <input type="text" name="twitter_handle" placeholder="Twitter Handle @example" required><br>
