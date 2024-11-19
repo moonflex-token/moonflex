@@ -287,10 +287,25 @@ To complete your entry, visit: https://moonflex.xyz/airdrop
             <!-- Success Message (hidden initially) -->
             <div id="success-message" style="display:none;">
                <p>Thank you for submitting! Your airdrop request has been received.</p>
-            </div>
-         </div>
-         <script>
-            // Function to submit form via AJAX
+           </div>
+      </div>
+      <!-- Footer Text -->
+      <div style="text-align: center; margin-top: 20px;">
+         <br>© 2024 MoonFlex. All rights reserved.
+      </div>
+      <!-- Sticky Call to Action Button -->
+      <div id="cta-sticky">
+         <a href="https://sologenic.org/market-index/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1" target="_blank">Participate in our IDO!</a>
+      </div>
+      <script>
+         // JavaScript to handle the hamburger menu toggle
+         const hamburger = document.getElementById('hamburger');
+         const menu = document.getElementById('menu');
+         
+         hamburger.addEventListener('click', () => {
+             menu.classList.toggle('show');
+         });
+                     // Function to submit form via AJAX
             document.getElementById('airdrop-form').addEventListener('submit', function(event) {
                event.preventDefault();  // Prevent form from submitting the traditional way
             
@@ -317,24 +332,6 @@ To complete your entry, visit: https://moonflex.xyz/airdrop
                   alert('There was an error submitting the form. Please try again.');
                });
             });
-         </script>
-      </div>
-      <!-- Footer Text -->
-      <div style="text-align: center; margin-top: 20px;">
-         <br>© 2024 MoonFlex. All rights reserved.
-      </div>
-      <!-- Sticky Call to Action Button -->
-      <div id="cta-sticky">
-         <a href="https://sologenic.org/market-index/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1" target="_blank">Participate in our IDO!</a>
-      </div>
-      <script>
-         // JavaScript to handle the hamburger menu toggle
-         const hamburger = document.getElementById('hamburger');
-         const menu = document.getElementById('menu');
-         
-         hamburger.addEventListener('click', () => {
-             menu.classList.toggle('show');
-         });
       </script>
    </body>
 </html>
