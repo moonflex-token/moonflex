@@ -287,7 +287,35 @@ To complete your entry, visit: https://moonflex.xyz/airdrop
             <!-- Success Message (hidden initially) -->
             <div id="success-message" style="display:none;">
                <p>Thank you for submitting! Your airdrop request has been received.</p>
-           </div>
+            </div>
+         </div>
+<script>
+   // Function to submit form via AJAX
+   document.getElementById('airdrop-form').addEventListener('submit', function(event) {
+      event.preventDefault();  // Prevent form from submitting the traditional way
+   
+      var formData = new FormData(this);  // Get form data
+   
+      // Send the form data to Google Form using AJAX
+      fetch('https://docs.google.com/forms/d/e/1FAIpQLSf6puW4P3T77WMxOWROgKoMPb8_m9AalnZgmrZRMGAxaWdjHg/formResponse', {
+         method: 'POST',
+         body: formData,
+         mode: 'no-cors'  // Disable CORS checks to avoid errors
+      })
+      .then(function(response) {
+         // Instead of checking response.ok, assume success if no error is thrown
+         // Show success message
+         document.getElementById('success-message').style.display = 'block';
+         // Optionally, hide the form after submission
+         document.getElementById('airdrop-form').reset();
+      })
+      .catch(function(error) {
+         // Handle fetch error
+         console.error('Error:', error);  // Log the error for debugging
+         alert('There was an error submitting the form. Please try again.');
+      });
+   });
+</script>
       </div>
       <!-- Footer Text -->
       <div style="text-align: center; margin-top: 20px;">
@@ -305,33 +333,7 @@ To complete your entry, visit: https://moonflex.xyz/airdrop
          hamburger.addEventListener('click', () => {
              menu.classList.toggle('show');
          });
-                     // Function to submit form via AJAX
-            document.getElementById('airdrop-form').addEventListener('submit', function(event) {
-               event.preventDefault();  // Prevent form from submitting the traditional way
-            
-               var formData = new FormData(this);  // Get form data
-            
-               // Send the form data to Google Form using AJAX
-               fetch('https://docs.google.com/forms/d/e/1FAIpQLSf6puW4P3T77WMxOWROgKoMPb8_m9AalnZgmrZRMGAxaWdjHg/formResponse', {
-                  method: 'POST',
-                  body: formData
-               })
-               .then(function(response) {
-                  if (response.ok) {
-                     // Show success message
-                     document.getElementById('success-message').style.display = 'block';
-                     // Optionally, hide the form after submission
-                     document.getElementById('airdrop-form').reset();
-                  } else {
-                     // Handle error
-                     alert('There was an error submitting the form. Please try again.');
-                  }
-               })
-               .catch(function(error) {
-                  // Handle fetch error
-                  alert('There was an error submitting the form. Please try again.');
-               });
-            });
       </script>
    </body>
 </html>
+
