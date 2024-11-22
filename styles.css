@@ -163,6 +163,31 @@ ul li::before {
     animation: pulse 2s infinite;
 }
 
+/* Non-sticky CTA */
+#cta-non-sticky {
+    background-color: #ff6600;
+    padding: 15px;
+    border-radius: 30px;
+    text-align: center; /* To center the CTA within its section */
+    margin: 20px auto; /* Center it horizontally */
+    width: fit-content;
+}
+
+#cta-non-sticky a {
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#cta-non-sticky a:hover {
+    color: #fff;
+}
+
+/* Pulse Animation for Non-sticky CTA */
+#cta-non-sticky {
+    animation: pulse 2s infinite;
+}
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
