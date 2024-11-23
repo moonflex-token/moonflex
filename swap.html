@@ -1,1 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xaman Wallet Connect</title>
+</head>
+<body>
+
+  <h1>Connect Xaman Wallet</h1>
+  <button id="connectButton">Connect Wallet</button>
+  <div id="qrCodeContainer"></div>
+
+  <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
+  <script>
+    var xumm = new Xumm('33f1d097-00b1-4a1c-886c-539ed07e4626'); // Replace with your Xumm API key
+
+    document.getElementById('connectButton').onclick = function() {
+      xumm.authorize().then(result => {
+        const qrCode = result.qr_code;
+        document.getElementById('qrCodeContainer').innerHTML = `<img src="${qrCode}" alt="Xaman Wallet QR Code" />`;
+      }).catch(error => {
+        console.error("Error connecting:", error);
+      });
+    };
+  </script>
+</body>
+</html>
 
