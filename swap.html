@@ -28,29 +28,32 @@
         <div id="qr-code"></div>
     </div>
 
+    <!-- Add Xaman SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@xaman/sdk@latest"></script>
     <script>
-        // Initialize Xaman SDK
-        const xaman = new Xaman();
+        // Ensure Xaman SDK is ready before usage
+        window.onload = () => {
+            const xaman = new Xaman();
 
-        // Function to show QR code when the "Connect Wallet" button is clicked
-        document.getElementById('connect-wallet-btn').addEventListener('click', () => {
-            // Display the QR code container
-            document.getElementById('qr-container').style.display = 'block';
+            // When the user clicks the "Connect Wallet" button
+            document.getElementById('connect-wallet-btn').addEventListener('click', () => {
+                // Show QR code container
+                document.getElementById('qr-container').style.display = 'block';
 
-            // Use Xaman SDK to generate the QR code for wallet connection
-            xaman.openSignRequest({
-                payload: 'your-payload-here', // You need to customize this based on your use case (e.g., a transaction request)
-                callback: (response) => {
-                    // Handle the response when the wallet is connected
-                    console.log('Wallet connected:', response);
-
-                    // Optional: You can hide the QR container after successful connection
-                    document.getElementById('qr-container').style.display = 'none';
-                    alert('Wallet connected successfully!');
-                }
+                // Generate the QR code and handle the callback
+                xaman.openSignRequest({
+                    payload: 'your-payload-here', // Replace with your actual payload (transaction data or authentication request)
+                    callback: (response) => {
+                        // Handle the response when the wallet is connected
+                        console.log('Wallet connected:', response);
+                        
+                        // Optionally hide the QR code after successful connection
+                        document.getElementById('qr-container').style.display = 'none';
+                        alert('Wallet connected successfully!');
+                    }
+                });
             });
-        });
+        };
     </script>
 </body>
 </html>
