@@ -18,125 +18,98 @@
             height: 100vh;
         }
 
-        .container {
-            width: 400px;
-            background-color: #333;
-            border-radius: 15px;
+        .swap-container {
+            width: 350px;
             padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            background: #2b2b2b;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
         }
 
-        .header {
-            text-align: center;
+        .swap-container h1 {
+            font-size: 20px;
             margin-bottom: 20px;
         }
 
-        .header h1 {
-            font-size: 22px;
-            margin: 0;
-        }
-
         .input-group {
-            margin: 20px 0;
+            margin-bottom: 20px;
         }
 
         .input-group label {
+            display: block;
+            margin-bottom: 5px;
             font-size: 14px;
-            color: #ccc;
+            text-align: left;
         }
 
         .input-group input {
             width: 100%;
-            background-color: #444;
-            border: none;
-            border-radius: 8px;
             padding: 10px;
-            color: #fff;
+            border: none;
+            border-radius: 5px;
             font-size: 16px;
-            margin-top: 5px;
+            background: #444;
+            color: #fff;
+            text-align: right;
         }
 
-        .summary {
-            background-color: #444;
-            border-radius: 10px;
+        .swap-summary {
+            background: #333;
             padding: 15px;
-            margin-top: 20px;
-            color: #ccc;
+            border-radius: 10px;
+            text-align: left;
         }
 
-        .summary p {
-            margin: 8px 0;
+        .swap-summary p {
             font-size: 14px;
+            line-height: 1.6;
+            margin: 5px 0;
         }
 
-        .swap-info span {
-            color: #ff6600;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: space-between;
+        .button-group {
             margin-top: 20px;
         }
 
-        .buttons button {
-            width: 48%;
-            background-color: #ff6600;
-            border: none;
-            border-radius: 8px;
+        .button-group button {
+            width: 100%;
             padding: 10px;
-            color: #fff;
+            border: none;
+            border-radius: 5px;
             font-size: 16px;
+            background: #ff6600;
+            color: white;
             cursor: pointer;
-            transition: background 0.3s;
         }
 
-        .buttons button:hover {
-            background-color: #ffcc00;
+        .button-group button:hover {
+            background: #ffcc00;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>MFX Swap</h1>
-        </div>
-
+    <div class="swap-container">
+        <h1>MFX ↔ XRP Swap</h1>
         <div class="input-group">
-            <label for="inputAmount">Enter XRP Amount</label>
-            <input type="number" id="inputAmount" placeholder="0.00">
+            <label for="xrpAmount">Enter XRP Amount:</label>
+            <input type="number" id="xrpAmount" placeholder="Amount in XRP" />
         </div>
-
-        <div class="summary swap-info">
+        <div class="swap-summary">
+            <p><strong>Summary:</strong></p>
             <p>Slippage tolerance: <span id="slippage">2%</span></p>
             <p>Minimum received: <span id="minReceived">-</span></p>
             <p>From orderbook: <span id="orderBookAmount">-</span></p>
             <p>Price impact: <span id="priceImpact">0%</span></p>
             <p>Price: <span id="price">-</span></p>
         </div>
-
-        <div class="buttons">
+        <div class="button-group">
             <button id="swapButton">Swap XRP to MFX</button>
-            <button id="reverseSwap">⇄ Swap MFX to XRP</button>
         </div>
     </div>
 
     <script>
         const MFX_ISSUER = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
         const SLIPPAGE_TOLERANCE = 0.02; // 2%
-
-        document.getElementById("inputAmount").addEventListener("input", async function () {
-            const amount = parseFloat(this.value);
-            if (!amount || amount <= 0) return resetSummary();
-
-            try {
-                const orderData = await fetchOrderBook();
-                updateSummary(orderData, amount, false);
-            } catch (error) {
-                console.error(error);
-                resetSummary();
-            }
-        });
 
         async function fetchOrderBook() {
             const url = `https://s2.ripple.com:51234/`;
@@ -148,7 +121,7 @@
                     params: [
                         {
                             ledger_index: "validated",
-                            taker: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh", // XRP ledger's "no-op" address
+                            taker: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh", // XRPL's "no-op" address
                             taker_gets: { currency: "MFX", issuer: MFX_ISSUER },
                             taker_pays: { currency: "XRP" },
                         },
@@ -170,22 +143,38 @@
             }
         }
 
-        function updateSummary(orderData, amount, isReversed) {
-            const swapPrice = isReversed ? 1 / orderData.price : orderData.price;
-            const minReceived = (amount * swapPrice) * (1 - SLIPPAGE_TOLERANCE);
+        async function updateSummary() {
+            const xrpAmount = parseFloat(document.getElementById("xrpAmount").value);
+            if (isNaN(xrpAmount) || xrpAmount <= 0) {
+                resetSummary();
+                return;
+            }
 
-            document.getElementById("slippage").innerText = `${SLIPPAGE_TOLERANCE * 100}%`;
-            document.getElementById("minReceived").innerText = minReceived.toFixed(6) + (isReversed ? " XRP" : " MFX");
-            document.getElementById("orderBookAmount").innerText = orderData.amount.toFixed(6) + " MFX";
-            document.getElementById("priceImpact").innerText = "0%";
-            document.getElementById("price").innerText = swapPrice.toFixed(6);
+            try {
+                const orderData = await fetchOrderBook();
+                const swapPrice = orderData.price;
+                const minReceived = (xrpAmount * swapPrice) * (1 - SLIPPAGE_TOLERANCE);
+
+                document.getElementById("slippage").innerText = `${SLIPPAGE_TOLERANCE * 100}%`;
+                document.getElementById("minReceived").innerText = minReceived.toFixed(6) + " MFX";
+                document.getElementById("orderBookAmount").innerText = orderData.amount.toFixed(6) + " MFX";
+                document.getElementById("priceImpact").innerText = "0%";
+                document.getElementById("price").innerText = swapPrice.toFixed(6);
+            } catch (error) {
+                console.error(error);
+                resetSummary();
+            }
         }
 
         function resetSummary() {
             document.getElementById("minReceived").innerText = "-";
             document.getElementById("orderBookAmount").innerText = "-";
+            document.getElementById("priceImpact").innerText = "0%";
             document.getElementById("price").innerText = "-";
         }
+
+        document.getElementById("xrpAmount").addEventListener("input", updateSummary);
+        document.getElementById("swapButton").addEventListener("click", () => alert("Swap functionality not yet implemented!"));
     </script>
 </body>
 </html>
