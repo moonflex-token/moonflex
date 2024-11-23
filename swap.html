@@ -124,7 +124,10 @@
                 <!-- QR Code Container -->
                 <div class="qr-container" id="qrContainer">
                     <p>Scan this QR code to connect your wallet:</p>
-                    <div id="qr-code"></div>
+                    <div id="qr-code">
+                        <!-- Canvas element for QR code -->
+                        <canvas id="qrCanvas"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
@@ -147,9 +150,10 @@
             };
 
             const qrData = JSON.stringify(walletConnectionRequest);
-            const qrCodeElement = document.getElementById('qr-code');
+            const qrCanvasElement = document.getElementById('qrCanvas');
 
-            QRCode.toCanvas(qrCodeElement, qrData, function(error) {
+            // Generate the QR code on the canvas
+            QRCode.toCanvas(qrCanvasElement, qrData, function(error) {
                 if (error) {
                     console.error('QR Code generation error:', error);
                 } else {
@@ -161,4 +165,3 @@
 </body>
 
 </html>
-
