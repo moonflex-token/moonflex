@@ -10,14 +10,14 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Keep the same styles from index.html */
         body {
             font-family: 'Orbitron', sans-serif;
             background-color: #121212;
             color: #fff;
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             color: #ff6600;
         }
 
@@ -133,14 +133,8 @@
     <script src="https://cdn.jsdelivr.net/npm/xrpl@1.3.1/dist/xrpl.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xamagnetic/xaman-wallet@1.0.1/dist/xaman.min.js"></script>
     <script>
-        const issuerAddress = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"; // MFX issuer address
-        const maxSlippage = 0.01; // 1% slippage tolerance
-
         const connectButton = document.getElementById('connectButton');
         const qrCodeContainer = document.getElementById('qrCode');
-        const swapButton = document.getElementById('swapButton');
-        const amountInput = document.getElementById('amount');
-        const directionSelect = document.getElementById('direction');
         const statusDiv = document.getElementById('status');
 
         let xamanWallet;
@@ -149,19 +143,26 @@
         connectButton.addEventListener('click', async () => {
             try {
                 xamanWallet = new XamanWallet();
-                await xamanWallet.connect();
+                const isConnected = await xamanWallet.connect();
 
-                // Get the QR code for wallet connection
-                const qrCodeUrl = await xamanWallet.getQRCode();
-                qrCodeContainer.innerHTML = `<img class="qr-code" src="${qrCodeUrl}" alt="QR Code" />`;
-                statusDiv.textContent = "Wallet Connected! Scan the QR Code to connect.";
+                if (isConnected) {
+                    const qrCodeUrl = await xamanWallet.getQRCode();
+                    qrCodeContainer.innerHTML = `<img class="qr-code" src="${qrCodeUrl}" alt="QR Code" />`;
+                    statusDiv.textContent = "Wallet Connected!";
+                } else {
+                    statusDiv.textContent = "Error connecting wallet. Please try again.";
+                }
             } catch (error) {
-                console.error(error);
+                console.error('Error connecting wallet:', error);
                 statusDiv.textContent = "Error connecting wallet. Please try again.";
             }
         });
 
         // Handle the swap logic
+        const swapButton = document.getElementById('swapButton');
+        const amountInput = document.getElementById('amount');
+        const directionSelect = document.getElementById('direction');
+
         swapButton.addEventListener('click', async () => {
             const amount = parseFloat(amountInput.value);
             const direction = directionSelect.value;
@@ -183,7 +184,7 @@
                     },
                     taker_pays: {
                         currency: 'MFX',
-                        issuer: issuerAddress
+                        issuer: 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1'
                     }
                 });
             } else {
@@ -191,7 +192,7 @@
                     command: 'book_offers',
                     taker_gets: {
                         currency: 'MFX',
-                        issuer: issuerAddress
+                        issuer: 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1'
                     },
                     taker_pays: {
                         currency: 'XRP'
@@ -206,22 +207,14 @@
             }
 
             const price = parseFloat(bestOffer.TakerGets.value) / parseFloat(bestOffer.TakerPays.value);
-            const slippageAllowed = price * (1 + maxSlippage);
-            const slippageExceeded = direction === 'xrp-to-mfx'
-                ? amount * slippageAllowed
-                : amount * (1 - maxSlippage);
-
-            if (slippageExceeded > bestOffer.TakerGets.value) {
-                statusDiv.textContent = `Slippage exceeds the max tolerance of 1%.`;
-                return;
-            }
+            const slippageAllowed = price * 1.01;
 
             // Perform swap transaction (simplified)
             const transaction = {
                 "TransactionType": "Payment",
                 "Account": xamanWallet.address,
                 "Amount": xrpl.xrpToDrops(amount),
-                "Destination": issuerAddress,
+                "Destination": 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1',
                 "SendMax": xrpl.xrpToDrops(amount * slippageAllowed),
             };
 
