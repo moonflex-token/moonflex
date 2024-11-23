@@ -13,103 +13,124 @@
             margin: 0;
             padding: 0;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
         }
 
         .swap-container {
-            width: 350px;
+            width: 380px;
             padding: 20px;
-            background: #2b2b2b;
+            background-color: #222;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .swap-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #333;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .swap-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            background: #444;
+            color: #fff;
+            font-size: 16px;
             text-align: center;
         }
 
-        .swap-container h1 {
-            font-size: 20px;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            text-align: left;
-        }
-
-        .input-group input {
+        .swap-box button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
+            background: #ff6600;
+            color: #fff;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
-            background: #444;
-            color: #fff;
-            text-align: right;
+            font-size: 18px;
+            cursor: pointer;
+            margin-bottom: 10px;
         }
 
-        .swap-summary {
-            background: #333;
+        .swap-box button:hover {
+            background: #ffcc00;
+        }
+
+        .summary {
+            background: #444;
             padding: 15px;
             border-radius: 10px;
+            margin-top: 20px;
             text-align: left;
+            font-size: 14px;
         }
 
-        .swap-summary p {
-            font-size: 14px;
-            line-height: 1.6;
+        .summary p {
             margin: 5px 0;
         }
 
-        .button-group {
-            margin-top: 20px;
-        }
-
-        .button-group button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            background: #ff6600;
-            color: white;
-            cursor: pointer;
-        }
-
-        .button-group button:hover {
-            background: #ffcc00;
+        .summary .bold {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="swap-container">
-        <h1>MFX ↔ XRP Swap</h1>
-        <div class="input-group">
-            <label for="xrpAmount">Enter XRP Amount:</label>
-            <input type="number" id="xrpAmount" placeholder="Amount in XRP" />
+        <h1>MFX Swap</h1>
+        <div class="swap-box">
+            <input type="number" id="amount" placeholder="Enter XRP or MFX amount" />
+            <button id="swapButton">Swap</button>
         </div>
-        <div class="swap-summary">
-            <p><strong>Summary:</strong></p>
-            <p>Slippage tolerance: <span id="slippage">2%</span></p>
-            <p>Minimum received: <span id="minReceived">-</span></p>
-            <p>From orderbook: <span id="orderBookAmount">-</span></p>
-            <p>Price impact: <span id="priceImpact">0%</span></p>
-            <p>Price: <span id="price">-</span></p>
-        </div>
-        <div class="button-group">
-            <button id="swapButton">Swap XRP to MFX</button>
+        
+        <div class="summary">
+            <p><span class="bold">Slippage tolerance:</span> <span id="slippage">2%</span></p>
+            <p><span class="bold">Minimum received:</span> <span id="minReceived">-</span></p>
+            <p><span class="bold">From orderbook:</span> <span id="orderBookAmount">-</span></p>
+            <p><span class="bold">Price impact:</span> <span id="priceImpact">0%</span></p>
+            <p><span class="bold">Price:</span> <span id="price">-</span></p>
         </div>
     </div>
 
     <script>
         const MFX_ISSUER = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
         const SLIPPAGE_TOLERANCE = 0.02; // 2%
+
+        document.getElementById('swapButton').addEventListener('click', async () => {
+            const inputAmount = parseFloat(document.getElementById("amount").value);
+            if (isNaN(inputAmount) || inputAmount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            try {
+                const orderData = await fetchOrderBook();
+                const swapPrice = orderData.price;
+                const minReceived = inputAmount * swapPrice * (1 - SLIPPAGE_TOLERANCE);
+
+                document.getElementById("slippage").innerText = `${SLIPPAGE_TOLERANCE * 100}%`;
+                document.getElementById("minReceived").innerText = minReceived.toFixed(6) + " MFX";
+                document.getElementById("orderBookAmount").innerText = orderData.amount.toFixed(6) + " MFX";
+                document.getElementById("priceImpact").innerText = "0%"; // No price impact calculation (for simplicity)
+                document.getElementById("price").innerText = swapPrice.toFixed(6);
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred while fetching the orderbook.");
+            }
+        });
 
         async function fetchOrderBook() {
             const url = `https://s2.ripple.com:51234/`;
@@ -121,7 +142,7 @@
                     params: [
                         {
                             ledger_index: "validated",
-                            taker: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh", // XRPL's "no-op" address
+                            taker: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh", // XRP ledger's "no-op" address
                             taker_gets: { currency: "MFX", issuer: MFX_ISSUER },
                             taker_pays: { currency: "XRP" },
                         },
@@ -142,39 +163,6 @@
                 throw new Error("Failed to fetch orderbook data.");
             }
         }
-
-        async function updateSummary() {
-            const xrpAmount = parseFloat(document.getElementById("xrpAmount").value);
-            if (isNaN(xrpAmount) || xrpAmount <= 0) {
-                resetSummary();
-                return;
-            }
-
-            try {
-                const orderData = await fetchOrderBook();
-                const swapPrice = orderData.price;
-                const minReceived = (xrpAmount * swapPrice) * (1 - SLIPPAGE_TOLERANCE);
-
-                document.getElementById("slippage").innerText = `${SLIPPAGE_TOLERANCE * 100}%`;
-                document.getElementById("minReceived").innerText = minReceived.toFixed(6) + " MFX";
-                document.getElementById("orderBookAmount").innerText = orderData.amount.toFixed(6) + " MFX";
-                document.getElementById("priceImpact").innerText = "0%";
-                document.getElementById("price").innerText = swapPrice.toFixed(6);
-            } catch (error) {
-                console.error(error);
-                resetSummary();
-            }
-        }
-
-        function resetSummary() {
-            document.getElementById("minReceived").innerText = "-";
-            document.getElementById("orderBookAmount").innerText = "-";
-            document.getElementById("priceImpact").innerText = "0%";
-            document.getElementById("price").innerText = "-";
-        }
-
-        document.getElementById("xrpAmount").addEventListener("input", updateSummary);
-        document.getElementById("swapButton").addEventListener("click", () => alert("Swap functionality not yet implemented!"));
     </script>
 </body>
 </html>
