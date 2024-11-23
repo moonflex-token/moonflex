@@ -11,8 +11,6 @@
             background-color: #1a1a1a;
             margin: 0;
             padding: 0;
-        }
-        .container {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,14 +19,17 @@
         .swap-box {
             background: #333;
             border-radius: 15px;
-            padding: 30px;
-            width: 400px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 350px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .swap-box h2 {
+        h2 {
             color: #fe6602;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         .input-field {
             width: 100%;
@@ -37,7 +38,7 @@
             border-radius: 10px;
             border: 2px solid #fe6602;
             background-color: #222;
-            color: #fff;
+            color: white;
             font-size: 16px;
             text-align: center;
         }
@@ -51,6 +52,7 @@
             border-radius: 10px;
             cursor: pointer;
             margin-top: 20px;
+            width: 100%;
         }
         .swap-btn:hover {
             background-color: #ff7a2a;
@@ -58,13 +60,11 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="swap-box">
-            <h2>Swap Tokens</h2>
-            <input type="text" class="input-field" placeholder="Amount to Send" />
-            <input type="text" class="input-field" placeholder="Amount to Receive" />
-            <button class="swap-btn">Swap</button>
-        </div>
+    <div class="swap-box">
+        <h2>Swap Tokens</h2>
+        <input type="text" class="input-field" placeholder="Amount to Send" />
+        <input type="text" class="input-field" placeholder="Amount to Receive" />
+        <button class="swap-btn">Swap</button>
     </div>
 </body>
 </html>
