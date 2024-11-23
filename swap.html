@@ -1,174 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Connect Xaman Wallet - MoonFlex</title>
-    <link rel="icon" href="moonflex-favicon.png" type="image/png">
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <title>Connect Xaman Wallet</title>
     <style>
-        /* Add the styles for the mobile hamburger menu */
-        nav {
-            position: relative;
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            margin: 10px;
-        }
-
-        .bar {
-            height: 3px;
-            width: 25px;
-            background-color: #fff;
-            margin: 4px 0;
-            transition: 0.4s;
-        }
-
-        /* Navigation styles */
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            margin: 0;
-        }
-
-        nav ul li {
-            margin: 0 15px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #fff;
-        }
-
-        /* Page styles */
-        .content {
+        body {
+            font-family: Arial, sans-serif;
             text-align: center;
-            margin: 40px;
+            padding: 20px;
         }
-
-        .cta-button {
-            padding: 15px 25px;
-            background-color: #ff6600;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 18px;
-            transition: background-color 0.3s;
-        }
-
-        .cta-button:hover {
-            background-color: #ffcc00;
-        }
-
-        .qr-container {
-            display: none;
+        #qr-container {
             margin-top: 20px;
+            display: none;
         }
-
         #qr-code {
             margin-top: 20px;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .mysection-square {
-                flex-direction: column; /* Stack items vertically */
-                align-items: flex-start; /* Align items to the start */
-            }
+            text-align: center;
         }
     </style>
 </head>
-
 <body>
-    <!-- Menu -->
-    <header>
-        <nav>
-            <div class="hamburger" id="hamburger">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-            <ul id="menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="#page-2">Tokenomics</a></li>
-                <li><a href="#page-3">Roadmap</a></li>
-                <li><a href="#page-4">Liquidity Incentive</a></li>
-                <li><a href="#page-5">Founder Vesting</a></li>
-                <li><a href="#page-6">Token Utility</a></li>
-                <li><a href="#page-7">Lunar Link-Up</a></li>
-                <li><a href="#page-8">FAQ</a></li>
-                <li><a href="whitepaper.pdf">Whitepaper</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- Content -->
-    <div class="container">
-        <section class="section" id="page-1">
-            <div class="content">
-                <h1>Connect Your Xaman Wallet</h1>
-                <p>Click the button below to connect your Xaman Wallet using a QR code. Simply scan the QR code with your Xaman wallet app to complete the connection.</p>
-                
-                <!-- Connect Wallet Button -->
-                <button class="cta-button" id="connectWalletButton">Connect Wallet</button>
-                
-                <!-- QR Code Container -->
-                <div class="qr-container" id="qrContainer">
-                    <p>Scan this QR code to connect your wallet:</p>
-                    <div id="qr-code"></div>
-                </div>
-            </div>
-        </section>
+    <h1>Connect to Xaman Wallet</h1>
+    <button id="connect-wallet-btn">Connect Wallet</button>
+    <div id="qr-container">
+        <h2>Scan the QR code in your Xaman app</h2>
+        <div id="qr-code"></div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/xaman-js@latest/dist/xaman.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xaman/sdk@latest"></script>
     <script>
-        // Function to generate and display the QR code
-        document.getElementById('connectWalletButton').addEventListener('click', function() {
-            console.log("Connect Wallet button clicked");
+        // Initialize Xaman SDK
+        const xaman = new Xaman();
 
-            // Show QR code container
-            const qrContainer = document.getElementById('qrContainer');
-            qrContainer.style.display = 'block';
-            console.log("QR Container is now visible");
+        // Function to show QR code when the "Connect Wallet" button is clicked
+        document.getElementById('connect-wallet-btn').addEventListener('click', () => {
+            // Display the QR code container
+            document.getElementById('qr-container').style.display = 'block';
 
-            // Prepare the wallet connection request
-            const walletConnectionRequest = {
-                action: 'connect', 
-                network: 'mainnet', 
-                appName: 'MoonFlex' 
-            };
+            // Use Xaman SDK to generate the QR code for wallet connection
+            xaman.openSignRequest({
+                payload: 'your-payload-here', // You need to customize this based on your use case (e.g., a transaction request)
+                callback: (response) => {
+                    // Handle the response when the wallet is connected
+                    console.log('Wallet connected:', response);
 
-            console.log("Wallet connection request prepared:", walletConnectionRequest);
-
-            // Convert the request object to a JSON string for QR code generation
-            const qrData = JSON.stringify(walletConnectionRequest);
-            console.log("QR Data to be encoded:", qrData);
-
-            // Generate the QR code using the 'QRCode.toCanvas' method
-            const qrCodeElement = document.getElementById('qr-code');
-            QRCode.toCanvas(qrCodeElement, qrData, function(error) {
-                if (error) {
-                    console.error('QR Code generation error:', error);
-                    alert("Error generating QR Code. Check the console for more details.");
-                } else {
-                    console.log('QR Code generated successfully!');
-                    alert("QR Code generated successfully. Please scan with your wallet app.");
+                    // Optional: You can hide the QR container after successful connection
+                    document.getElementById('qr-container').style.display = 'none';
+                    alert('Wallet connected successfully!');
                 }
             });
         });
     </script>
 </body>
-
 </html>
