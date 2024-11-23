@@ -13,11 +13,10 @@
 
   <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
   <script>
-    const xumm = new Xumm('your-api-key'); // Replace with your Xumm API key
-    const redirectURI = 'https://your-redirect-url.com'; // Replace with your redirect URL
+    const xumm = new Xumm('33f1d097-00b1-4a1c-886c-539ed07e4626'); // Replace with your Xumm API key
 
     document.getElementById('connectButton').onclick = function() {
-      xumm.authorize({ redirect_uri: redirectURI })
+      xumm.authorize()
         .then(response => {
           const qrCode = response.qr_code;
           document.getElementById('qrCodeContainer').innerHTML = `<img src="${qrCode}" alt="Scan QR to Connect Wallet" />`;
