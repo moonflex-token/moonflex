@@ -124,7 +124,7 @@
                 <!-- QR Code Container -->
                 <div class="qr-container" id="qrContainer">
                     <p>Scan this QR code to connect your wallet:</p>
-                    <canvas id="qr-code"></canvas>
+                    <canvas id="qr-code"></canvas> <!-- Use canvas instead of div -->
                 </div>
             </div>
         </section>
@@ -139,7 +139,7 @@
             // Show QR code container
             document.getElementById('qrContainer').style.display = 'block';
 
-            // Define the wallet connection request
+            // Generate QR code for Xaman Wallet connection
             const walletConnectionRequest = {
                 action: 'connect', 
                 network: 'mainnet', 
@@ -149,10 +149,6 @@
             const qrData = JSON.stringify(walletConnectionRequest);
             const qrCodeElement = document.getElementById('qr-code');
 
-            // Clear any previous QR code if exists
-            qrCodeElement.innerHTML = "";
-
-            // Generate the QR code and display it in the canvas
             QRCode.toCanvas(qrCodeElement, qrData, function(error) {
                 if (error) {
                     console.error('QR Code generation error:', error);
