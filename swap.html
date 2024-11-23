@@ -4,86 +4,174 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Swap Page</title>
+    <title>Wallet Connect Swap</title>
     <link rel="icon" href="moonflex-favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Your existing styles */
         body {
             font-family: 'Orbitron', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
             background-color: #1e1e1e;
-            color: white;
+            padding: 10px 0;
             text-align: center;
         }
-        .connect-wallet-btn {
-            background-color: #ff6600;
-            color: white;
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .swap-section {
+            padding: 30px;
+            background-color: #1e1e1e;
+            color: #fff;
+            text-align: center;
+        }
+
+        .swap-section h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .swap-form-container {
+            background-color: #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .swap-form-container input,
+        .swap-form-container button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
             border: none;
-            padding: 10px 20px;
-            cursor: pointer;
             border-radius: 5px;
-            font-size: 18px;
+            font-size: 16px;
+        }
+
+        .swap-form-container button {
+            background-color: #ff6600;
+            color: #fff;
+            cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        .connect-wallet-btn:hover {
+
+        .swap-form-container button:hover {
             background-color: #ffcc00;
         }
-        #wallet-info {
+
+        .wallet-status {
+            font-size: 18px;
             margin-top: 20px;
+            color: #ffcc00;
         }
     </style>
-    <!-- Add the WalletConnect library -->
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 </head>
 <body>
+    <!-- Header and Navigation Menu -->
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Tokenomics</a></li>
+                <li><a href="#">Roadmap</a></li>
+                <li><a href="#">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <h1>Welcome to the Swap Page</h1>
+    <!-- Swap Section -->
+    <div class="swap-section">
+        <h1>Connect Your Wallet to Swap Tokens</h1>
+        <p>Use WalletConnect to connect your wallet and start swapping tokens.</p>
 
-    <!-- Button to connect the wallet -->
-    <button class="connect-wallet-btn" id="connect-wallet-btn">Connect Wallet</button>
-    
-    <!-- Display wallet info -->
-    <div id="wallet-info"></div>
+        <!-- Wallet Connect Button -->
+        <button id="connectButton">Connect Wallet</button>
+        <div class="wallet-status" id="walletStatus">No wallet connected</div>
 
+        <!-- Swap Form -->
+        <div class="swap-form-container" style="display:none" id="swapFormContainer">
+            <input type="number" id="amountToSwap" placeholder="Amount to Swap" />
+            <button id="swapButton">Swap</button>
+        </div>
+    </div>
+
+    <!-- WalletConnect Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/client@2.0.0-beta.0/dist/index.min.js"></script>
     <script>
-        // Set up the WalletConnect provider
-        const provider = new WalletConnectProvider({
-            infuraId: "INFURA_PROJECT_ID", // Replace with your Infura project ID
-        });
+        // Initialize WalletConnect
+        let walletConnector;
+        let account;
+        const connectButton = document.getElementById('connectButton');
+        const walletStatus = document.getElementById('walletStatus');
+        const swapFormContainer = document.getElementById('swapFormContainer');
 
-        const connectButton = document.getElementById('connect-wallet-btn');
-        const walletInfo = document.getElementById('wallet-info');
-
-        // Function to connect wallet
+        // Connect Wallet Functionality
         connectButton.addEventListener('click', async () => {
-            try {
-                // Enable the provider (request access to wallet)
-                await provider.enable();
+            if (!walletConnector) {
+                walletConnector = new WalletConnectClient({
+                    bridge: "https://bridge.walletconnect.org", // WalletConnect bridge URL
+                });
 
-                // Get the user's wallet address
-                const accounts = await provider.request({ method: 'eth_accounts' });
-                const userAddress = accounts[0];
+                // Check if already connected
+                if (!walletConnector.connected) {
+                    await walletConnector.createSession();
+                }
 
-                // Show the wallet address
-                walletInfo.innerHTML = `<p>Connected: ${userAddress}</p>`;
-
-                // Update button text after successful connection
-                connectButton.textContent = 'Wallet Connected';
-                connectButton.disabled = true;
-
-            } catch (error) {
-                console.error("Connection failed: ", error);
-                walletInfo.innerHTML = '<p>Connection failed. Please try again.</p>';
+                // Listen for session updates
+                walletConnector.on("connect", async (error, payload) => {
+                    if (error) throw error;
+                    account = payload.params[0].accounts[0];
+                    walletStatus.textContent = `Connected to: ${account}`;
+                    swapFormContainer.style.display = 'block'; // Show swap form
+                });
+            } else {
+                // Wallet is already connected, so we just show the status
+                walletStatus.textContent = 'Already connected to wallet.';
             }
         });
 
-        // Handle provider disconnection
-        provider.on('disconnect', () => {
-            walletInfo.innerHTML = '<p>Wallet disconnected.</p>';
-            connectButton.textContent = 'Connect Wallet';
-            connectButton.disabled = false;
+        // Handle Swap
+        const swapButton = document.getElementById('swapButton');
+        swapButton.addEventListener('click', () => {
+            const amount = document.getElementById('amountToSwap').value;
+            if (amount) {
+                alert(`Swapping ${amount} tokens...`);
+                // Here you can integrate your token swap logic
+            } else {
+                alert("Please enter an amount to swap.");
+            }
         });
     </script>
-
 </body>
 </html>
