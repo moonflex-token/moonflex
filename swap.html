@@ -44,18 +44,6 @@
             color: white;
             font-size: 16px;
             text-align: center;
-            position: relative;
-        }
-        .input-field::placeholder {
-            text-align: left;
-        }
-        .currency {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #fe6602;
-            font-size: 16px;
         }
         .swap-btn {
             background-color: #fe6602;
@@ -77,14 +65,8 @@
 <body>
     <div class="swap-box">
         <h2>Swap Tokens</h2>
-        <div style="position: relative;">
-            <input type="text" class="input-field" placeholder="Amount to Send" />
-            <span class="currency">XRP</span>
-        </div>
-        <div style="position: relative;">
-            <input type="text" class="input-field" placeholder="Amount to Receive" />
-            <span class="currency">MFX</span>
-        </div>
+        <input type="text" class="input-field" placeholder="Amount to Send" />
+        <input type="text" class="input-field" placeholder="Amount to Receive" />
         <button class="swap-btn">Swap</button>
     </div>
 </body>
