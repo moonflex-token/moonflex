@@ -40,17 +40,26 @@
                 // Show QR code container
                 document.getElementById('qr-container').style.display = 'block';
 
-                // Generate the QR code and handle the callback
-                xaman.openSignRequest({
-                    payload: 'your-payload-here', // Replace with your actual payload (transaction data or authentication request)
-                    callback: (response) => {
-                        // Handle the response when the wallet is connected
-                        console.log('Wallet connected:', response);
-                        
-                        // Optionally hide the QR code after successful connection
-                        document.getElementById('qr-container').style.display = 'none';
-                        alert('Wallet connected successfully!');
+                // Prepare the payload
+                const payload = {
+                    txjson: {
+                        TransactionType: 'Payment',
+                        Destination: 'rwiETSee2wMz3SBnAG8hkMsCgvGy9LWbZ1', // Example destination address
+                        Amount: '1337' // Example amount to send
                     }
+                };
+
+                // Generate the QR code and handle the callback
+                xaman.openSignRequest(payload).then((response) => {
+                    // Handle the response when the wallet is connected
+                    console.log('Wallet connected:', response);
+                    
+                    // Optionally hide the QR code after successful connection
+                    document.getElementById('qr-container').style.display = 'none';
+                    alert('Wallet connected successfully!');
+                }).catch((error) => {
+                    console.error('Error connecting wallet:', error);
+                    alert('Failed to connect wallet');
                 });
             });
         };
