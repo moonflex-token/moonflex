@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Include existing CSS styles from index.html for consistency */
         body {
             font-family: 'Orbitron', sans-serif;
             background-color: #0c0c0c;
@@ -35,47 +34,59 @@
             color: #ff6600;
         }
 
-        .cta-button {
-            display: block;
-            text-align: center;
-            background-color: #ff6600;
-            padding: 15px;
-            color: white;
-            font-size: 1.2em;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        .cta-button:hover {
-            background-color: #ffcc00;
-        }
-
-        .swap-container {
+        .swap-box {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 30px;
+            flex-direction: column;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
-            max-width: 300px;
+            max-width: 500px;
             margin: 0 auto;
+            text-align: center;
         }
 
         .input-group input {
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
             font-size: 1.2em;
             border: 2px solid #ff6600;
             border-radius: 5px;
-            background-color: #333;
+            background-color: #222;
             color: white;
         }
 
         .input-group button {
+            padding: 15px;
+            background-color: #ff6600;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .input-group button:hover {
+            background-color: #ffcc00;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .toggle-container button {
             padding: 10px;
             background-color: #ff6600;
             border: none;
@@ -83,9 +94,11 @@
             font-size: 1.2em;
             cursor: pointer;
             border-radius: 5px;
+            flex: 1;
+            margin: 0 5px;
         }
 
-        .input-group button:hover {
+        .toggle-container button:hover {
             background-color: #ffcc00;
         }
 
@@ -121,19 +134,17 @@
                 <div id="xaman-qr"></div>
             </div>
 
-            <div class="swap-container">
-                <!-- XRP to MFX Swap -->
-                <div class="input-group">
-                    <label for="xrp-amount">Amount of XRP to Swap:</label>
-                    <input type="number" id="xrp-amount" placeholder="Enter amount in XRP">
-                    <button id="swap-xrp-to-mfx">Swap XRP to MFX</button>
+            <!-- Swap Box -->
+            <div class="swap-box">
+                <div class="toggle-container">
+                    <button id="swap-xrp-to-mfx" class="toggle-btn">XRP to MFX</button>
+                    <button id="swap-mfx-to-xrp" class="toggle-btn">MFX to XRP</button>
                 </div>
 
-                <!-- MFX to XRP Swap -->
+                <!-- Input Group for Amount -->
                 <div class="input-group">
-                    <label for="mfx-amount">Amount of MFX to Swap:</label>
-                    <input type="number" id="mfx-amount" placeholder="Enter amount in MFX">
-                    <button id="swap-mfx-to-xrp">Swap MFX to XRP</button>
+                    <input type="number" id="swap-amount" placeholder="Enter amount" min="0" step="any">
+                    <button id="execute-swap">Execute Swap</button>
                 </div>
             </div>
         </section>
@@ -143,12 +154,13 @@
     <script src="https://cdn.jsdelivr.net/npm/xrpl@1.8.2/dist/xrpl.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xaman@1.0.0-beta.11/dist/xaman.min.js"></script>
     <script>
-        const issuerAddress = 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1'; // MFX issuer address
         const maxSlippage = 0.01; // 1% max slippage
+        const issuerAddress = 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1'; // MFX issuer address
         const xrplClient = new xrpl.Client('wss://s2.ripple.com'); // XRPL WebSocket client
 
         let xamanWallet = null;
         let xamanQRCode = null;
+        let currentSwapDirection = 'XRPtoMFX'; // default direction XRP to MFX
 
         // Function to generate and show QR code for Xaman wallet connection
         function showXamanQR() {
@@ -161,74 +173,34 @@
             document.getElementById('qr-code').style.display = 'block'; // Show QR code
         }
 
-        // Function to connect wallet
-        document.getElementById('swap-xrp-to-mfx').addEventListener('click', async () => {
-            const xrpAmount = parseFloat(document.getElementById('xrp-amount').value);
-            if (!xrpAmount || xrpAmount <= 0) return alert('Please enter a valid XRP amount.');
-
-            if (!xamanWallet) {
-                showXamanQR();
-                return;
-            }
-
-            // Get order book for XRP/MFX pair
-            const orderBook = await xrplClient.request({
-                "command": "book_offers",
-                "taker_pays": {
-                    "currency": "XRP",
-                    "issuer": issuerAddress
-                },
-                "taker_gets": {
-                    "currency": "MFX",
-                    "issuer": issuerAddress
-                }
-            });
-
-            // Check for slippage
-            const bestPrice = orderBook.result.offers[0]?.price;
-            if (!bestPrice) return alert('No orders available.');
-
-            const slippageLimit = bestPrice * (1 + maxSlippage);
-            if (xrpAmount * bestPrice > slippageLimit) {
-                return alert('Slippage exceeds 1%. Please adjust the amount.');
-            }
-
-            // Send transaction to XRPL to execute swap
-            const payment = {
-                "TransactionType": "Payment",
-                "Account": xamanWallet.address,
-                "Destination": issuerAddress,
-                "Amount": xrpl.xrpToDrops(xrpAmount),
-                "Memos": [
-                    { "MemoData": "Swap XRP to MFX" }
-                ]
-            };
-            const preparedTx = await xrplClient.autofill(payment);
-            const signedTx = xamanWallet.sign(preparedTx);
-            await xrplClient.submit(signedTx.tx_json);
-            alert('XRP to MFX swap successful!');
+        // Toggle button for direction change (XRP to MFX, MFX to XRP)
+        document.getElementById('swap-xrp-to-mfx').addEventListener('click', () => {
+            currentSwapDirection = 'XRPtoMFX';
+            document.getElementById('swap-xrp-to-mfx').style.backgroundColor = '#ff6600';
+            document.getElementById('swap-mfx-to-xrp').style.backgroundColor = '#222';
         });
 
-        // Function to swap MFX to XRP
-        document.getElementById('swap-mfx-to-xrp').addEventListener('click', async () => {
-            const mfxAmount = parseFloat(document.getElementById('mfx-amount').value);
-            if (!mfxAmount || mfxAmount <= 0) return alert('Please enter a valid MFX amount.');
+        document.getElementById('swap-mfx-to-xrp').addEventListener('click', () => {
+            currentSwapDirection = 'MFXtoXRP';
+            document.getElementById('swap-mfx-to-xrp').style.backgroundColor = '#ff6600';
+            document.getElementById('swap-xrp-to-mfx').style.backgroundColor = '#222';
+        });
+
+        // Function to execute the swap
+        document.getElementById('execute-swap').addEventListener('click', async () => {
+            const swapAmount = parseFloat(document.getElementById('swap-amount').value);
+            if (!swapAmount || swapAmount <= 0) return alert('Please enter a valid amount.');
 
             if (!xamanWallet) {
                 showXamanQR();
                 return;
             }
 
-            // Get order book for MFX/XRP pair
+            // Get order book for the correct pair
             const orderBook = await xrplClient.request({
                 "command": "book_offers",
-                "taker_pays": {
-                    "currency": "MFX",
-                    "issuer": issuerAddress
-                },
-                "taker_gets": {
-                    "currency": "XRP"
-                }
+                "taker_pays": currentSwapDirection === 'XRPtoMFX' ? { "currency": "XRP" } : { "currency": "MFX", "issuer": issuerAddress },
+                "taker_gets": currentSwapDirection === 'XRPtoMFX' ? { "currency": "MFX", "issuer": issuerAddress } : { "currency": "XRP" }
             });
 
             // Check for slippage
@@ -236,7 +208,7 @@
             if (!bestPrice) return alert('No orders available.');
 
             const slippageLimit = bestPrice * (1 + maxSlippage);
-            if (mfxAmount * bestPrice > slippageLimit) {
+            if (swapAmount * bestPrice > slippageLimit) {
                 return alert('Slippage exceeds 1%. Please adjust the amount.');
             }
 
@@ -245,15 +217,15 @@
                 "TransactionType": "Payment",
                 "Account": xamanWallet.address,
                 "Destination": issuerAddress,
-                "Amount": xrpl.xrpToDrops(mfxAmount),
+                "Amount": xrpl.xrpToDrops(swapAmount),
                 "Memos": [
-                    { "MemoData": "Swap MFX to XRP" }
+                    { "MemoData": `Swap ${currentSwapDirection === 'XRPtoMFX' ? 'XRP' : 'MFX'} to ${currentSwapDirection === 'XRPtoMFX' ? 'MFX' : 'XRP'}` }
                 ]
             };
-            const preparedTx = await xrplClient.autofill(payment);
+            const preparedTx = await xrplClient.preparePayment(xamanWallet.address, payment);
             const signedTx = xamanWallet.sign(preparedTx);
             await xrplClient.submit(signedTx.tx_json);
-            alert('MFX to XRP swap successful!');
+            alert('Swap successful!');
         });
     </script>
 </body>
