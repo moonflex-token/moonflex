@@ -43,26 +43,20 @@
             background-color: #222;
             color: white;
             font-size: 16px;
-            text-align: center;
-            position: relative;
+            text-align: right;
+            padding-right: 50px; /* Space for currency */
         }
-        .input-field.xrp::after {
-            content: 'XRP';
+        .input-field::placeholder {
+            color: white;
+            opacity: 0.5;
+        }
+        .currency {
             position: absolute;
-            right: 10px;
+            right: 15px;
             top: 50%;
             transform: translateY(-50%);
+            font-size: 16px;
             color: #fe6602;
-            font-weight: bold;
-        }
-        .input-field.mfx::after {
-            content: 'MFX';
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #fe6602;
-            font-weight: bold;
         }
         .swap-btn {
             background-color: #fe6602;
@@ -84,8 +78,14 @@
 <body>
     <div class="swap-box">
         <h2>Swap Tokens</h2>
-        <input type="text" class="input-field xrp" placeholder="Amount to Send" />
-        <input type="text" class="input-field mfx" placeholder="Amount to Receive" />
+        <div style="position: relative; width: 100%;">
+            <input type="text" class="input-field" placeholder="Amount to Send" />
+            <span class="currency">XRP</span>
+        </div>
+        <div style="position: relative; width: 100%;">
+            <input type="text" class="input-field" placeholder="Amount to Receive" />
+            <span class="currency">MFX</span>
+        </div>
         <button class="swap-btn">Swap</button>
     </div>
 </body>
