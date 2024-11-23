@@ -34,6 +34,10 @@
         .input-field, .swap-btn {
             font-family: 'Orbitron', sans-serif;
         }
+        .input-container {
+            position: relative;
+            width: 100%;
+        }
         .input-field {
             width: 100%;
             padding: 15px;
@@ -43,7 +47,16 @@
             background-color: #222;
             color: white;
             font-size: 16px;
-            text-align: center;
+            text-align: left;
+        }
+        .currency {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #fe6602;
+            font-size: 16px;
+            font-weight: bold;
         }
         .swap-btn {
             background-color: #fe6602;
@@ -65,8 +78,14 @@
 <body>
     <div class="swap-box">
         <h2>Swap Tokens</h2>
-        <input type="text" class="input-field" placeholder="Amount to Send" />
-        <input type="text" class="input-field" placeholder="Amount to Receive" />
+        <div class="input-container">
+            <input type="text" class="input-field" placeholder="Amount to Send" />
+            <span class="currency">XRP</span>
+        </div>
+        <div class="input-container">
+            <input type="text" class="input-field" placeholder="Amount to Receive" />
+            <span class="currency">MFX</span>
+        </div>
         <button class="swap-btn">Swap</button>
     </div>
 </body>
