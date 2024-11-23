@@ -12,9 +12,15 @@
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
+        }
+        h1 {
+            color: #fe6602;
+            font-size: 36px;
+            margin-bottom: 50px;
         }
         .swap-box {
             background: #333;
@@ -31,7 +37,7 @@
             color: #fe6602;
             margin-bottom: 30px;
         }
-        .input-field, .swap-btn {
+        .input-field, .swap-btn, .connect-btn {
             font-family: 'Orbitron', sans-serif;
         }
         .input-field {
@@ -45,7 +51,7 @@
             font-size: 16px;
             text-align: center;
         }
-        .swap-btn {
+        .swap-btn, .connect-btn {
             background-color: #fe6602;
             color: white;
             border: none;
@@ -57,16 +63,18 @@
             margin-top: 20px;
             width: 100%;
         }
-        .swap-btn:hover {
+        .swap-btn:hover, .connect-btn:hover {
             background-color: #ff7a2a;
         }
     </style>
 </head>
 <body>
+    <h1>XRP MFX Swap in Construction...</h1>
     <div class="swap-box">
         <h2>Swap Tokens</h2>
         <input type="text" class="input-field" placeholder="Amount to Send" />
         <input type="text" class="input-field" placeholder="Amount to Receive" />
+        <button class="connect-btn">Connect Wallet</button>
         <button class="swap-btn">Swap</button>
     </div>
 </body>
