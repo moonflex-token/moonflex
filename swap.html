@@ -1,1 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MoonFlex Swap - Swap XRP for MFX</title>
+    <link rel="icon" href="moonflex-favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        header, footer {
+            background-color: #ff6600;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .container {
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .swap-box {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: auto;
+            text-align: center;
+        }
+        .button {
+            background-color: #ff6600;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #ffcc00;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ff6600;
+            color: #fff;
+            background-color: #222;
+            font-size: 16px;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #ffcc00;
+        }
+        .qr-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+        #qrCode {
+            width: 150px;
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>MoonFlex Swap</h1>
+    <p>Swap XRP for MFX or MFX for XRP</p>
+</header>
+
+<div class="container">
+    <section class="swap-box">
+        <h2>Connect Wallet</h2>
+        <button class="button" id="connect-wallet">Connect Xaman Wallet</button>
+        
+        <div class="qr-container" id="qr-container" style="display: none;">
+            <img src="" alt="QR Code" id="qrCode">
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Amount to Swap</label>
+            <input type="number" id="amount" class="form-input" placeholder="Amount" />
+        </div>
+
+        <div class="form-group">
+            <select id="swap-type" class="form-input">
+                <option value="XRP-MFX">XRP to MFX</option>
+                <option value="MFX-XRP">MFX to XRP</option>
+            </select>
+        </div>
+
+        <button class="button" id="swap-button">Swap</button>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2024 MoonFlex - All Rights Reserved</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/xrpl@1.9.0/dist/xrpl.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xaman.js"></script>
+<script>
+    // Constants for XRPL interaction
+    const issuer = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"; // MFX issuer address
+    const maxSlippage = 0.01; // 1% slippage tolerance
+
+    // Connect to Xaman Wallet
+    let wallet = null;
+
+    document.getElementById('connect-wallet').addEventListener('click', () => {
+        Xaman.connect().then(walletData => {
+            wallet = walletData;
+            generateQRCode(walletData.address);
+        }).catch(err => {
+            console.error("Failed to connect wallet:", err);
+        });
+    });
+
+    function generateQRCode(address) {
+        const qrCodeContainer = document.getElementById('qr-container');
+        const qrCodeElement = document.getElementById('qrCode');
+        qrCodeContainer.style.display = 'block';
+        const qrCodeUrl = `https://xaman.io/wallet/${address}`; // Link for wallet connection
+        qrCodeElement.src = `https://api.qrserver.com/v1/create-qr-code/?data=${qrCodeUrl}&size=150x150`;
+    }
+
+    // Swap XRP to MFX or MFX to XRP
+    document.getElementById('swap-button').addEventListener('click', () => {
+        if (!wallet) {
+            alert("Please connect your wallet first.");
+            return;
+        }
+
+        const amount = parseFloat(document.getElementById('amount').value);
+        const swapType = document.getElementById('swap-type').value;
+
+        if (isNaN(amount) || amount <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        if (swapType === "XRP-MFX") {
+            swapXRPToMFX(amount);
+        } else {
+            swapMFXToXRP(amount);
+        }
+    });
+
+    // Swap XRP to MFX
+    async function swapXRPToMFX(amount) {
+        try {
+            const client = new xrpl.Client("wss://s2.ripple.com"); // XRPL public server
+            await client.connect();
+
+            // Get order book for XRP/MFX pair
+            const orderbook = await client.request({
+                command: "book_offers",
+                taker_gets: "XRP",
+                taker_pays: {
+                    currency: "MFX",
+                    issuer: issuer
+                }
+            });
+
+            // Check for available orders and apply slippage limit
+            const bestOffer = orderbook.result.offers[0];
+            if (!bestOffer) {
+                alert("No orders available for this swap.");
+                return;
+            }
+
+            const price = bestOffer.TakerGets / bestOffer.TakerPays;
+            const slippagePrice = price * (1 + maxSlippage);
+            const swapAmount = amount * slippagePrice;
+
+            // Perform the transaction
+            const payment = {
+                TransactionType: "Payment",
+                Account: wallet.address,
+                Destination: issuer,
+                Amount: xrpl.xrpToDrops(swapAmount),
+                Flags: 2147483648, // Universal Flag for XRP
+            };
+
+            const tx = await client.submit(payment, wallet.privateKey);
+            console.log("Transaction result:", tx);
+
+            alert("Swap successful! XRP to MFX.");
+        } catch (err) {
+            console.error("Error during swap:", err);
+            alert("Swap failed.");
+        }
+    }
+
+    // Swap MFX to XRP
+    async function swapMFXToXRP(amount) {
+        try {
+            const client = new xrpl.Client("wss://s2.ripple.com"); // XRPL public server
+            await client.connect();
+
+            // Get order book for MFX/XRP pair
+            const orderbook = await client.request({
+                command: "book_offers",
+                taker_gets: {
+                    currency: "MFX",
+                    issuer: issuer
+                },
+                taker_pays: "XRP"
+            });
+
+            // Check for available orders and apply slippage limit
+            const bestOffer = orderbook.result.offers[0];
+            if (!bestOffer) {
+                alert("No orders available for this swap.");
+                return;
+            }
+
+            const price = bestOffer.TakerPays / bestOffer.TakerGets;
+            const slippagePrice = price * (1 + maxSlippage);
+            const swapAmount = amount * slippagePrice;
+
+            // Perform the transaction
+            const payment = {
+                TransactionType: "Payment",
+                Account: wallet.address,
+                Destination: bestOffer.Account,
+                Amount: xrpl.xrpToDrops(swapAmount),
+                Flags: 2147483648, // Universal Flag for XRP
+            };
+
+            const tx = await client.submit(payment, wallet.privateKey);
+            console.log("Transaction result:", tx);
+
+            alert("Swap successful! MFX to XRP.");
+        } catch (err) {
+            console.error("Error during swap:", err);
+            alert("Swap failed.");
+        }
+    }
+</script>
+</body>
+</html>
 
