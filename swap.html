@@ -3,27 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Xaman Wallet Connect</title>
+  <title>Connect Xaman Wallet</title>
 </head>
 <body>
 
-  <h1>Connect Xaman Wallet</h1>
+  <h1>Connect Your Wallet</h1>
   <button id="connectButton">Connect Wallet</button>
   <div id="qrCodeContainer"></div>
 
   <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
   <script>
-    var xumm = new Xumm('33f1d097-00b1-4a1c-886c-539ed07e4626'); // Replace with your Xumm API key
+    const xumm = new Xumm('your-api-key'); // Replace with your Xumm API key
+    const redirectURI = 'https://your-redirect-url.com'; // Replace with your redirect URL
 
     document.getElementById('connectButton').onclick = function() {
-      xumm.authorize().then(result => {
-        const qrCode = result.qr_code;
-        document.getElementById('qrCodeContainer').innerHTML = `<img src="${qrCode}" alt="Xaman Wallet QR Code" />`;
-      }).catch(error => {
-        console.error("Error connecting:", error);
-      });
+      xumm.authorize({ redirect_uri: redirectURI })
+        .then(response => {
+          const qrCode = response.qr_code;
+          document.getElementById('qrCodeContainer').innerHTML = `<img src="${qrCode}" alt="Scan QR to Connect Wallet" />`;
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
     };
   </script>
 </body>
 </html>
-
