@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* Keep the same styles from index.html */
         body {
             font-family: 'Orbitron', sans-serif;
             background-color: #121212;
@@ -147,24 +148,16 @@
         // Connect to Xaman wallet
         connectButton.addEventListener('click', async () => {
             try {
-                // Initialize the wallet connection
                 xamanWallet = new XamanWallet();
-
-                // Attempt to connect to the wallet
                 await xamanWallet.connect();
 
-                // Generate the QR code for wallet connection
+                // Get the QR code for wallet connection
                 const qrCodeUrl = await xamanWallet.getQRCode();
-
-                // Display the QR code
                 qrCodeContainer.innerHTML = `<img class="qr-code" src="${qrCodeUrl}" alt="QR Code" />`;
-
-                // Update status message
-                statusDiv.textContent = "Wallet Connected! Please scan the QR code.";
+                statusDiv.textContent = "Wallet Connected! Scan the QR Code to connect.";
             } catch (error) {
-                // Handle errors
                 console.error(error);
-                statusDiv.textContent = "Connection failed. Please try again.";
+                statusDiv.textContent = "Error connecting wallet. Please try again.";
             }
         });
 
