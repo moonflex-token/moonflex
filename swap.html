@@ -1,1 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Swap Tokens - Your Token Swap</title>
+      <link rel="icon" href="moonflex-favicon.png" type="image/png">
+      <link rel="stylesheet" href="styles.css">
+      <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
+      <style>
+         /* Add the styles for the mobile hamburger menu */
+         nav {
+            position: relative;
+         }
+         .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            margin: 10px;
+         }
+         .bar {
+            height: 3px;
+            width: 25px;
+            background-color: #fff;
+            margin: 4px 0;
+            transition: 0.4s;
+         }
+         /* Navigation styles */
+         nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin: 0;
+         }
+         nav ul li {
+            margin: 0 15px;
+         }
+         nav ul li a {
+            text-decoration: none;
+            color: #fff;
+         }
+         /* Styles for mobile view */
+         @media (max-width: 768px) {
+            .hamburger {
+               display: flex;
+            }
+            nav ul {
+               display: none;
+               flex-direction: column;
+               width: 100%;
+               position: absolute;
+               top: 60px; /* Adjust based on header height */
+               left: 0;
+               background-color: rgba(0, 0, 0, 0.8);
+               z-index: 1;
+            }
+            nav ul.show {
+               display: flex;
+            }
+            nav ul li {
+               margin: 0px 0;
+            }
+         }
+         /* General Page Styling */
+         body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+         }
+         .header {
+            background-color: #1e1e1e;
+            padding: 20px;
+            text-align: center;
+         }
+         .header h1 {
+            font-size: 36px;
+            color: #fff;
+         }
+         .swap-section {
+            padding: 50px;
+            background-color: #1e1e1e;
+            color: #fff;
+            text-align: center;
+         }
+         .swap-section h2 {
+            font-size: 30px;
+            margin-bottom: 20px;
+         }
+         .swap-form input,
+         .swap-form select,
+         .swap-form button {
+            padding: 12px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 400px;
+            font-size: 16px;
+         }
+         .swap-form button {
+            background-color: #ff6600;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+         }
+         .swap-form button:hover {
+            background-color: #ffcc00;
+         }
+         .wallet-connect-btn {
+            background-color: #0066ff;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+         }
+         .wallet-connect-btn:hover {
+            background-color: #0099ff;
+         }
+         .footer {
+            text-align: center;
+            background-color: #1e1e1e;
+            padding: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+         }
+      </style>
+   </head>
+   <body>
+      <!-- Menu -->
+      <header>
+         <nav>
+            <div class="hamburger" id="hamburger">
+               <div class="bar"></div>
+               <div class="bar"></div>
+               <div class="bar"></div>
+            </div>
+            <ul id="menu">
+               <li><a href="home.html">Home</a></li>
+               <li><a href="about.html">About</a></li>
+               <li><a href="contact.html">Contact</a></li>
+            </ul>
+         </nav>
+      </header>
+
+      <!-- Swap Section -->
+      <div class="swap-section">
+         <h2>Swap Your Tokens</h2>
+         <p>Connect your wallet to start swapping tokens</p>
+         <button class="wallet-connect-btn" id="connect-wallet-btn">Connect Wallet</button>
+         <div id="wallet-address" style="margin-top: 20px;"></div>
+         <form class="swap-form" id="swap-form" style="display:none;">
+            <input type="text" id="from-amount" placeholder="Amount to Swap" required><br>
+            <input type="text" id="to-amount" placeholder="Amount You Receive" readonly><br>
+            <button type="submit">Swap Tokens</button>
+         </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+         <p>&copy; 2024 Your Token Swap. All Rights Reserved.</p>
+      </div>
+
+      <script>
+         // Initialize WalletConnect provider
+         const provider = new WalletConnectProvider({
+            infuraId: "your-infura-id-here" // Replace with your Infura Project ID
+         });
+
+         const connectButton = document.getElementById("connect-wallet-btn");
+         const walletAddressElement = document.getElementById("wallet-address");
+         const swapForm = document.getElementById("swap-form");
+
+         connectButton.addEventListener("click", async () => {
+            // Enable the provider (prompt wallet to connect)
+            await provider.enable();
+            
+            // Get the accounts connected
+            const accounts = await provider.request({ method: "eth_accounts" });
+            const walletAddress = accounts[0];
+            walletAddressElement.innerText = `Connected: ${walletAddress}`;
+
+            // Show the swap form
+            swapForm.style.display = "block";
+            connectButton.style.display = "none";
+         });
+
+         // Handle the swap form submission
+         document.getElementById("swap-form").addEventListener("submit", (event) => {
+            event.preventDefault();
+            const fromAmount = document.getElementById("from-amount").value;
+            const toAmount = document.getElementById("to-amount").value;
+
+            alert(`Swapping ${fromAmount} tokens for ${toAmount} tokens`);
+         });
+
+         // Example logic for updating the "to-amount" based on user input (mock swap logic)
+         document.getElementById("from-amount").addEventListener("input", (event) => {
+            const fromAmount = event.target.value;
+            if (fromAmount) {
+               document.getElementById("to-amount").value = (fromAmount * 0.95).toFixed(2); // Example: assume 5% fee
+            } else {
+               document.getElementById("to-amount").value = "";
+            }
+         });
+      </script>
+   </body>
+</html>
 
