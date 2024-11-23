@@ -17,29 +17,23 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            color: white;
         }
         .swap-box {
             background: #333;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 100%;
-            max-width: 400px;
+            width: 400px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
             text-align: center;
-            box-sizing: border-box;
         }
         .swap-box h2 {
             color: #fe6602;
             margin-bottom: 20px;
         }
-        .input-container {
-            margin: 10px 0;
-        }
         .input-field {
             width: 100%;
             padding: 15px;
-            margin-bottom: 10px;
+            margin: 10px 0;
             border-radius: 10px;
             border: 2px solid #fe6602;
             background-color: #222;
@@ -57,7 +51,6 @@
             border-radius: 10px;
             cursor: pointer;
             margin-top: 20px;
-            width: 100%;
         }
         .swap-btn:hover {
             background-color: #ff7a2a;
@@ -68,12 +61,8 @@
     <div class="container">
         <div class="swap-box">
             <h2>Swap Tokens</h2>
-            <div class="input-container">
-                <input type="text" class="input-field" placeholder="Amount to Send" />
-            </div>
-            <div class="input-container">
-                <input type="text" class="input-field" placeholder="Amount to Receive" />
-            </div>
+            <input type="text" class="input-field" placeholder="Amount to Send" />
+            <input type="text" class="input-field" placeholder="Amount to Receive" />
             <button class="swap-btn">Swap</button>
         </div>
     </div>
