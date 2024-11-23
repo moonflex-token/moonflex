@@ -3,166 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MFX Swap</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Swap MFX/XRP</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         body {
-            font-family: 'Orbitron', sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #1e1e1e;
-            color: #fff;
+            color: white;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
         }
-
-        .swap-container {
-            width: 380px;
-            padding: 20px;
-            background-color: #222;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        h1 {
-            font-size: 24px;
+        header {
+            background-color: #333;
+            padding: 10px;
             text-align: center;
-            margin-bottom: 15px;
         }
-
-        .swap-box {
+        .swap-container {
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: #333;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
         }
-
-        .swap-box input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: none;
-            background: #444;
-            color: #fff;
+        .input-field {
+            margin: 10px;
+            padding: 10px;
+            width: 80%;
+            max-width: 500px;
             font-size: 16px;
-            text-align: center;
+            background-color: #333;
+            color: white;
+            border-radius: 5px;
+            border: 1px solid #666;
         }
-
-        .swap-box button {
-            width: 100%;
-            padding: 12px;
-            background: #ff6600;
-            color: #fff;
+        .swap-info {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px;
+            width: 80%;
+            max-width: 500px;
+        }
+        .swap-info div {
+            margin: 10px 0;
+        }
+        .button {
+            background-color: #ff6600;
+            color: white;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            font-size: 18px;
             cursor: pointer;
-            margin-bottom: 10px;
         }
-
-        .swap-box button:hover {
-            background: #ffcc00;
+        .button:hover {
+            background-color: #ffcc00;
         }
-
-        .summary {
-            background: #444;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        .summary p {
-            margin: 5px 0;
-        }
-
-        .summary .bold {
-            font-weight: bold;
+        .connect-wallet {
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>MFX/XRP Swap</h1>
+    </header>
     <div class="swap-container">
-        <h1>MFX Swap</h1>
-        <div class="swap-box">
-            <input type="number" id="amount" placeholder="Enter XRP or MFX amount" />
-            <button id="swapButton">Swap</button>
+        <!-- Wallet Connection -->
+        <div class="connect-wallet">
+            <button class="button" id="connect-wallet">Connect Wallet</button>
         </div>
-        
-        <div class="summary">
-            <p><span class="bold">Slippage tolerance:</span> <span id="slippage">2%</span></p>
-            <p><span class="bold">Minimum received:</span> <span id="minReceived">-</span></p>
-            <p><span class="bold">From orderbook:</span> <span id="orderBookAmount">-</span></p>
-            <p><span class="bold">Price impact:</span> <span id="priceImpact">0%</span></p>
-            <p><span class="bold">Price:</span> <span id="price">-</span></p>
+
+        <!-- Swap Form -->
+        <div class="swap-form">
+            <input class="input-field" id="amount-to-swap" type="number" placeholder="Amount to Swap (MFX)">
+            <button class="button" id="swap-button">Swap</button>
+        </div>
+
+        <!-- Swap Information -->
+        <div class="swap-info">
+            <div id="slippage-tolerance">
+                <label for="slippage">Slippage Tolerance: </label>
+                <input type="range" id="slippage" min="1" max="5" value="4" step="0.1">
+                <span id="slippage-value">4%</span>
+            </div>
+            <div>
+                <strong>Minimum Received: </strong><span id="min-received">--</span> MFX
+            </div>
+            <div>
+                <strong>Price Impact: </strong><span id="price-impact">--</span>
+            </div>
+            <div>
+                <strong>From Order Book: </strong><span id="order-book">--</span> MFX
+            </div>
         </div>
     </div>
 
     <script>
-        const MFX_ISSUER = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
-        const SLIPPAGE_TOLERANCE = 0.02; // 2%
-
-        document.getElementById('swapButton').addEventListener('click', async () => {
-            const inputAmount = parseFloat(document.getElementById("amount").value);
-            if (isNaN(inputAmount) || inputAmount <= 0) {
-                alert("Please enter a valid amount.");
-                return;
-            }
-
+        // Simulate fetching swap data from the order book
+        async function fetchSwapData(amount) {
+            const slippage = parseFloat(document.getElementById('slippage').value);
+            
             try {
-                const orderData = await fetchOrderBook();
-                const swapPrice = orderData.price;
-                const minReceived = inputAmount * swapPrice * (1 - SLIPPAGE_TOLERANCE);
+                // Fetch the order book and swap data (mock API call for now)
+                const orderBookData = await axios.get('https://api.mockorderbook.com/orderbook');
+                const price = orderBookData.data.price;
+                const availableAmount = orderBookData.data.availableAmount;
 
-                document.getElementById("slippage").innerText = `${SLIPPAGE_TOLERANCE * 100}%`;
-                document.getElementById("minReceived").innerText = minReceived.toFixed(6) + " MFX";
-                document.getElementById("orderBookAmount").innerText = orderData.amount.toFixed(6) + " MFX";
-                document.getElementById("priceImpact").innerText = "0%"; // No price impact calculation (for simplicity)
-                document.getElementById("price").innerText = swapPrice.toFixed(6);
+                // Simulating swap calculation
+                const receivedAmount = amount * price * (1 - slippage / 100);
+                const priceImpact = (Math.random() * 0.1).toFixed(2);
+
+                document.getElementById('min-received').innerText = receivedAmount.toFixed(2);
+                document.getElementById('price-impact').innerText = `${priceImpact}%`;
+                document.getElementById('order-book').innerText = availableAmount;
             } catch (error) {
-                console.error(error);
-                alert("An error occurred while fetching the orderbook.");
+                console.error('Error fetching swap data:', error);
+            }
+        }
+
+        // Wallet connection functionality
+        document.getElementById('connect-wallet').addEventListener('click', () => {
+            if (window.ethereum) {
+                ethereum.request({ method: 'eth_requestAccounts' })
+                    .then(accounts => {
+                        console.log('Connected wallet:', accounts[0]);
+                        alert('Wallet Connected');
+                    })
+                    .catch(err => console.error('Wallet connection error:', err));
+            } else {
+                alert('Please install MetaMask!');
             }
         });
 
-        async function fetchOrderBook() {
-            const url = `https://s2.ripple.com:51234/`;
-            const requestBody = {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    method: "book_offers",
-                    params: [
-                        {
-                            ledger_index: "validated",
-                            taker: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh", // XRP ledger's "no-op" address
-                            taker_gets: { currency: "MFX", issuer: MFX_ISSUER },
-                            taker_pays: { currency: "XRP" },
-                        },
-                    ],
-                }),
-            };
-
-            const response = await fetch(url, requestBody);
-            const data = await response.json();
-
-            if (data.result && data.result.offers) {
-                const offers = data.result.offers;
-                const bestOffer = offers[0]; // First order in the orderbook
-                const takerPays = parseFloat(bestOffer.TakerPays) / 1e6; // XRP
-                const takerGets = parseFloat(bestOffer.TakerGets.value); // MFX
-                return { price: takerGets / takerPays, amount: takerGets };
+        // Swap button functionality
+        document.getElementById('swap-button').addEventListener('click', () => {
+            const amount = document.getElementById('amount-to-swap').value;
+            if (amount) {
+                fetchSwapData(amount);
             } else {
-                throw new Error("Failed to fetch orderbook data.");
+                alert('Please enter an amount to swap.');
             }
-        }
+        });
+
+        // Update slippage value display
+        document.getElementById('slippage').addEventListener('input', function() {
+            document.getElementById('slippage-value').innerText = `${this.value}%`;
+        });
     </script>
 </body>
 </html>
