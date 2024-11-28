@@ -55,28 +55,10 @@
             margin-top: 5px;
         }
 
-/* Hide the "three dots" (Chrome/Safari/Edge) */
-audio::-webkit-media-controls-enclosure {
-    display: none !important; /* Hide the entire controls container */
-}
-
-/* Style the controls panel */
-audio::-webkit-media-controls-panel {
-    background-color: #fe6602; /* Orange background */
-    border-radius: 20px; /* Rounded corners */
-    display: flex !important; /* Ensure controls remain visible */
-}
-
-/* You can control specific buttons here if needed */
-audio::-webkit-media-controls-play-button,
-audio::-webkit-media-controls-volume-slider,
-audio::-webkit-media-controls-volume-slider-container,
-audio::-webkit-media-controls-current-time-display,
-audio::-webkit-media-controls-time-remaining-display,
-audio::-webkit-media-controls-mute-button {
-    /* Additional styling for other controls */
-}
-
+        audio::-webkit-media-controls-panel {
+            background-color: #fe6602;
+            border-radius: 20px;
+        }
     </style>
 </head>
 <body>
