@@ -16,18 +16,30 @@
             position: fixed;
             bottom: 20px;
             left: 20px;
-            background-color: #333;
+            background-color: transparent; /* Keep the background transparent */
             color: white;
             padding: 10px;
             border-radius: 5px;
             display: flex;
             align-items: center;
-            width: 300px;
+            width: 320px;
             z-index: 1000;
         }
 
-        #music-player audio {
-            width: 100%;
+        /* Custom styling for audio controls */
+        audio::-webkit-media-controls-panel {
+            background-color: #fe6602 !important; /* Make the oval area orange */
+            border-radius: 20px; /* Keep the rounded oval shape */
+        }
+
+        audio::-webkit-media-controls-play-button {
+            background-color: black !important; /* Keep the play button black */
+            border-radius: 50%; /* Ensure it's circular */
+        }
+
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: white !important; /* Text should be white for visibility */
         }
 
         #player-info {
@@ -35,7 +47,7 @@
         }
 
         #player-info a {
-            color: #fe6602;
+            color: white;
             text-decoration: none;
         }
 
@@ -44,12 +56,12 @@
         }
 
         .song-title {
-            font-size: 10px;
+            font-size: 14px;
             font-weight: bold;
         }
 
         .author-credit {
-            font-size: 8px;
+            font-size: 12px;
             margin-top: 5px;
         }
     </style>
