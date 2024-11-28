@@ -56,7 +56,7 @@
 </head>
 <body>
     <div id="music-player">
-        <audio id="audio-player" controls loop>
+        <audio controls autoplay loop>
             <source src="music/Forever, Laura (feat. Michael Saylor).mp3" type="audio/mp3">
             Your browser does not support the audio element.
         </audio>
@@ -67,21 +67,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        // Attempt to play the audio automatically
-        window.addEventListener('load', function() {
-            var audioPlayer = document.getElementById('audio-player');
-            
-            // Try autoplay
-            audioPlayer.play().catch(function(error) {
-                console.log('Autoplay failed: ' + error);
-                // Fallback: start playing on user interaction
-                document.body.addEventListener('click', function() {
-                    audioPlayer.play();
-                });
-            });
-        });
-    </script>
 </body>
 </html>
