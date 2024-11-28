@@ -19,10 +19,11 @@
             background-color: #333;
             color: white;
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 20px; /* Rounded corners */
+            border: 2px solid #fe6602; /* Orange border */
             display: flex;
             align-items: center;
-            width: 300px;
+            width: 320px;
             z-index: 1000;
         }
 
@@ -52,24 +53,57 @@
             font-size: 12px;
             margin-top: 5px;
         }
+
         audio::-webkit-media-controls-panel {
-           background-color: #fe6602; /* Change this to your desired background color */
-           border-radius: 20px; /* Makes the player oval */
-       }
+            background-color: #fe6602;
+            border-radius: 20px;
+        }
     </style>
 </head>
 <body>
     <div id="music-player">
-        <audio controls autoplay loop>
-            <source src="music/Forever, Laura (feat. Michael Saylor).mp3" type="audio/mp3">
-            Your browser does not support the audio element.
-        </audio>
+        <audio id="audio-player" controls autoplay></audio>
         <div id="player-info">
-            <div class="song-title">Forever, Laura (feat. Michael Saylor)</div>
+            <div class="song-title" id="song-title">Forever, Laura (feat. Michael Saylor)</div>
             <div class="author-credit">
                 <span>By <a href="https://x.com/TheCryptoBubble" target="_blank">Lil Bubble</a></span>
             </div>
         </div>
     </div>
+
+    <script>
+        // Playlist array
+        const playlist = [
+            {
+                title: "Forever, Laura (feat. Michael Saylor)",
+                src: "music/Forever, Laura (feat. Michael Saylor).mp3"
+            },
+            {
+                title: "One Chair (feat. Michael Saylor)",
+                src: "music/One Chair (feat. Michael Saylor).mp3"
+            }
+        ];
+
+        let currentSongIndex = 0; // Start with the first song
+        const audioPlayer = document.getElementById("audio-player");
+        const songTitleElement = document.getElementById("song-title");
+
+        // Function to load a song
+        function loadSong(index) {
+            const song = playlist[index];
+            audioPlayer.src = song.src;
+            songTitleElement.textContent = song.title;
+            audioPlayer.play();
+        }
+
+        // Load the first song initially
+        loadSong(currentSongIndex);
+
+        // Play the next song when the current one ends
+        audioPlayer.addEventListener("ended", () => {
+            currentSongIndex = (currentSongIndex + 1) % playlist.length; // Loop back to the start
+            loadSong(currentSongIndex);
+        });
+    </script>
 </body>
 </html>
