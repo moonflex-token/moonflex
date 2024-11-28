@@ -1,68 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Price Widget</title>
-  <style>
-    .widget {
-      font-family: Arial, sans-serif;
-      background: #f4f4f9;
-      padding: 10px;
-      border: 1px solid #ddd;
-      width: 200px;
-    }
-    .price-item {
-      margin-bottom: 10px;
-    }
-    .price-item span {
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Prices Widget</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .widget {
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .widget h2 {
+            margin-bottom: 10px;
+        }
+        .price {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
-  <div class="widget">
-    <div class="price-item">BTC/USD: <span id="btc-price">Loading...</span></div>
-    <div class="price-item">XRP/USD: <span id="xrp-price">Loading...</span></div>
-    <div class="price-item">MFX/USD: <span id="mfx-price">Loading...</span></div>
-  </div>
+    <div class="widget">
+        <h2>Crypto Prices</h2>
+        <div id="prices">
+            <div class="price">BTC/USD: <span id="btc-price">Loading...</span></div>
+            <div class="price">XRP/USD: <span id="xrp-price">Loading...</span></div>
+            <div class="price">MFX/USD: <span id="mfx-price">Loading...</span></div>
+        </div>
+    </div>
 
-  <script>
-    async function fetchPrices() {
-      const API_URL_TICKERS = "https://api.sologenic.org/api/v1/tickers/24h";
+    <script>
+        const API_URL_TICKERS = "https://api.sologenic.org/api/v1/tickers/24h";
+        const symbols = {
+            btc: "BTC/USD",
+            xrp: "XRP/USD",
+            mfx: "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"
+        };
 
-      try {
-        const response = await fetch(API_URL_TICKERS);
-        const data = await response.json();
+        async function fetchPrices() {
+            const payload = { symbols: Object.values(symbols) };
 
-        // Get BTC/USD price
-        const btcPrice = data.find(item => item.symbol === "BTC/USD")?.lastPrice || "N/A";
-        document.getElementById("btc-price").textContent = btcPrice;
+            try {
+                const response = await fetch(API_URL_TICKERS, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
 
-        // Get XRP/USD price
-        const xrpPrice = data.find(item => item.symbol === "XRP/USD")?.lastPrice || "N/A";
-        document.getElementById("xrp-price").textContent = xrpPrice;
+                if (response.ok) {
+                    const data = await response.json();
+                    // Update the widget with prices
+                    document.getElementById('btc-price').innerText = data[symbols.btc]?.last_price || "N/A";
+                    document.getElementById('xrp-price').innerText = data[symbols.xrp]?.last_price || "N/A";
 
-        // Get MFX/USD price (via MFX/XRP)
-        const mfxXrpData = data.find(item => item.symbol === "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1");
-        if (mfxXrpData) {
-          const xrpToMfx = parseFloat(mfxXrpData.lastPrice);
-          const xrpUsd = parseFloat(xrpPrice);
-          const mfxUsd = (1 / xrpToMfx) * xrpUsd;
-          document.getElementById("mfx-price").textContent = mfxUsd.toFixed(6);
-        } else {
-          document.getElementById("mfx-price").textContent = "N/A";
+                    // Convert MFX/XRP price to USD using XRP/USD rate
+                    const xrpPriceUSD = parseFloat(data[symbols.xrp]?.last_price);
+                    const mfxPriceInXRP = parseFloat(data[symbols.mfx]?.last_price);
+                    const mfxPriceUSD = xrpPriceUSD && mfxPriceInXRP ? (xrpPriceUSD * mfxPriceInXRP).toFixed(6) : "N/A";
+
+                    document.getElementById('mfx-price').innerText = mfxPriceUSD;
+                } else {
+                    console.error("Failed to fetch prices from Sologenic API.");
+                }
+            } catch (error) {
+                console.error("Error fetching prices:", error);
+            }
         }
-      } catch (error) {
-        console.error("Error fetching prices:", error);
-        document.getElementById("btc-price").textContent = "Error";
-        document.getElementById("xrp-price").textContent = "Error";
-        document.getElementById("mfx-price").textContent = "Error";
-      }
-    }
 
-    // Fetch prices on page load
-    fetchPrices();
-  </script>
+        // Fetch prices every 30 seconds
+        fetchPrices();
+        setInterval(fetchPrices, 30000);
+    </script>
 </body>
 </html>
