@@ -17,21 +17,25 @@
             position: fixed;
             bottom: 20px;
             left: 50%;
-            transform: translateX(-50%);  /* Center the player horizontally */
+            transform: translateX(-50%);
             background-color: #333;
             color: white;
             padding: 10px;
             border-radius: 10px;
             display: flex;
             align-items: center;
-            width: 250px;  /* Adjust the width */
-            height: 70px;  /* Adjust the height */
+            justify-content: center;
+            width: 250px;
+            height: 70px;
             z-index: 1000;
             border: 2px solid #fe6602;  /* Orange border */
+            box-sizing: border-box; /* Ensure padding and border don't overlap the content */
         }
 
         #music-player audio {
             width: 100%;
+            border-radius: 5px;
+            box-sizing: border-box; /* Ensures it doesn't extend beyond the player */
         }
 
         #player-info {
