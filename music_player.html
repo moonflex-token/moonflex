@@ -69,11 +69,17 @@
     </div>
 
     <script>
-        // Force the audio to play on page load
+        // Attempt to play the audio automatically
         window.addEventListener('load', function() {
             var audioPlayer = document.getElementById('audio-player');
+            
+            // Try autoplay
             audioPlayer.play().catch(function(error) {
                 console.log('Autoplay failed: ' + error);
+                // Fallback: start playing on user interaction
+                document.body.addEventListener('click', function() {
+                    audioPlayer.play();
+                });
             });
         });
     </script>
