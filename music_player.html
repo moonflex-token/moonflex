@@ -18,11 +18,11 @@
             left: 20px;
             background-color: #333;
             color: white;
-            padding: 5px;
+            padding: 10px;
             border-radius: 5px;
             display: flex;
             align-items: center;
-            width: 250px; /* Reduced size */
+            width: 300px;
             z-index: 1000;
         }
 
@@ -44,19 +44,19 @@
         }
 
         .song-title {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
         }
 
         .author-credit {
-            font-size: 10px;
+            font-size: 12px;
             margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div id="music-player">
-        <audio id="audio-player" controls autoplay loop>
+        <audio id="audio-player" controls loop>
             <source src="music/Forever, Laura (feat. Michael Saylor).mp3" type="audio/mp3">
             Your browser does not support the audio element.
         </audio>
@@ -69,15 +69,13 @@
     </div>
 
     <script>
-        // Ensure music starts automatically without user click (bypass autoplay restrictions)
-        window.onload = function() {
-            var audio = document.getElementById('audio-player');
-            audio.muted = true;  // Start muted
-            audio.play();        // Play the audio
-            setTimeout(function() {
-                audio.muted = false;  // Unmute after 1 second
-            }, 1000);
-        };
+        // Force the audio to play on page load
+        window.addEventListener('load', function() {
+            var audioPlayer = document.getElementById('audio-player');
+            audioPlayer.play().catch(function(error) {
+                console.log('Autoplay failed: ' + error);
+            });
+        });
     </script>
 </body>
 </html>
