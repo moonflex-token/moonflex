@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Widget</title>
+</head>
+<body>
+    <h2>Price Widget</h2>
+    <div>
+        <p>XRP/USD: <span id="xrp-usd-price">Loading...</span></p>
+        <p>MFX/USD: <span id="mfx-usd-price">Loading...</span></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/xrpl@1.10.0/dist/xrpl.min.js"></script>
+    <script>
+        // Set up XRPL client
+        const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+
+        // Gatehub USD issued address (used for XRP/USD price)
+        const gatehubUSDAddress = "rDsbeomngU9GdyZ3cVfqPp6nsm5u5MQ5v4"; // Gatehub's USD issued address
+
+        // MFX issuer address (used for MFX/XRP price)
+        const mfxIssuerAddress = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"; // MFX issuer
+
+        // Function to fetch XRP/USD price
+        async function fetchXRPUSD() {
+            await client.connect();
+            const request = {
+                "command": "account_lines",
+                "account": gatehubUSDAddress
+            };
+
+            const response = await client.request(request);
+            const xrpUsdLine = response.result.lines.find(line => line.currency === "USD");
+            const xrpUsdPrice = xrpUsdLine ? xrpUsdLine.balance : 0;
+            document.getElementById("xrp-usd-price").textContent = `$${parseFloat(xrpUsdPrice).toFixed(2)}`;
+            return parseFloat(xrpUsdPrice);
+        }
+
+        // Function to fetch MFX/XRP price
+        async function fetchMFXPriceInXRP() {
+            const request = {
+                "command": "account_lines",
+                "account": mfxIssuerAddress
+            };
+
+            const response = await client.request(request);
+            const mfxXrpLine = response.result.lines.find(line => line.currency === "MFX");
+            const mfxXrpPrice = mfxXrpLine ? mfxXrpLine.balance : 0;
+            return parseFloat(mfxXrpPrice);
+        }
+
+        // Main function to calculate MFX/USD
+        async function fetchPrices() {
+            const xrpUsdPrice = await fetchXRPUSD();
+            const mfxXrpPrice = await fetchMFXPriceInXRP();
+            const mfxUsdPrice = mfxXrpPrice * xrpUsdPrice;
+            document.getElementById("mfx-usd-price").textContent = `$${mfxUsdPrice.toFixed(2)}`;
+            client.disconnect();
+        }
+
+        // Call the function to fetch and display the prices
+        fetchPrices();
+    </script>
+</body>
+</html>
 
