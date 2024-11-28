@@ -10,40 +10,28 @@
             margin: 0;
             padding: 0;
             font-family: 'Orbitron', sans-serif;
-            background-color: #333;
         }
 
         #music-player {
             position: fixed;
             bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 20px;
             background-color: #333;
             color: white;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 5px;
+            border-radius: 5px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 250px;
-            height: 70px;
+            width: 250px; /* Reduced size */
             z-index: 1000;
-            border: 2px solid #fe6602;  /* Orange border */
-            box-sizing: border-box; /* Ensure padding and border don't overlap the content */
         }
 
         #music-player audio {
             width: 100%;
-            border-radius: 5px;
-            box-sizing: border-box; /* Ensures it doesn't extend beyond the player */
         }
 
         #player-info {
             margin-left: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            text-align: center;
         }
 
         #player-info a {
@@ -68,7 +56,7 @@
 </head>
 <body>
     <div id="music-player">
-        <audio controls autoplay loop>
+        <audio id="audio-player" controls autoplay loop>
             <source src="music/Forever, Laura (feat. Michael Saylor).mp3" type="audio/mp3">
             Your browser does not support the audio element.
         </audio>
@@ -79,5 +67,17 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Ensure music starts automatically without user click (bypass autoplay restrictions)
+        window.onload = function() {
+            var audio = document.getElementById('audio-player');
+            audio.muted = true;  // Start muted
+            audio.play();        // Play the audio
+            setTimeout(function() {
+                audio.muted = false;  // Unmute after 1 second
+            }, 1000);
+        };
+    </script>
 </body>
 </html>
