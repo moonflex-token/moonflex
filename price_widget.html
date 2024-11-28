@@ -25,38 +25,76 @@
 
         // Function to fetch XRP/USD price
         async function fetchXRPUSD() {
-            await client.connect();
-            const request = {
-                "command": "account_lines",
-                "account": gatehubUSDAddress
-            };
+            console.log("Fetching XRP/USD price...");
+            try {
+                await client.connect();
+                const request = {
+                    "command": "account_lines",
+                    "account": gatehubUSDAddress
+                };
 
-            const response = await client.request(request);
-            const xrpUsdLine = response.result.lines.find(line => line.currency === "USD");
-            const xrpUsdPrice = xrpUsdLine ? xrpUsdLine.balance : 0;
-            document.getElementById("xrp-usd-price").textContent = `$${parseFloat(xrpUsdPrice).toFixed(2)}`;
-            return parseFloat(xrpUsdPrice);
+                const response = await client.request(request);
+                console.log("XRP/USD account lines response:", response);
+                
+                const xrpUsdLine = response.result.lines.find(line => line.currency === "USD");
+                if (xrpUsdLine) {
+                    const xrpUsdPrice = xrpUsdLine.balance;
+                    console.log("XRP/USD price found:", xrpUsdPrice);
+                    return parseFloat(xrpUsdPrice);
+                } else {
+                    console.error("USD line not found in account lines response.");
+                    return 0;
+                }
+            } catch (error) {
+                console.error("Error fetching XRP/USD price:", error);
+                return 0;
+            }
         }
 
         // Function to fetch MFX/XRP price
         async function fetchMFXPriceInXRP() {
-            const request = {
-                "command": "account_lines",
-                "account": mfxIssuerAddress
-            };
+            console.log("Fetching MFX/XRP price...");
+            try {
+                const request = {
+                    "command": "account_lines",
+                    "account": mfxIssuerAddress
+                };
 
-            const response = await client.request(request);
-            const mfxXrpLine = response.result.lines.find(line => line.currency === "MFX");
-            const mfxXrpPrice = mfxXrpLine ? mfxXrpLine.balance : 0;
-            return parseFloat(mfxXrpPrice);
+                const response = await client.request(request);
+                console.log("MFX/XRP account lines response:", response);
+                
+                const mfxXrpLine = response.result.lines.find(line => line.currency === "MFX");
+                if (mfxXrpLine) {
+                    const mfxXrpPrice = mfxXrpLine.balance;
+                    console.log("MFX/XRP price found:", mfxXrpPrice);
+                    return parseFloat(mfxXrpPrice);
+                } else {
+                    console.error("MFX line not found in account lines response.");
+                    return 0;
+                }
+            } catch (error) {
+                console.error("Error fetching MFX/XRP price:", error);
+                return 0;
+            }
         }
 
         // Main function to calculate MFX/USD
         async function fetchPrices() {
+            console.log("Starting to fetch prices...");
             const xrpUsdPrice = await fetchXRPUSD();
             const mfxXrpPrice = await fetchMFXPriceInXRP();
-            const mfxUsdPrice = mfxXrpPrice * xrpUsdPrice;
-            document.getElementById("mfx-usd-price").textContent = `$${mfxUsdPrice.toFixed(2)}`;
+
+            if (xrpUsdPrice === 0 || mfxXrpPrice === 0) {
+                console.error("Error: One or more prices are 0, unable to calculate MFX/USD.");
+                document.getElementById("xrp-usd-price").textContent = "Error fetching prices";
+                document.getElementById("mfx-usd-price").textContent = "Error fetching prices";
+            } else {
+                const mfxUsdPrice = mfxXrpPrice * xrpUsdPrice;
+                console.log("MFX/USD price:", mfxUsdPrice);
+                document.getElementById("xrp-usd-price").textContent = `$${xrpUsdPrice.toFixed(2)}`;
+                document.getElementById("mfx-usd-price").textContent = `$${mfxUsdPrice.toFixed(2)}`;
+            }
+
             client.disconnect();
         }
 
@@ -65,4 +103,3 @@
     </script>
 </body>
 </html>
-
