@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            width: 300px;
+            z-index: 1000;
+        }
+
+        #music-player audio {
+            width: 100%;
+        }
+
+        #player-info {
+            margin-left: 10px;
+        }
+
+        #player-info a {
+            color: #fe6602;
+            text-decoration: none;
+        }
+
+        #player-info a:hover {
+            text-decoration: underline;
+        }
+
+        .song-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .author-credit {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="music-player">
+        <audio controls autoplay loop>
+            <source src="music/Forever, Laura (feat. Michael Saylor).mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        <div id="player-info">
+            <div class="song-title">Forever, Laura (feat. Michael Saylor)</div>
+            <div class="author-credit">
+                <span>By <a href="https://x.com/TheCryptoBubble" target="_blank">Lil Bubble</a></span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
