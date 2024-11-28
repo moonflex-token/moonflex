@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Price Widget</title>
+  <style>
+    .widget {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      padding: 10px;
+      border: 1px solid #ddd;
+      width: 200px;
+    }
+    .price-item {
+      margin-bottom: 10px;
+    }
+    .price-item span {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget">
+    <div class="price-item">BTC/USD: <span id="btc-price">Loading...</span></div>
+    <div class="price-item">XRP/USD: <span id="xrp-price">Loading...</span></div>
+    <div class="price-item">MFX/USD: <span id="mfx-price">Loading...</span></div>
+  </div>
+
+  <script>
+    async function fetchPrices() {
+      const API_URL_TICKERS = "https://api.sologenic.org/api/v1/tickers/24h";
+
+      try {
+        const response = await fetch(API_URL_TICKERS);
+        const data = await response.json();
+
+        // Get BTC/USD price
+        const btcPrice = data.find(item => item.symbol === "BTC/USD")?.lastPrice || "N/A";
+        document.getElementById("btc-price").textContent = btcPrice;
+
+        // Get XRP/USD price
+        const xrpPrice = data.find(item => item.symbol === "XRP/USD")?.lastPrice || "N/A";
+        document.getElementById("xrp-price").textContent = xrpPrice;
+
+        // Get MFX/USD price (via MFX/XRP)
+        const mfxXrpData = data.find(item => item.symbol === "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1");
+        if (mfxXrpData) {
+          const xrpToMfx = parseFloat(mfxXrpData.lastPrice);
+          const xrpUsd = parseFloat(xrpPrice);
+          const mfxUsd = (1 / xrpToMfx) * xrpUsd;
+          document.getElementById("mfx-price").textContent = mfxUsd.toFixed(6);
+        } else {
+          document.getElementById("mfx-price").textContent = "N/A";
+        }
+      } catch (error) {
+        console.error("Error fetching prices:", error);
+        document.getElementById("btc-price").textContent = "Error";
+        document.getElementById("xrp-price").textContent = "Error";
+        document.getElementById("mfx-price").textContent = "Error";
+      }
+    }
+
+    // Fetch prices on page load
+    fetchPrices();
+  </script>
+</body>
+</html>
