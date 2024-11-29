@@ -28,8 +28,9 @@
             const data = JSON.parse(event.data);
             console.log(data);  // Log data for debugging
 
-            if (data && data.result && data.result.price) {
-                const price = data.result.price;
+            if (data && data.result && data.result.aggregate_price) {
+                // Assuming the price data is under 'aggregate_price' (this can vary)
+                const price = data.result.aggregate_price; // Update with correct key if necessary
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('price').textContent = `MFX Price: ${price} XRP`;
             } else {
@@ -45,12 +46,14 @@
             // Send request for the aggregate price of MFX/XRP
             const msg = {
                 "command": "get_aggregate_price",
-                "token": {
-                    "issuer": "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1", // MFX token issuer
-                    "currency": "MFX" // MFX token currency
-                },
+                "tokens": [
+                    {
+                        "issuer": "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1", // MFX token issuer
+                        "currency": "MFX" // MFX token currency
+                    }
+                ],
                 "base": "XRP", // Base currency XRP
-                "quote": "USD" // You can switch this to another pair if desired
+                "quote": "XRP" // Target is USD
             };
 
             ws.send(JSON.stringify(msg));  // Send the request
