@@ -3,64 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XRPL Order Book</title>
+    <title>MoonShot - MFX Order Book</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .order-list {
-            margin-top: 20px;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #f4f4f4;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        #order-book { max-width: 800px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background: #f9f9f9; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 8px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .buy { background: #d4fcdc; }
+        .sell { background: #fcdcdc; }
     </style>
 </head>
 <body>
-    <h1>XRPL Order Book for MFX/XRP</h1>
-    <h2>Buy Orders</h2>
-    <ul id="buy-orders"></ul>
-    <h2>Sell Orders</h2>
-    <ul id="sell-orders"></ul>
+    <h1>MoonShot - MFX Order Book</h1>
+    <div id="order-book">
+        <h2>Buy Orders (MFX/XRP)</h2>
+        <ul id="buy-orders"></ul>
+        <h2>Sell Orders (MFX/XRP)</h2>
+        <ul id="sell-orders"></ul>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/xrpl/dist/xrpl.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xrpl@2.3.2/dist/xrpl.min.js"></script>
     <script>
         async function fetchOrderBook() {
-            const xrpl = window.xrpl;
             const client = new xrpl.Client("wss://s2.ripple.com");
-
-            const MFX_ISSUER_ADDRESS = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
-            const MFX_CURRENCY_CODE = "MFX";
 
             try {
                 await client.connect();
-
-                const bookOffersRequest = {
-                    command: "book_offers",
-                    taker_gets: {
-                        currency: "XRP"
-                    },
-                    taker_pays: {
-                        currency: MFX_CURRENCY_CODE,
-                        issuer: MFX_ISSUER_ADDRESS
-                    }
+                const request = {
+                    method: "book_offers",
+                    taker: "rrrrrrrrrrrrrrrrrrrrBZbvji",
+                    taker_gets: { currency: "MFX", issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1" },
+                    taker_pays: { currency: "XRP" },
                 };
 
-                const response = await client.request(bookOffersRequest);
-                updateOrderBook(response.result);
+                const response = await client.request(request);
+                displayOrderBook(response.result.offers);
 
                 await client.disconnect();
             } catch (error) {
@@ -68,27 +45,26 @@
             }
         }
 
-        function updateOrderBook(data) {
+        function displayOrderBook(offers) {
             const buyOrders = document.getElementById("buy-orders");
             const sellOrders = document.getElementById("sell-orders");
             buyOrders.innerHTML = "";
             sellOrders.innerHTML = "";
 
-            data.offers.forEach((offer) => {
+            offers.forEach(offer => {
                 const listItem = document.createElement("li");
+                const takerPaysValue = parseFloat(offer.TakerPays) / 1e6; // XRP is in drops
+                const takerGetsValue = parseFloat(offer.TakerGets.value); // MFX quantity
+                const price = takerPaysValue / takerGetsValue;
 
-                if (offer.TakerGets.currency === "XRP") {
-                    // Sell order: MFX -> XRP
-                    const price = offer.TakerGets / 1_000_000; // Convert drops to XRP
-                    const amount = offer.TakerPays.value;
-                    listItem.textContent = `Sell MFX @ ${price.toFixed(6)} XRP/MFX - Amount: ${amount} MFX`;
-                    sellOrders.appendChild(listItem);
-                } else {
-                    // Buy order: XRP -> MFX
-                    const price = offer.TakerPays.value / (offer.TakerGets / 1_000_000); // Convert drops to XRP
-                    const amount = offer.TakerGets / 1_000_000;
-                    listItem.textContent = `Buy MFX @ ${price.toFixed(6)} XRP/MFX - Amount: ${amount} MFX`;
+                listItem.textContent = `Price: ${price.toFixed(6)} XRP/MFX, Amount: ${takerGetsValue.toFixed(2)} MFX`;
+
+                if (offer.Flags === 0) { // Buy order
+                    listItem.classList.add("buy");
                     buyOrders.appendChild(listItem);
+                } else { // Sell order
+                    listItem.classList.add("sell");
+                    sellOrders.appendChild(listItem);
                 }
             });
         }
