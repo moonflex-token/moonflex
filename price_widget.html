@@ -35,83 +35,77 @@
 
     <script src="https://unpkg.com/xrpl/dist/xrpl.js"></script>
     <script>
-        (async function() {
+        (async function () {
             const xrpUsdElement = document.getElementById('xrpPrice');
             const mfxUsdElement = document.getElementById('mfxPrice');
 
             const xrpl = window.xrpl;
-            const client = new xrpl.Client("wss://xrplcluster.com"); // Use mainnet for live prices
+            const client = new xrpl.Client("wss://xrplcluster.com"); // Reliable mainnet server
 
             const USD_ISSUER = "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq"; // GateHub USD issuer
             const MFX_ISSUER = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
 
-            async function fetchPrice() {
+            async function fetchPrices() {
                 try {
                     console.log("Connecting to XRPL...");
                     await client.connect();
 
-                    // Fetch XRP/USD price
+                    // 1. Fetch XRP/USD Price
                     console.log("Fetching XRP/USD price...");
                     const xrpUsdRequest = {
                         command: "book_offers",
-                        taker_gets: {
-                            currency: "XRP"
-                        },
-                        taker_pays: {
-                            currency: "USD",
-                            issuer: USD_ISSUER
-                        }
+                        taker_gets: { currency: "XRP" },
+                        taker_pays: { currency: "USD", issuer: USD_ISSUER },
                     };
+
                     const xrpUsdResponse = await client.request(xrpUsdRequest);
                     console.log("XRP/USD Response:", xrpUsdResponse);
 
-                    if (!xrpUsdResponse.result.offers.length) {
-                        throw new Error("No offers available for XRP/USD.");
+                    if (!xrpUsdResponse.result.offers || xrpUsdResponse.result.offers.length === 0) {
+                        throw new Error("No offers found for XRP/USD.");
                     }
 
                     const xrpUsdRate = parseFloat(xrpUsdResponse.result.offers[0].quality);
                     console.log("XRP/USD Rate:", xrpUsdRate);
 
-                    // Fetch MFX/XRP price
+                    // 2. Fetch MFX/XRP Price
                     console.log("Fetching MFX/XRP price...");
                     const mfxXrpRequest = {
                         command: "book_offers",
-                        taker_gets: {
-                            currency: "MFX",
-                            issuer: MFX_ISSUER
-                        },
-                        taker_pays: {
-                            currency: "XRP"
-                        }
+                        taker_gets: { currency: "MFX", issuer: MFX_ISSUER },
+                        taker_pays: { currency: "XRP" },
                     };
+
                     const mfxXrpResponse = await client.request(mfxXrpRequest);
                     console.log("MFX/XRP Response:", mfxXrpResponse);
 
-                    if (!mfxXrpResponse.result.offers.length) {
-                        throw new Error("No offers available for MFX/XRP.");
+                    if (!mfxXrpResponse.result.offers || mfxXrpResponse.result.offers.length === 0) {
+                        throw new Error("No offers found for MFX/XRP.");
                     }
 
                     const mfxXrpRate = 1 / parseFloat(mfxXrpResponse.result.offers[0].quality);
                     console.log("MFX/XRP Rate:", mfxXrpRate);
 
-                    // Calculate MFX/USD price
+                    // 3. Calculate MFX/USD Price
                     const mfxUsdRate = mfxXrpRate * xrpUsdRate;
                     console.log("MFX/USD Rate:", mfxUsdRate);
 
-                    // Update the HTML
+                    // Update HTML Elements
                     xrpUsdElement.textContent = xrpUsdRate.toFixed(4);
                     mfxUsdElement.textContent = mfxUsdRate.toFixed(4);
+
                 } catch (error) {
-                    console.error("Error fetching prices:", error);
+                    console.error("Error fetching prices:", error.message);
                     xrpUsdElement.textContent = "Error";
                     mfxUsdElement.textContent = "Error";
                 } finally {
                     console.log("Disconnecting from XRPL...");
-                    client.disconnect();
+                    await client.disconnect();
                 }
             }
 
-            fetchPrice();
+            // Fetch prices on page load
+            await fetchPrices();
         })();
     </script>
 </body>
