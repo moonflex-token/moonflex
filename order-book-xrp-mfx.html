@@ -47,34 +47,36 @@
     const API_URL_TICKERS = "https://api.sologenic.org/api/v1/tickers/24h";
     const symbol_to_check = "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
 
-    // CORS Proxy URL
-    const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+    // CORS Proxy URL (Using AllOrigins here)
+    const proxyUrl = "https://api.allorigins.win/get?url=";
 
     // Function to fetch price information for a specific symbol
     function fetchPrice(symbol) {
         const payload = { "symbols": [symbol] };
 
-        fetch(proxyUrl + API_URL_TICKERS, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
+        fetch(proxyUrl + encodeURIComponent(API_URL_TICKERS), {
+            method: "GET",
         })
         .then(response => response.json())
         .then(data => {
-            console.log("Response received from API:", data);
+            // Check if data is JSON or an HTML error message
+            if (data && data.contents) {
+                const jsonData = JSON.parse(data.contents); // Parse the actual JSON content
+                console.log("Response received from API:", jsonData);
 
-            // Display the raw JSON data on the webpage
-            document.getElementById("jsonData").textContent = JSON.stringify(data, null, 2);
+                // Display the raw JSON data on the webpage
+                document.getElementById("jsonData").textContent = JSON.stringify(jsonData, null, 2);
 
-            if (symbol in data) {
-                const soloToXrp = data[symbol];
-                // Update the HTML with the price data
-                document.getElementById("lastPrice").textContent = `Last Price: ${soloToXrp['last_price']}`;
-                document.getElementById("volume").textContent = `Volume: ${soloToXrp['volume']}`;
+                if (symbol in jsonData) {
+                    const soloToXrp = jsonData[symbol];
+                    // Update the HTML with the price data
+                    document.getElementById("lastPrice").textContent = `Last Price: ${soloToXrp['last_price']}`;
+                    document.getElementById("volume").textContent = `Volume: ${soloToXrp['volume']}`;
+                } else {
+                    console.error(`No data found for ${symbol}`);
+                }
             } else {
-                console.error(`No data found for ${symbol}`);
+                throw new Error("Error: Invalid JSON response");
             }
         })
         .catch(error => {
