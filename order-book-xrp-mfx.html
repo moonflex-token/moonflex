@@ -52,31 +52,39 @@
 
     // Function to fetch price information for a specific symbol
     function fetchPrice(symbol) {
-        const payload = { "symbols": [symbol] };
-
         fetch(proxyUrl + encodeURIComponent(API_URL_TICKERS), {
             method: "GET",
         })
-        .then(response => response.json())
-        .then(data => {
-            // Check if data is JSON or an HTML error message
-            if (data && data.contents) {
-                const jsonData = JSON.parse(data.contents); // Parse the actual JSON content
-                console.log("Response received from API:", jsonData);
+        .then(response => response.text()) // Get the raw response text
+        .then(text => {
+            console.log("Raw response:", text); // Log the raw response to check its content
+            
+            try {
+                const data = JSON.parse(text); // Attempt to parse it as JSON
+                console.log("Parsed JSON data:", data);
 
-                // Display the raw JSON data on the webpage
-                document.getElementById("jsonData").textContent = JSON.stringify(jsonData, null, 2);
+                // Check if we have the expected data structure
+                if (data && data.contents) {
+                    const jsonData = JSON.parse(data.contents); // Parse the actual JSON content
+                    console.log("Final JSON data:", jsonData);
 
-                if (symbol in jsonData) {
-                    const soloToXrp = jsonData[symbol];
-                    // Update the HTML with the price data
-                    document.getElementById("lastPrice").textContent = `Last Price: ${soloToXrp['last_price']}`;
-                    document.getElementById("volume").textContent = `Volume: ${soloToXrp['volume']}`;
+                    // Display the raw JSON data on the webpage
+                    document.getElementById("jsonData").textContent = JSON.stringify(jsonData, null, 2);
+
+                    if (symbol in jsonData) {
+                        const soloToXrp = jsonData[symbol];
+                        // Update the HTML with the price data
+                        document.getElementById("lastPrice").textContent = `Last Price: ${soloToXrp['last_price']}`;
+                        document.getElementById("volume").textContent = `Volume: ${soloToXrp['volume']}`;
+                    } else {
+                        console.error(`No data found for ${symbol}`);
+                    }
                 } else {
-                    console.error(`No data found for ${symbol}`);
+                    throw new Error("Invalid or empty JSON response");
                 }
-            } else {
-                throw new Error("Error: Invalid JSON response");
+            } catch (error) {
+                console.error("Error parsing response:", error);
+                document.getElementById("jsonData").textContent = "Error parsing response: " + error;
             }
         })
         .catch(error => {
@@ -88,6 +96,4 @@
     // Run the function to fetch price data
     fetchPrice(symbol_to_check);
 </script>
-
-</body>
 </html>
