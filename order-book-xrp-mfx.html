@@ -1,1 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoonShot - MFX Price</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        #price {
+            font-size: 2em;
+            color: #555;
+            margin-top: 20px;
+        }
+        #loading {
+            font-size: 1.5em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>MoonShot - MFX Token Price</h1>
+    <div id="loading">Loading MFX Price...</div>
+    <div id="price"></div>
+
+    <script>
+        // WebSocket connection URL
+        const wsUrl = 'wss://s1.xrplmeta.org'; // XRPL WebSocket server
+        
+        // Function to handle incoming messages from the WebSocket
+        function onMessage(event) {
+            const data = JSON.parse(event.data);
+            
+            // Check if the data contains price information
+            if (data && data.result && data.result.price) {
+                const price = data.result.price;
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('price').textContent = `MFX Price: ${price} XRP`;
+            } else {
+                console.log('Error: No price data received or invalid response');
+            }
+        }
+
+        // Create a new WebSocket connection
+        const ws = new WebSocket(wsUrl);
+
+        ws.onopen = function() {
+            console.log('WebSocket connection opened.');
+            
+            // Request the price for MFX (MFX/XRP pair)
+            const msg = {
+                command: "token_series",
+                token: {
+                    issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1", // MFX token issuer
+                    currency: "MFX" // MFX token currency code
+                },
+                metric: "price",
+                time: {
+                    from: Math.floor(Date.now() / 1000) - 86400, // Last 24 hours
+                    to: Math.floor(Date.now() / 1000) // Current time
+                }
+            };
+            ws.send(JSON.stringify(msg)); // Send the request to the server
+        };
+
+        ws.onmessage = onMessage;
+
+        ws.onerror = function(error) {
+            console.log("WebSocket Error: ", error);
+            document.getElementById('loading').textContent = 'Failed to fetch price.';
+        };
+
+        ws.onclose = function() {
+            console.log("WebSocket connection closed.");
+        };
+    </script>
+
+</body>
+</html>
 
