@@ -34,11 +34,14 @@
     const API_URL_TICKERS = "https://api.sologenic.org/api/v1/tickers/24h";
     const symbol_to_check = "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
 
+    // CORS Proxy URL
+    const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+
     // Function to fetch price information for a specific symbol
     function fetchPrice(symbol) {
         const payload = { "symbols": [symbol] };
 
-        fetch(API_URL_TICKERS, {
+        fetch(proxyUrl + API_URL_TICKERS, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
