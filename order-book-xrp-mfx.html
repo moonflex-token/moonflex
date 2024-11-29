@@ -4,8 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoonShot API Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
 </head>
 <body>
+    <h1>MoonShot API Data</h1>
+    <p>Raw JSON Data from the API:</p>
     <pre id="json-data">Loading...</pre>
 
     <script>
@@ -28,15 +43,17 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    // Just show the raw response text in case of an error
+                    document.getElementById("json-data").textContent = await response.text();
+                    return;
                 }
 
-                // Get the raw response data and display it directly
+                // Get the raw response data and display it exactly as is
                 const data = await response.json();
                 document.getElementById("json-data").textContent = JSON.stringify(data, null, 2);
 
             } catch (error) {
-                // Display only the raw error message from the API or the fetch error
+                // Show the error message if there's an issue with the fetch
                 document.getElementById("json-data").textContent = error.message;
             }
         }
