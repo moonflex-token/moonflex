@@ -34,13 +34,10 @@
         // WebSocket connection URL
         const wsUrl = 'wss://s1.xrplmeta.org'; // XRPL WebSocket server
         
-        // Create a new WebSocket connection
-        const ws = new WebSocket(wsUrl);
-
         // Function to handle incoming messages from the WebSocket
         function onMessage(event) {
             const data = JSON.parse(event.data);
-            console.log(data);  // Log the data to check for available information
+            console.log(data);  // Log the raw data for debugging
 
             // Check if the data contains price information
             if (data && data.result && data.result.price) {
@@ -53,33 +50,32 @@
             }
         }
 
-        // Send a message to subscribe to token price data
+        // Create a new WebSocket connection
+        const ws = new WebSocket(wsUrl);
+
         ws.onopen = function() {
             console.log('WebSocket connection opened.');
 
-            // Subscribe to MFX token price information
+            // Request the MFX/XRP token pair price (subscription to a specific token)
             const msg = {
                 command: "subscribe",
-                streams: ["token_price"],  // Example of subscribing to price stream (check actual stream name)
+                streams: ["token_price"],  // Stream for token price data
                 token: {
-                    issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1",  // MFX token issuer
-                    currency: "MFX"  // MFX token currency code
+                    issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1",  // MFX token issuer address
+                    currency: "MFX"  // MFX token currency
                 }
             };
 
-            ws.send(JSON.stringify(msg));  // Send the subscription request
+            ws.send(JSON.stringify(msg));  // Send the subscription request to the server
         };
 
-        // Event listener for handling incoming WebSocket messages
-        ws.onmessage = onMessage;
+        ws.onmessage = onMessage;  // Handle incoming messages
 
-        // Error handling
         ws.onerror = function(error) {
             console.log("WebSocket Error: ", error);
             document.getElementById('loading').textContent = 'Failed to fetch price.';
         };
 
-        // Close WebSocket connection
         ws.onclose = function() {
             console.log("WebSocket connection closed.");
         };
