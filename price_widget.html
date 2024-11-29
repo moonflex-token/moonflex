@@ -3,110 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Price Widget</title>
+    <title>Crypto Price Widget</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
         }
-        .widget {
-            display: inline-block;
-            padding: 20px;
+        #crypto-widget {
+            background-color: #f8f9fa;
             border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-width: 300px;
+            padding: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .price {
-            font-size: 24px;
+        .crypto-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+        .crypto-price img {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+        .crypto-price span {
+            font-size: 16px;
+        }
+        .crypto-price .price {
             font-weight: bold;
-            color: #333;
+            color: #007bff;
         }
     </style>
 </head>
 <body>
-    <div class="widget">
-        <h2>Live Prices</h2>
-        <div>
-            <p>XRP/USD: <span id="xrpPrice" class="price">Loading...</span></p>
-            <p>MFX/USD: <span id="mfxPrice" class="price">Loading...</span></p>
+    <div id="crypto-widget">
+        <div class="crypto-price">
+            <span><img src="https://cryptoicons.org/api/icon/btc/24" alt="BTC"> BTC/USD:</span>
+            <span class="price" id="btc-price">Loading...</span>
+        </div>
+        <div class="crypto-price">
+            <span><img src="https://cryptoicons.org/api/icon/xrp/24" alt="XRP"> XRP/USD:</span>
+            <span class="price" id="xrp-price">Loading...</span>
         </div>
     </div>
 
-    <script src="https://unpkg.com/xrpl/dist/xrpl.js"></script>
     <script>
-        (async function () {
-            const xrpUsdElement = document.getElementById('xrpPrice');
-            const mfxUsdElement = document.getElementById('mfxPrice');
+        async function fetchCryptoPrices() {
+            try {
+                const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ripple&vs_currencies=usd");
+                const data = await response.json();
 
-            const xrpl = window.xrpl;
-            const client = new xrpl.Client("wss://xrplcluster.com"); // Reliable mainnet server
-
-            const USD_ISSUER = "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq"; // GateHub USD issuer
-            const MFX_ISSUER = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
-
-            async function fetchPrices() {
-                try {
-                    console.log("Connecting to XRPL...");
-                    await client.connect();
-
-                    // 1. Fetch XRP/USD Price
-                    console.log("Fetching XRP/USD price...");
-                    const xrpUsdRequest = {
-                        command: "book_offers",
-                        taker_gets: { currency: "XRP" },
-                        taker_pays: { currency: "USD", issuer: USD_ISSUER },
-                    };
-
-                    const xrpUsdResponse = await client.request(xrpUsdRequest);
-                    console.log("XRP/USD Response:", xrpUsdResponse);
-
-                    if (!xrpUsdResponse.result.offers || xrpUsdResponse.result.offers.length === 0) {
-                        throw new Error("No offers found for XRP/USD.");
-                    }
-
-                    const xrpUsdRate = parseFloat(xrpUsdResponse.result.offers[0].quality);
-                    console.log("XRP/USD Rate:", xrpUsdRate);
-
-                    // 2. Fetch MFX/XRP Price
-                    console.log("Fetching MFX/XRP price...");
-                    const mfxXrpRequest = {
-                        command: "book_offers",
-                        taker_gets: { currency: "MFX", issuer: MFX_ISSUER },
-                        taker_pays: { currency: "XRP" },
-                    };
-
-                    const mfxXrpResponse = await client.request(mfxXrpRequest);
-                    console.log("MFX/XRP Response:", mfxXrpResponse);
-
-                    if (!mfxXrpResponse.result.offers || mfxXrpResponse.result.offers.length === 0) {
-                        throw new Error("No offers found for MFX/XRP.");
-                    }
-
-                    const mfxXrpRate = 1 / parseFloat(mfxXrpResponse.result.offers[0].quality);
-                    console.log("MFX/XRP Rate:", mfxXrpRate);
-
-                    // 3. Calculate MFX/USD Price
-                    const mfxUsdRate = mfxXrpRate * xrpUsdRate;
-                    console.log("MFX/USD Rate:", mfxUsdRate);
-
-                    // Update HTML Elements
-                    xrpUsdElement.textContent = xrpUsdRate.toFixed(4);
-                    mfxUsdElement.textContent = mfxUsdRate.toFixed(4);
-
-                } catch (error) {
-                    console.error("Error fetching prices:", error.message);
-                    xrpUsdElement.textContent = "Error";
-                    mfxUsdElement.textContent = "Error";
-                } finally {
-                    console.log("Disconnecting from XRPL...");
-                    await client.disconnect();
-                }
+                document.getElementById("btc-price").innerText = `$${data.bitcoin.usd}`;
+                document.getElementById("xrp-price").innerText = `$${data.ripple.usd}`;
+            } catch (error) {
+                console.error("Error fetching crypto prices:", error);
+                document.getElementById("btc-price").innerText = "Error";
+                document.getElementById("xrp-price").innerText = "Error";
             }
+        }
 
-            // Fetch prices on page load
-            await fetchPrices();
-        })();
+        fetchCryptoPrices();
+        setInterval(fetchCryptoPrices, 60000); // Update prices every 60 seconds
     </script>
 </body>
 </html>
