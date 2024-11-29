@@ -3,137 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonShot - MFX Order Book</title>
+    <title>MFX Order Book</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
             margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        h1 {
-            color: #4CAF50;
-        }
-        #order-book {
-            width: 80%;
-            max-width: 800px;
-            background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        h2 {
+        h1, h2 {
             color: #333;
         }
+        .order-list {
+            margin-top: 20px;
+        }
         ul {
-            list-style-type: none;
+            list-style: none;
             padding: 0;
         }
         li {
+            margin-bottom: 10px;
             padding: 10px;
-            margin-bottom: 5px;
-            background-color: #f1f1f1;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .buy {
-            background-color: #d1ffd1;
-        }
-        .sell {
-            background-color: #ffd1d1;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
+    <h1>MFX Order Book</h1>
+    <h2>Buy Orders</h2>
+    <ul id="buy-orders"></ul>
+    <h2>Sell Orders</h2>
+    <ul id="sell-orders"></ul>
 
-    <h1>MoonShot - MFX Order Book</h1>
-    <div id="order-book">
-        <h2>Buy Orders (MFX/XRP)</h2>
-        <ul id="buy-orders"></ul>
-
-        <h2>Sell Orders (MFX/XRP)</h2>
-        <ul id="sell-orders"></ul>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/xrpl@1.10.0/dist/xrpl.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xrpl/dist/xrpl.min.js"></script>
     <script>
-        // Fetch the order book data from the XRPL
         async function fetchOrderBook() {
             const xrpl = window.xrpl;
             const client = new xrpl.Client("wss://s2.ripple.com");
 
             try {
                 await client.connect();
+                const response = await client.request({
+                    command: "book_offers",
+                    taker_gets: { currency: "XRP" },
+                    taker_pays: {
+                        currency: "MFX",
+                        issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"
+                    }
+                });
 
-                // Define the token pair (MFX/XRP)
-                const request = {
-                    method: "book_offers",
-                    params: [{
-                        taker_gets: {
-                            currency: "MFX",
-                            issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"
-                        },
-                        taker_pays: "XRP"
-                    }]
-                };
-
-                // Fetch the order book data
-                const response = await client.request(request);
-                if (response.result.offers && response.result.offers.length > 0) {
-                    displayOrderBook(response.result);
-                } else {
-                    displayError("No orders found for this pair.");
-                }
-
+                updateOrderBook(response.result);
                 await client.disconnect();
             } catch (error) {
                 console.error("Error fetching order book:", error);
-                displayError("Failed to fetch order book data.");
             }
         }
 
-        // Display the fetched order book on the page
-        function displayOrderBook(orderBook) {
-            const buyOrdersList = document.getElementById("buy-orders");
-            const sellOrdersList = document.getElementById("sell-orders");
+        function updateOrderBook(data) {
+            const buyOrders = document.getElementById("buy-orders");
+            const sellOrders = document.getElementById("sell-orders");
+            buyOrders.innerHTML = "";
+            sellOrders.innerHTML = "";
 
-            // Clear existing data
-            buyOrdersList.innerHTML = '';
-            sellOrdersList.innerHTML = '';
+            data.offers.forEach((offer) => {
+                const listItem = document.createElement("li");
+                const takerGets = offer.TakerGets / 1_000_000; // XRP in drops to XRP
+                const takerPays = offer.TakerPays.value; // MFX amount
+                const price = takerGets / takerPays;
 
-            // Add buy orders to the page
-            orderBook.offers.forEach(order => {
-                const orderItem = document.createElement("li");
-                const price = order.TakerPays.value / order.TakerGets.value;
-                const side = order.TakerPays.currency === "XRP" ? "Sell" : "Buy";
+                listItem.textContent = `Price: ${price.toFixed(6)} XRP/MFX, Amount: ${takerPays} MFX`;
 
-                orderItem.textContent = `${side} Order - Price: ${price.toFixed(6)} XRP per MFX - Amount: ${order.TakerGets.value} MFX`;
-                
-                if (side === "Buy") {
-                    orderItem.classList.add("buy");
-                    buyOrdersList.appendChild(orderItem);
+                if (offer.TakerGets.currency === "XRP") {
+                    sellOrders.appendChild(listItem); // Sell MFX for XRP
                 } else {
-                    orderItem.classList.add("sell");
-                    sellOrdersList.appendChild(orderItem);
+                    buyOrders.appendChild(listItem); // Buy MFX with XRP
                 }
             });
         }
 
-        // Display an error message on the page
-        function displayError(message) {
-            const orderBookDiv = document.getElementById("order-book");
-            orderBookDiv.innerHTML = `<h2 style="color: red;">Error: ${message}</h2>`;
-        }
-
-        // Load the order book when the page loads
         document.addEventListener("DOMContentLoaded", fetchOrderBook);
     </script>
-    
 </body>
 </html>
