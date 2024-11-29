@@ -18,16 +18,15 @@
             height: 100vh;
         }
 
-        /* Widget container with blur and glow effects */
         #crypto-widget {
-            background-color: rgba(34, 34, 34, 0.8); /* Semi-transparent dark background */
+            background-color: rgba(34, 34, 34, 0.8);
             border: 2px solid #fe6602;
             border-radius: 16px;
-            max-width: 450px; /* Increased width to handle long prices */
+            max-width: 450px;
             padding: 24px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
             color: #fff;
-            backdrop-filter: blur(5px); /* Apply background blur effect */
+            backdrop-filter: blur(5px);
         }
 
         #crypto-widget h2 {
@@ -36,7 +35,7 @@
             margin-bottom: 16px;
             font-size: 24px;
             letter-spacing: 1px;
-            text-shadow: 0 0 10px #fe6602; /* Add glow effect to text */
+            text-shadow: 0 0 10px #fe6602;
         }
 
         .crypto-price {
@@ -47,9 +46,9 @@
             padding: 12px;
             border: 2px solid #fe6602;
             border-radius: 8px;
-            background: rgba(51, 51, 51, 0.9); /* Semi-transparent background for each price box */
+            background: rgba(51, 51, 51, 0.9);
             font-size: 18px;
-            box-shadow: 0 0 10px rgba(254, 102, 2, 0.6); /* Glowing effect for price boxes */
+            box-shadow: 0 0 10px rgba(254, 102, 2, 0.6);
         }
 
         .crypto-price img {
@@ -60,19 +59,19 @@
 
         .crypto-price span {
             display: flex;
-            align-items: center; /* Ensure text and images are vertically aligned */
+            align-items: center;
         }
 
         .crypto-price .price {
             font-weight: bold;
             font-size: 20px;
             color: #fe6602;
-            min-width: 140px; /* Fixed width for the price container */
-            text-align: right; /* Align price to the right */
-            white-space: nowrap; /* Prevent the text from wrapping */
-            overflow: hidden; /* Hide overflowing text */
-            text-overflow: ellipsis; /* Add ellipsis for overflowed text */
-            text-shadow: 0 0 8px #fe6602; /* Glowing effect for price text */
+            min-width: 140px;
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 0 8px #fe6602;
         }
     </style>
 </head>
@@ -87,37 +86,53 @@
             <span><img src="./images/icons/xrp.png" alt="XRP"> XRP/USD:</span>
             <span class="price" id="xrp-price">Loading...</span>
         </div>
+        <div class="crypto-price">
+            <span><img src="./images/icons/mfx.png" alt="MFX"> MFX/USD:</span>
+            <span class="price" id="mfx-price">Loading...</span>
+        </div>
     </div>
 
     <script>
-        // WebSocket connection for Binance live price updates
+        // WebSocket connections for BTC/USD and XRP/USD
         const socketBTC = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@trade');
         const socketXRP = new WebSocket('wss://stream.binance.com:9443/ws/xrpusdt@trade');
 
-        // WebSocket event for BTC/USD updates
+        let xrpUsdPrice = null; // Store the XRP/USD price
+        let mfxXrpPrice = null; // Store the MFX/XRP price
+
+        // Fetch BTC/USD price
         socketBTC.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            const btcPrice = parseFloat(data.p).toFixed(2); // Extract price from WebSocket message
+            const btcPrice = parseFloat(data.p).toFixed(2);
             document.getElementById("btc-price").innerText = `$${btcPrice}`;
         };
 
-        // WebSocket event for XRP/USD updates
+        // Fetch XRP/USD price
         socketXRP.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            const xrpPrice = parseFloat(data.p).toFixed(2); // Extract price from WebSocket message
-            document.getElementById("xrp-price").innerText = `$${xrpPrice}`;
+            xrpUsdPrice = parseFloat(data.p);
+            document.getElementById("xrp-price").innerText = `$${xrpUsdPrice.toFixed(2)}`;
+            calculateMFXUsd(); // Update MFX/USD whenever XRP/USD price changes
         };
 
-        // Handle WebSocket errors
-        socketBTC.onerror = function (error) {
-            console.log('Error in BTC WebSocket:', error);
-            document.getElementById("btc-price").innerText = "Error";
+        // WebSocket connection for MFX/XRP
+        const mfxSocket = new WebSocket('wss://api.onthedex.live/public/v1/ticker/MFX.rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1:XRP');
+
+        mfxSocket.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (data.pairs) {
+                mfxXrpPrice = parseFloat(data.pairs[0].l);
+                calculateMFXUsd(); // Update MFX/USD whenever MFX/XRP price changes
+            }
         };
 
-        socketXRP.onerror = function (error) {
-            console.log('Error in XRP WebSocket:', error);
-            document.getElementById("xrp-price").innerText = "Error";
-        };
+        // Calculate MFX/USD
+        function calculateMFXUsd() {
+            if (xrpUsdPrice !== null && mfxXrpPrice !== null) {
+                const mfxUsdPrice = (mfxXrpPrice * xrpUsdPrice).toFixed(6);
+                document.getElementById("mfx-price").innerText = `$${mfxUsdPrice}`;
+            }
+        }
     </script>
 </body>
 </html>
