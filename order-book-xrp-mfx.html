@@ -49,9 +49,13 @@
                 // Get the raw response data
                 const data = await response.json();
                 console.log("Response received from API:", data);
-                
-                // Display the raw API response
-                document.getElementById("json-data").textContent = JSON.stringify(data, null, 2);
+
+                // Check if the response contains errors
+                if (data.errors && data.errors.length > 0) {
+                    document.getElementById("json-data").textContent = JSON.stringify(data.errors, null, 2);
+                } else {
+                    document.getElementById("json-data").textContent = JSON.stringify(data, null, 2);
+                }
 
             } catch (error) {
                 console.error("Error fetching data:", error);
