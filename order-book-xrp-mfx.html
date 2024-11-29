@@ -1,57 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XRPL Token Price</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
-        }
-        #price {
-            font-size: 2em;
-            color: #333;
-        }
-    </style>
+    <script type="text/javascript">
+        const base_currency = "MFX"; // your token
+        const base_issuer = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"; // issuer address
+        const quote_currency = "USD"; // or USD, based on availability
+        const websocket_endpoint = "wss://api.onthedex.live/public/v1";
+
+        window.addEventListener("load", function() {
+            const dom_token_pair = document.getElementById('token_pair');
+            const dom_token_price = document.getElementById('token_price');
+            const dom_error = document.getElementById('error');
+            dom_token_pair.innerHTML = base_currency + '/' + quote_currency;
+
+            const connectToWebsocket = () => {
+                var mySocket = new WebSocket(websocket_endpoint + "/ticker/" + base_currency + ":" + quote_currency);
+
+                mySocket.onopen = function() {
+                    dom_error.style.display = "none";
+                };
+
+                mySocket.onmessage = function(e) {
+                    const token_data = JSON.parse(e.data);
+                    if (!token_data.error && token_data.pairs) {
+                        dom_token_price.innerHTML = Number(token_data.pairs[0].l).toFixed(6);
+                    } else {
+                        dom_error.innerHTML = token_data.message;
+                        dom_error.style.display = "inline";
+                    }
+                };
+
+                mySocket.onclose = function() {
+                    dom_error.innerHTML = 'WebSocket terminated.';
+                    dom_error.style.display = "inline";
+                    setTimeout(connectToWebsocket, 1000);
+                };
+            };
+
+            connectToWebsocket();
+        });
+    </script>
 </head>
 <body>
-    <h1>XRPL Token Price</h1>
-    <div id="price">Loading...</div>
-    <script>
-        const socket = new WebSocket('wss://api.onthedex.live/public/v1');
-
-        socket.onopen = () => {
-            console.log('WebSocket connection opened');
-            // Subscribe to token price updates
-            socket.send(JSON.stringify({
-                command: 'subscribe',
-                path: '/token/price/XRP'
-            }));
-        };
-
-        socket.onmessage = (event) => {
-            console.log('WebSocket message received:', event.data);
-            const data = JSON.parse(event.data);
-            if (data && data.price) {
-                document.getElementById('price').innerText = `Price: ${data.price}`;
-            }
-        };
-
-        socket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-        socket.onclose = () => {
-            console.log('WebSocket connection closed');
-            document.getElementById('price').innerText = 'Connection closed';
-        };
-    </script>
+    <h1>Token Price</h1>
+    <div>Pair: <span id="token_pair"></span></div>
+    <div>Price: <span id="token_price"></span></div>
+    <div id="error" style="color:red;"></div>
 </body>
 </html>
