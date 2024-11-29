@@ -85,11 +85,16 @@
 
                 // Fetch the order book data
                 const response = await client.request(request);
-                displayOrderBook(response.result);
+                if (response.result.offers && response.result.offers.length > 0) {
+                    displayOrderBook(response.result);
+                } else {
+                    displayError("No orders found for this pair.");
+                }
 
                 await client.disconnect();
             } catch (error) {
                 console.error("Error fetching order book:", error);
+                displayError("Failed to fetch order book data.");
             }
         }
 
@@ -108,7 +113,7 @@
                 const price = order.TakerPays.value / order.TakerGets.value;
                 const side = order.TakerPays.currency === "XRP" ? "Sell" : "Buy";
 
-                orderItem.textContent = `${side} Order - Price: ${price} XRP per MFX - Amount: ${order.TakerGets.value} MFX`;
+                orderItem.textContent = `${side} Order - Price: ${price.toFixed(6)} XRP per MFX - Amount: ${order.TakerGets.value} MFX`;
                 
                 if (side === "Buy") {
                     orderItem.classList.add("buy");
@@ -118,6 +123,12 @@
                     sellOrdersList.appendChild(orderItem);
                 }
             });
+        }
+
+        // Display an error message on the page
+        function displayError(message) {
+            const orderBookDiv = document.getElementById("order-book");
+            orderBookDiv.innerHTML = `<h2 style="color: red;">Error: ${message}</h2>`;
         }
 
         // Load the order book when the page loads
