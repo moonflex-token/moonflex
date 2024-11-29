@@ -1,49 +1,88 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <script type="text/javascript">
-        const base_currency = "MFX"; // your token
-        const base_issuer = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"; // issuer address
-        const quote_currency = "USD"; // or USD, based on availability
-        const websocket_endpoint = "wss://api.onthedex.live/public/v1";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoonShot Token Price</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
+        .widget {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: white;
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .widget h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .pair, .price {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .error {
+            color: red;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="widget">
+        <h1>MoonShot Token Price</h1>
+        <div class="pair">Pair: <span id="token_pair">Loading...</span></div>
+        <div class="price">Price: <span id="token_price">Loading...</span></div>
+        <div class="error" id="error" style="display:none;"></div>
+    </div>
 
+    <script type="text/javascript">
+        const base_currency = "MFX"; // Your token
+        const base_issuer = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"; // Token issuer address
+        const quote_currency = "USD"; // or USD, depending on availability
+        const websocket_endpoint = "wss://api.onthedex.live/public/v1";
+        
         window.addEventListener("load", function() {
             const dom_token_pair = document.getElementById('token_pair');
             const dom_token_price = document.getElementById('token_price');
             const dom_error = document.getElementById('error');
             dom_token_pair.innerHTML = base_currency + '/' + quote_currency;
 
+            // WebSocket connection function
             const connectToWebsocket = () => {
                 var mySocket = new WebSocket(websocket_endpoint + "/ticker/" + base_currency + ":" + quote_currency);
 
+                // Connection opened
                 mySocket.onopen = function() {
-                    dom_error.style.display = "none";
+                    dom_error.style.display = "none"; // Hide error message if connection is successful
                 };
 
+                // Message received from WebSocket
                 mySocket.onmessage = function(e) {
                     const token_data = JSON.parse(e.data);
                     if (!token_data.error && token_data.pairs) {
-                        dom_token_price.innerHTML = Number(token_data.pairs[0].l).toFixed(6);
+                        dom_token_price.innerHTML = Number(token_data.pairs[0].l).toFixed(6); // Latest price
                     } else {
-                        dom_error.innerHTML = token_data.message;
+                        dom_error.innerHTML = 'Error fetching data.';
                         dom_error.style.display = "inline";
                     }
                 };
 
+                // WebSocket closed
                 mySocket.onclose = function() {
-                    dom_error.innerHTML = 'WebSocket terminated.';
+                    dom_error.innerHTML = 'WebSocket connection terminated.';
                     dom_error.style.display = "inline";
-                    setTimeout(connectToWebsocket, 1000);
+                    setTimeout(connectToWebsocket, 1000); // Attempt to reconnect
                 };
             };
 
             connectToWebsocket();
         });
     </script>
-</head>
-<body>
-    <h1>Token Price</h1>
-    <div>Pair: <span id="token_pair"></span></div>
-    <div>Price: <span id="token_price"></span></div>
-    <div id="error" style="color:red;"></div>
 </body>
 </html>
