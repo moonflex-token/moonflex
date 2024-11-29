@@ -18,15 +18,16 @@
             height: 100vh;
         }
 
+        /* Widget container with blur and glow effects */
         #crypto-widget {
-            background-color: rgba(34, 34, 34, 0.8);
+            background-color: rgba(34, 34, 34, 0.8); /* Semi-transparent dark background */
             border: 2px solid #fe6602;
             border-radius: 16px;
-            max-width: 450px;
+            max-width: 450px; /* Increased width to handle long prices */
             padding: 24px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
             color: #fff;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px); /* Apply background blur effect */
         }
 
         #crypto-widget h2 {
@@ -35,7 +36,7 @@
             margin-bottom: 16px;
             font-size: 24px;
             letter-spacing: 1px;
-            text-shadow: 0 0 10px #fe6602;
+            text-shadow: 0 0 10px #fe6602; /* Add glow effect to text */
         }
 
         .crypto-price {
@@ -46,9 +47,9 @@
             padding: 12px;
             border: 2px solid #fe6602;
             border-radius: 8px;
-            background: rgba(51, 51, 51, 0.9);
+            background: rgba(51, 51, 51, 0.9); /* Semi-transparent background for each price box */
             font-size: 18px;
-            box-shadow: 0 0 10px rgba(254, 102, 2, 0.6);
+            box-shadow: 0 0 10px rgba(254, 102, 2, 0.6); /* Glowing effect for price boxes */
         }
 
         .crypto-price img {
@@ -59,19 +60,19 @@
 
         .crypto-price span {
             display: flex;
-            align-items: center;
+            align-items: center; /* Ensure text and images are vertically aligned */
         }
 
         .crypto-price .price {
             font-weight: bold;
             font-size: 20px;
             color: #fe6602;
-            min-width: 140px;
-            text-align: right;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-shadow: 0 0 8px #fe6602;
+            min-width: 140px; /* Fixed width for the price container */
+            text-align: right; /* Align price to the right */
+            white-space: nowrap; /* Prevent the text from wrapping */
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+            text-shadow: 0 0 8px #fe6602; /* Glowing effect for price text */
         }
     </style>
 </head>
@@ -86,10 +87,6 @@
             <span><img src="./images/icons/xrp.png" alt="XRP"> XRP/USD:</span>
             <span class="price" id="xrp-price">Loading...</span>
         </div>
-        <div class="crypto-price">
-            <span><img src="./images/icons/mfx.png" alt="MFX"> MFX/USD:</span>
-            <span class="price" id="mfx-price">Loading...</span>
-        </div>
     </div>
 
     <script>
@@ -97,71 +94,19 @@
         const socketBTC = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@trade');
         const socketXRP = new WebSocket('wss://stream.binance.com:9443/ws/xrpusdt@trade');
 
-        let xrpPrice = 0;
-        let mfxXrpPrice = 0;
-
         // WebSocket event for BTC/USD updates
         socketBTC.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            const btcPrice = parseFloat(data.p).toFixed(2);
-            document.getElementById("btc-price").innerText = `$${btcPrice}`;
+            const btcPrice = parseFloat(data.p).toFixed(2); // Extract price from WebSocket message
+            document.getElementById("btc-price").innerText = $${btcPrice};
         };
 
         // WebSocket event for XRP/USD updates
         socketXRP.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            xrpPrice = parseFloat(data.p).toFixed(2); // Store XRP price
-            document.getElementById("xrp-price").innerText = `$${xrpPrice}`;
-
-            // Calculate MFX/USD price once XRP/USD is received
-            if (mfxXrpPrice > 0) {
-                const mfxUsdPrice = (mfxXrpPrice * xrpPrice).toFixed(2);
-                document.getElementById("mfx-price").innerText = `$${mfxUsdPrice}`;
-            }
+            const xrpPrice = parseFloat(data.p).toFixed(2); // Extract price from WebSocket message
+            document.getElementById("xrp-price").innerText = $${xrpPrice};
         };
-
-        // Fetch the MFX/XRP order book from the XRPL using the book_offers method
-        async function fetchMFXOrderBook() {
-            const url = 'https://s2.ripple.com:51234';  // Replace with a live XRPL server URL
-            const params = {
-                "method": "book_offers",
-                "params": [
-                    {
-                        "taker_gets": {
-                            "currency": "MFX",
-                            "issuer": "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"
-                        },
-                        "taker_pays": {
-                            "currency": "XRP"
-                        }
-                    }
-                ]
-            };
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(params)
-                });
-
-                const data = await response.json();
-                if (data.result && data.result.offers.length > 0) {
-                    // Extract the highest bid (first offer)
-                    const highestBid = data.result.offers[0].taker_gets.value;
-                    mfxXrpPrice = highestBid ? parseFloat(highestBid).toFixed(6) : 0;
-                    
-                    // Once we have MFX/XRP price, calculate MFX/USD
-                    if (xrpPrice > 0 && mfxXrpPrice > 0) {
-                        const mfxUsdPrice = (mfxXrpPrice * xrpPrice).toFixed(2);
-                        document.getElementById("mfx-price").innerText = `$${mfxUsdPrice}`;
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching MFX order book:', error);
-                document.getElementById("mfx-price").innerText = "Error";
-            }
-        }
 
         // Handle WebSocket errors
         socketBTC.onerror = function (error) {
@@ -173,9 +118,6 @@
             console.log('Error in XRP WebSocket:', error);
             document.getElementById("xrp-price").innerText = "Error";
         };
-
-        // Initialize MFX/XRP order book fetch
-        fetchMFXOrderBook();
     </script>
 </body>
 </html>
