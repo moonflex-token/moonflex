@@ -3,83 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonShot Price Widget</title>
+    <title>MoonShot API Data</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            padding: 0;
         }
-        .widget {
-            border: 1px solid #ccc;
-            padding: 20px;
-            width: 300px;
-            background-color: #f9f9f9;
-        }
-        .widget h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .price-info {
-            margin-bottom: 10px;
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
     </style>
 </head>
 <body>
-    <div class="widget">
-        <h2>MoonShot Price</h2>
-        <div id="raw-data">
-            <!-- Raw JSON will be displayed here -->
-        </div>
-        <div class="price-info" id="price-info">
-            <!-- Processed price data will be displayed here -->
-        </div>
-    </div>
+    <h1>MoonShot API Data</h1>
+    <p>Raw JSON Data from the API:</p>
+    <pre id="json-data">Loading...</pre>
 
     <script>
-        // URL for fetching price data
-        const API_URL = "https://api.sologenic.org/api/v1/tickers/24h";
-        const symbol = "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
+        const API_URL_TICKERS = "https://api.sologenic.org/api/v1/tickers/24h";
+        const symbol_to_check = "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
 
-        // Function to fetch price data and update the page
-        function fetchPrice() {
-            const payload = { "symbols": [symbol] };
-            
-            // Send POST request to the API
-            fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Log raw JSON data in the "raw-data" div
-                document.getElementById("raw-data").innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+        async function fetchPrice() {
+            const payload = {
+                symbols: [symbol_to_check]
+            };
 
-                // Check if the symbol exists in the data and update price information
-                if (symbol in data) {
-                    const priceData = data[symbol];
-                    const priceInfo = `
-                        <p><strong>Open Price:</strong> ${priceData.open_price}</p>
-                        <p><strong>High Price:</strong> ${priceData.high_price}</p>
-                        <p><strong>Low Price:</strong> ${priceData.low_price}</p>
-                        <p><strong>Last Price:</strong> ${priceData.last_price}</p>
-                        <p><strong>Volume:</strong> ${priceData.volume}</p>
-                    `;
-                    document.getElementById("price-info").innerHTML = priceInfo;
-                } else {
-                    document.getElementById("price-info").innerHTML = "<p>No data found for the symbol.</p>";
+            try {
+                const response = await fetch(API_URL_TICKERS, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-            })
-            .catch(error => {
-                console.error('Error fetching price data:', error);
-                document.getElementById("price-info").innerHTML = "<p>Error fetching price data.</p>";
-            });
+
+                const data = await response.json();
+                console.log("Response received from API:", data);
+                displayData(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById("json-data").textContent = "Error fetching data.";
+            }
         }
 
-        // Fetch price data when the page loads
+        function displayData(data) {
+            const jsonDataElement = document.getElementById("json-data");
+
+            // Check if the symbol exists in the data
+            const symbolData = data[symbol_to_check];
+            if (symbolData) {
+                const formattedData = JSON.stringify(symbolData, null, 2);
+                jsonDataElement.textContent = formattedData;
+            } else {
+                jsonDataElement.textContent = "No data found for the specified symbol.";
+            }
+        }
+
+        // Fetch data when the page loads
         window.onload = fetchPrice;
     </script>
 </body>
