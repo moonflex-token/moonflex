@@ -5,95 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoonShot Price Widget</title>
     <style>
-        .price-container {
+        body {
             font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        .widget {
+            border: 1px solid #ccc;
             padding: 20px;
-            border: 1px solid #ddd;
             width: 300px;
-            margin: 0 auto;
+            background-color: #f9f9f9;
+        }
+        .widget h2 {
             text-align: center;
+            margin-bottom: 20px;
         }
-        .price-container h2 {
-            margin: 0 0 10px;
-        }
-        .price-container p {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-        #jsonData {
-            white-space: pre-wrap; /* Maintains formatting */
-            font-family: monospace;
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            background-color: #f4f4f4;
+        .price-info {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
+    <div class="widget">
+        <h2>MoonShot Price</h2>
+        <div id="raw-data">
+            <!-- Raw JSON will be displayed here -->
+        </div>
+        <div class="price-info" id="price-info">
+            <!-- Processed price data will be displayed here -->
+        </div>
+    </div>
 
-<div class="price-container">
-    <h2>MoonShot Price</h2>
-    <p id="lastPrice">Last Price: Loading...</p>
-    <p id="volume">Volume: Loading...</p>
-</div>
+    <script>
+        // URL for fetching price data
+        const API_URL = "https://api.sologenic.org/api/v1/tickers/24h";
+        const symbol = "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
 
-<div id="jsonData">
-    <h3>Raw JSON Data:</h3>
-    <p>Loading...</p>
-</div>
-
-<script>
-    const API_URL_TICKERS = "https://api.sologenic.org/api/v1/tickers/24h";
-    const symbol_to_check = "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
-
-    // CORS Proxy URL (Using AllOrigins here)
-    const proxyUrl = "https://api.allorigins.win/get?url=";
-
-    // Function to fetch price information for a specific symbol
-    function fetchPrice(symbol) {
-        fetch(proxyUrl + encodeURIComponent(API_URL_TICKERS), {
-            method: "GET",
-        })
-        .then(response => response.text()) // Get the raw response text
-        .then(text => {
-            console.log("Raw response:", text); // Log the raw response to check its content
+        // Function to fetch price data and update the page
+        function fetchPrice() {
+            const payload = { "symbols": [symbol] };
             
-            try {
-                const data = JSON.parse(text); // Attempt to parse it as JSON
-                console.log("Parsed JSON data:", data);
+            // Send POST request to the API
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Log raw JSON data in the "raw-data" div
+                document.getElementById("raw-data").innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
 
-                // Check if we have the expected data structure
-                if (data && data.contents) {
-                    const jsonData = JSON.parse(data.contents); // Parse the actual JSON content
-                    console.log("Final JSON data:", jsonData);
-
-                    // Display the raw JSON data on the webpage
-                    document.getElementById("jsonData").textContent = JSON.stringify(jsonData, null, 2);
-
-                    if (symbol in jsonData) {
-                        const soloToXrp = jsonData[symbol];
-                        // Update the HTML with the price data
-                        document.getElementById("lastPrice").textContent = `Last Price: ${soloToXrp['last_price']}`;
-                        document.getElementById("volume").textContent = `Volume: ${soloToXrp['volume']}`;
-                    } else {
-                        console.error(`No data found for ${symbol}`);
-                    }
+                // Check if the symbol exists in the data and update price information
+                if (symbol in data) {
+                    const priceData = data[symbol];
+                    const priceInfo = `
+                        <p><strong>Open Price:</strong> ${priceData.open_price}</p>
+                        <p><strong>High Price:</strong> ${priceData.high_price}</p>
+                        <p><strong>Low Price:</strong> ${priceData.low_price}</p>
+                        <p><strong>Last Price:</strong> ${priceData.last_price}</p>
+                        <p><strong>Volume:</strong> ${priceData.volume}</p>
+                    `;
+                    document.getElementById("price-info").innerHTML = priceInfo;
                 } else {
-                    throw new Error("Invalid or empty JSON response");
+                    document.getElementById("price-info").innerHTML = "<p>No data found for the symbol.</p>";
                 }
-            } catch (error) {
-                console.error("Error parsing response:", error);
-                document.getElementById("jsonData").textContent = "Error parsing response: " + error;
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching data:", error);
-            document.getElementById("jsonData").textContent = "Error fetching data: " + error;
-        });
-    }
+            })
+            .catch(error => {
+                console.error('Error fetching price data:', error);
+                document.getElementById("price-info").innerHTML = "<p>Error fetching price data.</p>";
+            });
+        }
 
-    // Run the function to fetch price data
-    fetchPrice(symbol_to_check);
-</script>
+        // Fetch price data when the page loads
+        window.onload = fetchPrice;
+    </script>
+</body>
 </html>
