@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Price Widget</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/xrpl@2.0.0-beta.2/dist/xrpl.min.js"></script>
     <style>
         body {
             font-family: 'Orbitron', sans-serif;
@@ -97,50 +98,6 @@
         const socketBTC = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@trade');
         const socketXRP = new WebSocket('wss://stream.binance.com:9443/ws/xrpusdt@trade');
 
-        // Variable to hold the XRP price
-        let xrpPriceUSD = 0;
-
-        // Fetch the first buy order from the order book for MFX/XRP
-        async function fetchMFXPriceXRP() {
-            try {
-                const response = await fetch('https://s1.ripple.com:51234', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        method: 'book_offers',
-                        params: [
-                            {
-                                ledger_index: 'validated',
-                                taker_gets: {
-                                    currency: 'MFX',
-                                    issuer: 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1' // MFX issuer address
-                                },
-                                taker_pays: {
-                                    currency: 'XRP'
-                                }
-                            }
-                        ]
-                    })
-                });
-
-                const data = await response.json();
-                if (data.result && data.result.offers.length > 0) {
-                    // Get the first buy order from the order book
-                    const mfxXrpPrice = data.result.offers[0].price;
-                    const mfxPriceUSD = (mfxXrpPrice * xrpPriceUSD).toFixed(2);
-                    document.getElementById("mfx-price").innerText = `$${mfxPriceUSD}`;
-                } else {
-                    console.error('Unable to fetch MFX price from XRP Ledger.');
-                    document.getElementById("mfx-price").innerText = "Error fetching price";
-                }
-            } catch (error) {
-                console.error('Error fetching MFX price:', error);
-                document.getElementById("mfx-price").innerText = "Error fetching price";
-            }
-        }
-
         // WebSocket event for BTC/USD updates
         socketBTC.onmessage = function (event) {
             const data = JSON.parse(event.data);
@@ -151,11 +108,11 @@
         // WebSocket event for XRP/USD updates
         socketXRP.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            xrpPriceUSD = parseFloat(data.p).toFixed(2);
-            document.getElementById("xrp-price").innerText = `$${xrpPriceUSD}`;
+            const xrpPrice = parseFloat(data.p).toFixed(2);
+            document.getElementById("xrp-price").innerText = `$${xrpPrice}`;
 
-            // After fetching XRP price, calculate MFX/USD
-            fetchMFXPriceXRP();
+            // Once we have XRP price, update the MFX price
+            fetchMFXPrice(xrpPrice);
         };
 
         // Handle WebSocket errors
@@ -168,6 +125,37 @@
             console.log('Error in XRP WebSocket:', error);
             document.getElementById("xrp-price").innerText = "Error";
         };
+
+        // Fetch MFX price from XRPL Order Book and calculate MFX/USD
+        async function fetchMFXPrice(xrpPrice) {
+            const client = new xrpl.Client("wss://s2.ripple.com");
+
+            try {
+                await client.connect();
+
+                // Get the order book for the MFX/XRP pair
+                const orderBook = await client.request({
+                    command: 'book_offers',
+                    taker_gets: { currency: 'XRP', issuer: '' },
+                    taker_pays: { currency: 'MFX', issuer: 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1' },
+                    limit: 1
+                });
+
+                if (orderBook.result.offers.length > 0) {
+                    const bestBid = orderBook.result.offers[0].price;
+                    const mfxPriceInXRP = parseFloat(bestBid);
+                    const mfxPriceInUSD = (mfxPriceInXRP * parseFloat(xrpPrice)).toFixed(2);
+                    document.getElementById("mfx-price").innerText = `$${mfxPriceInUSD}`;
+                } else {
+                    document.getElementById("mfx-price").innerText = "No bids available";
+                }
+            } catch (error) {
+                console.error('Error fetching MFX price:', error);
+                document.getElementById("mfx-price").innerText = "Error";
+            } finally {
+                client.disconnect();
+            }
+        }
     </script>
 </body>
 </html>
