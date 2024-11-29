@@ -20,6 +20,14 @@
             margin: 5px 0;
             font-size: 16px;
         }
+        #jsonData {
+            white-space: pre-wrap; /* Maintains formatting */
+            font-family: monospace;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
     </style>
 </head>
 <body>
@@ -28,6 +36,11 @@
     <h2>MoonShot Price</h2>
     <p id="lastPrice">Last Price: Loading...</p>
     <p id="volume">Volume: Loading...</p>
+</div>
+
+<div id="jsonData">
+    <h3>Raw JSON Data:</h3>
+    <p>Loading...</p>
 </div>
 
 <script>
@@ -52,9 +65,12 @@
         .then(data => {
             console.log("Response received from API:", data);
 
+            // Display the raw JSON data on the webpage
+            document.getElementById("jsonData").textContent = JSON.stringify(data, null, 2);
+
             if (symbol in data) {
                 const soloToXrp = data[symbol];
-                // Update the HTML with the data received
+                // Update the HTML with the price data
                 document.getElementById("lastPrice").textContent = `Last Price: ${soloToXrp['last_price']}`;
                 document.getElementById("volume").textContent = `Volume: ${soloToXrp['volume']}`;
             } else {
@@ -63,6 +79,7 @@
         })
         .catch(error => {
             console.error("Error fetching data:", error);
+            document.getElementById("jsonData").textContent = "Error fetching data: " + error;
         });
     }
 
