@@ -32,6 +32,7 @@
             width: 24px;
             height: 24px;
             margin-right: 8px;
+            border-radius: 50%;
         }
         .crypto-price span {
             font-size: 16px;
@@ -45,11 +46,17 @@
 <body>
     <div id="crypto-widget">
         <div class="crypto-price">
-            <span><img src="https://cryptoicons.org/api/icon/btc/24" alt="BTC"> BTC/USD:</span>
+            <span>
+                <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" alt="BTC"> 
+                BTC/USD:
+            </span>
             <span class="price" id="btc-price">Loading...</span>
         </div>
         <div class="crypto-price">
-            <span><img src="https://cryptoicons.org/api/icon/xrp/24" alt="XRP"> XRP/USD:</span>
+            <span>
+                <img src="https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png" alt="XRP"> 
+                XRP/USD:
+            </span>
             <span class="price" id="xrp-price">Loading...</span>
         </div>
     </div>
