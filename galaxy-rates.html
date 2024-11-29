@@ -84,7 +84,7 @@
             <span class="price" id="btc-price">Loading...</span>
         </div>
         <div class="crypto-price">
-            <span><img src="./images/icons/xrp.png" alt="XRP"> XRP/USD:</span>
+            <span><img src="./images/icons/xrp.webp" alt="XRP"> XRP/USD:</span>
             <span class="price" id="xrp-price">Loading...</span>
         </div>
     </div>
@@ -98,14 +98,14 @@
         socketBTC.onmessage = function (event) {
             const data = JSON.parse(event.data);
             const btcPrice = parseFloat(data.p).toFixed(2); // Extract price from WebSocket message
-            document.getElementById("btc-price").innerText = $${btcPrice};
+            document.getElementById("btc-price").innerText = `$${btcPrice}`;
         };
 
         // WebSocket event for XRP/USD updates
         socketXRP.onmessage = function (event) {
             const data = JSON.parse(event.data);
             const xrpPrice = parseFloat(data.p).toFixed(2); // Extract price from WebSocket message
-            document.getElementById("xrp-price").innerText = $${xrpPrice};
+            document.getElementById("xrp-price").innerText = `$${xrpPrice}`;
         };
 
         // Handle WebSocket errors
