@@ -28,6 +28,7 @@
         const socket = new WebSocket('wss://api.onthedex.live/public/v1');
 
         socket.onopen = () => {
+            console.log('WebSocket connection opened');
             // Subscribe to token price updates
             socket.send(JSON.stringify({
                 command: 'subscribe',
@@ -36,6 +37,7 @@
         };
 
         socket.onmessage = (event) => {
+            console.log('WebSocket message received:', event.data);
             const data = JSON.parse(event.data);
             if (data && data.price) {
                 document.getElementById('price').innerText = `Price: ${data.price}`;
@@ -43,13 +45,13 @@
         };
 
         socket.onerror = (error) => {
-            console.error(`WebSocket error: ${error}`);
+            console.error('WebSocket error:', error);
         };
 
         socket.onclose = () => {
+            console.log('WebSocket connection closed');
             document.getElementById('price').innerText = 'Connection closed';
         };
     </script>
 </body>
 </html>
-
