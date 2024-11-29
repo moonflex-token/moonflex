@@ -24,16 +24,19 @@
     <pre id="json-data">Loading...</pre>
 
     <script>
+        // CORS proxy to bypass CORS restrictions in browsers
         const CORS_PROXY = "https://api.allorigins.win/raw?url=";
         const API_URL_TICKERS = "https://api.sologenic.org/api/v1/tickers/24h";
-        const symbol_to_check = "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1";
+        const symbol_to_check = "XRP/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"; // Symbol to check
 
         async function fetchPrice() {
+            // Prepare the payload to send to the API
             const payload = {
                 symbols: [symbol_to_check]
             };
 
             try {
+                // Send the request to the API using the CORS proxy
                 const response = await fetch(CORS_PROXY + encodeURIComponent(API_URL_TICKERS), {
                     method: 'POST',
                     headers: {
@@ -43,7 +46,7 @@
                 });
 
                 if (!response.ok) {
-                    // If API returns an error response, show it as is
+                    // Handle non-200 responses by showing them raw
                     const errorText = await response.text();
                     document.getElementById("json-data").textContent = errorText;
                     return;
@@ -54,12 +57,12 @@
                 document.getElementById("json-data").textContent = JSON.stringify(data, null, 2);
 
             } catch (error) {
-                // If fetch fails, display the error message
+                // Handle any errors that occur during the fetch
                 document.getElementById("json-data").textContent = `Error: ${error.message}`;
             }
         }
 
-        // Fetch data when the page loads
+        // Fetch the data when the page loads
         window.onload = fetchPrice;
     </script>
 </body>
