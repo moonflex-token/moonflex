@@ -34,10 +34,14 @@
         // WebSocket connection URL
         const wsUrl = 'wss://s1.xrplmeta.org'; // XRPL WebSocket server
         
+        // Create a new WebSocket connection
+        const ws = new WebSocket(wsUrl);
+
         // Function to handle incoming messages from the WebSocket
         function onMessage(event) {
             const data = JSON.parse(event.data);
-            
+            console.log(data);  // Log the data to check for available information
+
             // Check if the data contains price information
             if (data && data.result && data.result.price) {
                 const price = data.result.price;
@@ -45,38 +49,37 @@
                 document.getElementById('price').textContent = `MFX Price: ${price} XRP`;
             } else {
                 console.log('Error: No price data received or invalid response');
+                document.getElementById('loading').textContent = 'Failed to fetch price.';
             }
         }
 
-        // Create a new WebSocket connection
-        const ws = new WebSocket(wsUrl);
-
+        // Send a message to subscribe to token price data
         ws.onopen = function() {
             console.log('WebSocket connection opened.');
-            
-            // Request the price for MFX (MFX/XRP pair)
+
+            // Subscribe to MFX token price information
             const msg = {
-                command: "token_series",
+                command: "subscribe",
+                streams: ["token_price"],  // Example of subscribing to price stream (check actual stream name)
                 token: {
-                    issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1", // MFX token issuer
-                    currency: "MFX" // MFX token currency code
-                },
-                metric: "price",
-                time: {
-                    from: Math.floor(Date.now() / 1000) - 86400, // Last 24 hours
-                    to: Math.floor(Date.now() / 1000) // Current time
+                    issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1",  // MFX token issuer
+                    currency: "MFX"  // MFX token currency code
                 }
             };
-            ws.send(JSON.stringify(msg)); // Send the request to the server
+
+            ws.send(JSON.stringify(msg));  // Send the subscription request
         };
 
+        // Event listener for handling incoming WebSocket messages
         ws.onmessage = onMessage;
 
+        // Error handling
         ws.onerror = function(error) {
             console.log("WebSocket Error: ", error);
             document.getElementById('loading').textContent = 'Failed to fetch price.';
         };
 
+        // Close WebSocket connection
         ws.onclose = function() {
             console.log("WebSocket connection closed.");
         };
@@ -84,4 +87,3 @@
 
 </body>
 </html>
-
