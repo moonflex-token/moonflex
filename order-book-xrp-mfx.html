@@ -3,43 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonShot - MFX Price</title>
+    <title>Token Price</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        h1 {
-            color: #4CAF50;
+        #loading {
+            display: block;
         }
         #price {
-            font-size: 2em;
-            color: #555;
-            margin-top: 20px;
-        }
-        #loading {
-            font-size: 1.5em;
-            color: #888;
+            font-size: 24px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-
-    <h1>MoonShot - MFX Token Price</h1>
-    <div id="loading">Loading MFX Price...</div>
+    <h1>Token Price</h1>
+    <div id="loading">Loading...</div>
     <div id="price"></div>
 
     <script>
-        // WebSocket connection URL
         const wsUrl = 'wss://s1.xrplmeta.org'; // XRPL WebSocket server
-        
+        const ws = new WebSocket(wsUrl);
+
         // Function to handle incoming messages from the WebSocket
         function onMessage(event) {
             const data = JSON.parse(event.data);
-            console.log(data);  // Log the raw data for debugging
+            console.log(data);  // Log data for debugging
 
-            // Check if the data contains price information
             if (data && data.result && data.result.price) {
                 const price = data.result.price;
                 document.getElementById('loading').style.display = 'none';
@@ -50,36 +38,37 @@
             }
         }
 
-        // Create a new WebSocket connection
-        const ws = new WebSocket(wsUrl);
-
+        // WebSocket open handler
         ws.onopen = function() {
             console.log('WebSocket connection opened.');
 
-            // Request the MFX/XRP token pair price (subscription to a specific token)
+            // Subscribe to MFX token price information
             const msg = {
-                command: "subscribe",
-                streams: ["token_price"],  // Stream for token price data
-                token: {
-                    issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1",  // MFX token issuer address
-                    currency: "MFX"  // MFX token currency
-                }
+                command: "tokens_subscribe",
+                tokens: [
+                    { 
+                        issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1",  // MFX token issuer
+                        currency: "MFX"  // MFX token currency
+                    }
+                ]
             };
 
-            ws.send(JSON.stringify(msg));  // Send the subscription request to the server
+            ws.send(JSON.stringify(msg));  // Send subscription request
         };
 
-        ws.onmessage = onMessage;  // Handle incoming messages
+        // Listen for incoming messages
+        ws.onmessage = onMessage;
 
+        // Error handling
         ws.onerror = function(error) {
             console.log("WebSocket Error: ", error);
             document.getElementById('loading').textContent = 'Failed to fetch price.';
         };
 
+        // Close WebSocket connection
         ws.onclose = function() {
             console.log("WebSocket connection closed.");
         };
     </script>
-
 </body>
 </html>
