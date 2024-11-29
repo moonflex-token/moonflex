@@ -43,18 +43,19 @@
                 });
 
                 if (!response.ok) {
-                    // Just show the raw response text in case of an error
-                    document.getElementById("json-data").textContent = await response.text();
+                    // If API returns an error response, show it as is
+                    const errorText = await response.text();
+                    document.getElementById("json-data").textContent = errorText;
                     return;
                 }
 
-                // Get the raw response data and display it exactly as is
+                // Get the raw JSON response and display it
                 const data = await response.json();
                 document.getElementById("json-data").textContent = JSON.stringify(data, null, 2);
 
             } catch (error) {
-                // Show the error message if there's an issue with the fetch
-                document.getElementById("json-data").textContent = error.message;
+                // If fetch fails, display the error message
+                document.getElementById("json-data").textContent = `Error: ${error.message}`;
             }
         }
 
