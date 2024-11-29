@@ -91,8 +91,8 @@
 
     <script>
         // WebSocket connection for Binance live price updates
-        const socketBTC = new WebSocket('wss://stream.binance.com:9443/ws/btcusd@trade');
-        const socketXRP = new WebSocket('wss://stream.binance.com:9443/ws/xrpusd@trade');
+        const socketBTC = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@trade');
+        const socketXRP = new WebSocket('wss://stream.binance.com:9443/ws/xrpusdt@trade');
 
         // WebSocket event for BTC/USD updates
         socketBTC.onmessage = function (event) {
