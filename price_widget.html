@@ -4,46 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Price Widget</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Orbitron', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #000; /* Black background */
+            color: #fe6602; /* Orange text color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         #crypto-widget {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            max-width: 300px;
-            padding: 16px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #222; /* Dark gray background for the widget */
+            border: 2px solid #fe6602; /* Orange border */
+            border-radius: 16px;
+            max-width: 350px;
+            padding: 24px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+            color: #fff;
+        }
+        #crypto-widget h2 {
+            text-align: center;
+            color: #fe6602;
+            margin-bottom: 16px;
+            font-size: 24px;
+            letter-spacing: 1px;
         }
         .crypto-price {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 8px 0;
-            padding: 8px;
-            border: 1px solid #ddd;
+            margin: 16px 0;
+            padding: 12px;
+            border: 2px solid #fe6602;
             border-radius: 8px;
-            background: #ffffff;
+            background: #333; /* Slightly lighter gray */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .crypto-price:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(254, 102, 2, 0.6);
         }
         .crypto-price img {
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             margin-right: 8px;
         }
         .crypto-price span {
-            font-size: 16px;
+            font-size: 18px;
         }
         .crypto-price .price {
             font-weight: bold;
-            color: #007bff;
+            font-size: 20px;
+            color: #fe6602; /* Orange for prices */
         }
     </style>
 </head>
 <body>
     <div id="crypto-widget">
+        <h2>Crypto Prices</h2>
         <div class="crypto-price">
             <span><img src="./images/icons/bitcoin.webp" alt="BTC"> BTC/USD:</span>
             <span class="price" id="btc-price">Loading...</span>
@@ -70,7 +92,7 @@
         }
 
         fetchCryptoPrices();
-        setInterval(fetchCryptoPrices, 1000); // Update prices every 1 seconds
+        setInterval(fetchCryptoPrices, 1000); // Update prices every 1 second
     </script>
 </body>
 </html>
