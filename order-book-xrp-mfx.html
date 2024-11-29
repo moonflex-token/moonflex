@@ -46,25 +46,17 @@
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
+                // Get the raw response data
                 const data = await response.json();
                 console.log("Response received from API:", data);
-                displayData(data);
+                
+                // Display the raw API response
+                document.getElementById("json-data").textContent = JSON.stringify(data, null, 2);
+
             } catch (error) {
                 console.error("Error fetching data:", error);
-                document.getElementById("json-data").textContent = "Error fetching data.";
-            }
-        }
-
-        function displayData(data) {
-            const jsonDataElement = document.getElementById("json-data");
-
-            // Check if the symbol exists in the data
-            const symbolData = data[symbol_to_check];
-            if (symbolData) {
-                const formattedData = JSON.stringify(symbolData, null, 2);
-                jsonDataElement.textContent = formattedData;
-            } else {
-                jsonDataElement.textContent = "No data found for the specified symbol.";
+                // Display the error message from the API or the general error message
+                document.getElementById("json-data").textContent = `Error: ${error.message}`;
             }
         }
 
