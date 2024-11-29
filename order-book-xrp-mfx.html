@@ -42,18 +42,18 @@
         ws.onopen = function() {
             console.log('WebSocket connection opened.');
 
-            // Subscribe to MFX token price information
+            // Send request for the aggregate price of MFX/XRP
             const msg = {
-                command: "tokens_subscribe",
-                tokens: [
-                    { 
-                        issuer: "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1",  // MFX token issuer
-                        currency: "MFX"  // MFX token currency
-                    }
-                ]
+                "command": "get_aggregate_price",
+                "token": {
+                    "issuer": "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1", // MFX token issuer
+                    "currency": "MFX" // MFX token currency
+                },
+                "base": "XRP", // Base currency XRP
+                "quote": "USD" // You can switch this to another pair if desired
             };
 
-            ws.send(JSON.stringify(msg));  // Send subscription request
+            ws.send(JSON.stringify(msg));  // Send the request
         };
 
         // Listen for incoming messages
