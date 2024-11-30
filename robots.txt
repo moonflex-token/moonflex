@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /test/
+
+# Disallow indexing of assets folder (if applicable)
+Disallow: /assets/
+
+# Sitemap location
+Sitemap: https://moonflex.xyz/sitemap.xml
