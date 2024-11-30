@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Homepage -->
+    <url>
+        <loc>https://moonflex.xyz/</loc>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- Whitepaper PDF -->
+    <url>
+        <loc>https://moonflex.xyz/whitepaper.pdf</loc>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Galaxy Rates Page -->
+    <url>
+        <loc>https://moonflex.xyz/galaxy-rates</loc>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Pitch Deck PDF -->
+    <url>
+        <loc>https://moonflex.xyz/mfx_pitch_deck.pdf</loc>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Airdrop Page -->
+    <url>
+        <loc>https://moonflex.xyz/airdrop</loc>
+        <priority>0.9</priority>
+    </url>
+</urlset>
