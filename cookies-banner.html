@@ -38,6 +38,7 @@
             font-size: 14px;
             border-radius: 20px; /* Rounded corners */
             font-family: 'Orbitron', sans-serif; /* Ensure the Orbitron font is applied */
+            margin: 0 10px;
         }
         .cookies-banner button:hover {
             background-color: #e04d00;
@@ -53,6 +54,7 @@
     <div class="cookies-banner" id="cookiesBanner">
         <p>We use cookies to improve your experience on our website. By browsing, you agree to our <a href="https://moonflex.xyz/cookie-policy" target="_blank">Cookie Policy</a>.</p>
         <button id="acceptCookiesButton">Accept Cookies</button>
+        <button id="rejectCookiesButton">Reject Cookies</button>
     </div>
 
     <script>
@@ -65,6 +67,15 @@
         document.getElementById('acceptCookiesButton').addEventListener('click', function() {
             // Set a flag in local storage to remember the user's choice
             localStorage.setItem('cookiesAccepted', 'true');
+
+            // Hide the banner
+            document.getElementById('cookiesBanner').style.display = 'none';
+        });
+
+        // When the user clicks the "Reject Cookies" button
+        document.getElementById('rejectCookiesButton').addEventListener('click', function() {
+            // Set a flag in local storage to remember the user's choice
+            localStorage.setItem('cookiesAccepted', 'false');
 
             // Hide the banner
             document.getElementById('cookiesBanner').style.display = 'none';
