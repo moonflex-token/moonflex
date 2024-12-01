@@ -55,20 +55,36 @@
         <button id="rejectCookiesButton">Reject Cookies</button>
     </div>
 
-    <script>
-        if (!localStorage.getItem('cookiesAccepted')) {
-            document.getElementById('cookiesBanner').style.display = 'block';
-        }
+<script>
+    // Check if the user has already accepted cookies
+    if (!localStorage.getItem('cookiesAccepted')) {
+        document.getElementById('cookiesBanner').style.display = 'block';
+    }
 
-        document.getElementById('acceptCookiesButton').addEventListener('click', function() {
-            localStorage.setItem('cookiesAccepted', 'true');
-            document.getElementById('cookiesBanner').style.display = 'none';
-        });
+    // When the user clicks the "Accept Cookies" button
+    document.getElementById('acceptCookiesButton').addEventListener('click', function() {
+        // Set a flag in local storage to remember the user's choice
+        localStorage.setItem('cookiesAccepted', 'true');
 
-        document.getElementById('rejectCookiesButton').addEventListener('click', function() {
-            localStorage.setItem('cookiesAccepted', 'false');
-            document.getElementById('cookiesBanner').style.display = 'none';
-        });
-    </script>
+        // Hide the banner
+        document.getElementById('cookiesBanner').style.display = 'none';
+
+        // Notify the parent window
+        window.parent.postMessage('cookiesHandled', '*');
+    });
+
+    // When the user clicks the "Reject Cookies" button
+    document.getElementById('rejectCookiesButton').addEventListener('click', function() {
+        // Set a flag in local storage to remember the user's choice
+        localStorage.setItem('cookiesAccepted', 'false');
+
+        // Hide the banner
+        document.getElementById('cookiesBanner').style.display = 'none';
+
+        // Notify the parent window
+        window.parent.postMessage('cookiesHandled', '*');
+    });
+</script>
+
 </body>
 </html>
