@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +22,7 @@
             text-align: center;
             font-size: 14px;
             display: none;
-            z-index: 9999;
+            z-index: 9999; /* Keep it high, but lower than the CTAs */
         }
         .cookies-banner a {
             color: #fe6602;
@@ -36,8 +35,8 @@
             padding: 10px 20px;
             cursor: pointer;
             font-size: 14px;
-            border-radius: 20px; /* Rounded corners */
-            font-family: 'Orbitron', sans-serif; /* Ensure the Orbitron font is applied */
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
             margin: 0 10px;
         }
         .cookies-banner button:hover {
@@ -49,7 +48,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="cookies-banner" id="cookiesBanner">
         <p>We use cookies to improve your experience on our website. By browsing, you agree to our <a href="https://moonflex.xyz/cookie-policy" target="_blank">Cookie Policy</a>.</p>
@@ -58,29 +56,19 @@
     </div>
 
     <script>
-        // Check if the user has already accepted cookies
         if (!localStorage.getItem('cookiesAccepted')) {
             document.getElementById('cookiesBanner').style.display = 'block';
         }
 
-        // When the user clicks the "Accept Cookies" button
         document.getElementById('acceptCookiesButton').addEventListener('click', function() {
-            // Set a flag in local storage to remember the user's choice
             localStorage.setItem('cookiesAccepted', 'true');
-
-            // Hide the banner
             document.getElementById('cookiesBanner').style.display = 'none';
         });
 
-        // When the user clicks the "Reject Cookies" button
         document.getElementById('rejectCookiesButton').addEventListener('click', function() {
-            // Set a flag in local storage to remember the user's choice
             localStorage.setItem('cookiesAccepted', 'false');
-
-            // Hide the banner
             document.getElementById('cookiesBanner').style.display = 'none';
         });
     </script>
 </body>
-
 </html>
