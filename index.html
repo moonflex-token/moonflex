@@ -488,15 +488,22 @@
           <iframe src="music_player.html" style="position: fixed; bottom: 20px; left: 20px; border: none; width: 380px; height: 150px; z-index: 1000; background-color: transparent;"></iframe>
     </div>
     <script src="script.js"></script>
-   <iframe id="cookiesIframe" src="cookies-banner.html" style="width: 100%; height: 150px; border: none; position: fixed; bottom: 0; left: 0; z-index: 9999;"></iframe>
-   <script>
-       // Listen for messages from the iframe
-       window.addEventListener('message', function(event) {
-           if (event.data === 'cookiesHandled') {
-               // Lower the z-index of the iframe to allow interaction with other elements
-               document.getElementById('cookiesIframe').style.zIndex = '-1';
-           }
-       });
+    <iframe id="cookiesIframe" src="cookies-banner.html" style="width: 100%; height: 150px; border: none; position: fixed; bottom: 0; left: 0; z-index: 9999;"></iframe>
+    <script>
+        // Check and apply the zIndex state when the page loads
+        const cookiesHandled = localStorage.getItem('cookiesHandled');
+        if (cookiesHandled === 'true') {
+            document.getElementById('cookiesIframe').style.zIndex = '-1';
+        }
+
+        // Listen for messages from the iframe
+        window.addEventListener('message', function (event) {
+            if (event.data === 'cookiesHandled') {
+                // Lower the z-index of the iframe and store the state
+                document.getElementById('cookiesIframe').style.zIndex = '-1';
+                localStorage.setItem('cookiesHandled', 'true');
+            }
+        });
     </script>
     <script>
         // JavaScript for FAQ toggle functionality
