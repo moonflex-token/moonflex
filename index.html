@@ -488,18 +488,16 @@
           <iframe src="music_player.html" style="position: fixed; bottom: 20px; left: 20px; border: none; width: 380px; height: 150px; z-index: 1000; background-color: transparent;"></iframe>
     </div>
     <script src="script.js"></script>
-<iframe id="cookiesIframe" src="cookies-banner.html" style="width: 100%; height: 150px; border: none; position: fixed; bottom: 0; left: 0; z-index: 9999;"></iframe>
-<script>
-    // Listen for messages from the iframe
-    window.addEventListener('message', function(event) {
-        if (event.data === 'cookiesHandled') {
-            // Remove the iframe completely or hide it
-            const cookiesIframe = document.getElementById('cookiesIframe');
-            cookiesIframe.parentNode.removeChild(cookiesIframe); // Option 1: Remove the iframe
-            // cookiesIframe.style.display = 'none'; // Option 2: Hide the iframe
-        }
-    });
-</script>
+   <iframe id="cookiesIframe" src="cookies-banner.html" style="width: 100%; height: 150px; border: none; position: fixed; bottom: 0; left: 0; z-index: 9999;"></iframe>
+   <script>
+       // Listen for messages from the iframe
+       window.addEventListener('message', function(event) {
+           if (event.data === 'cookiesHandled') {
+               // Lower the z-index of the iframe to allow interaction with other elements
+               document.getElementById('cookiesIframe').style.zIndex = '-1';
+           }
+       });
+    </script>
     <script>
         // JavaScript for FAQ toggle functionality
         function toggleAnswer(questionElement) {
