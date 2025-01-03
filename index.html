@@ -418,11 +418,22 @@
       <!-- Footer Text -->
       <div style="text-align: center; margin-top: 20px;">
          <br>© 2025 MoonFlex. All rights reserved.
-      </div>
       <!-- Sticky Call to Action Button -->
       <div id="cta-sticky">
-         <a href="https://xmagnetic.org/swap/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1_XRP+XRP?network=mainnet" target="_blank">GRAB MFX Now!</a>
+          <a href="https://xmagnetic.org/swap/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1_XRP+XRP?network=mainnet" 
+             target="_blank"
+             onclick="trackGrabEvent()">GRAB MFX Now!</a>
       </div>
+      <!-- Twitter Conversion Tracking Event Code -->
+      <script type="text/javascript">
+          function trackGrabEvent() {
+              // Trigger the Twitter conversion tracking event when the link is clicked
+              twq('event', 'tw-ov75m-ov75o', {
+                  status: 'clicked' // You can customize the status if needed
+              });
+          }
+      </script>
+      <!-- End Twitter Conversion Tracking Event Code -->
       <!-- Dots for Navigation -->
       <div id="dots">
          <span class="dot" onclick="scrollToSection(0)"></span>
