@@ -176,8 +176,6 @@
             </ul>
         </nav>
     </header>
-
-
     <div class="container">
         <!-- Page 1 - Welcome -->
         <section class="section" id="page-1">
@@ -188,9 +186,22 @@
             </div>
         <!-- Non-Sticky CTA inside the container -->
             <div id="cta-non-sticky">
-                <a href="https://xmagnetic.org/swap/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1_XRP+XRP?network=mainnet" target="_blank">Swap MFX Now</a>
-            </div>
-        </section>
+                    <a href="https://xmagnetic.org/swap/MFX+rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1_XRP+XRP?network=mainnet" 
+                       target="_blank"
+                       onclick="trackSwapEvent()">Swap MFX Now</a>
+                </div>
+            </section>
+        </div>
+        <!-- Twitter Conversion Tracking Event Code -->
+        <script type="text/javascript">
+            function trackSwapEvent() {
+                // Trigger the Twitter conversion tracking event when the link is clicked
+                twq('event', 'tw-ov75m-ov75o', {
+                    status: 'clicked' // You can customize the status if needed
+                });
+            }
+        </script>
+        <!-- End Twitter Conversion Tracking Event Code --
 
         <!-- Page 2 - Tokenomics -->
         <section class="section" id="page-2">
