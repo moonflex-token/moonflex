@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>Proof of Reserves – XRPL</title>
+  <!-- 1) Load the UMD build of xrpl.js from jsDelivr -->
+  <script src="https://cdn.jsdelivr.net/npm/xrpl@2.8.0/build/xrpl-latest-min.js"></script>
   <style>
     body { font-family: sans-serif; padding: 2rem; }
     .spinner {
-      display: inline-block;
-      width: 1em; height: 1em;
-      border: 0.2em solid currentColor;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
+      display: inline-block; width: 1em; height: 1em;
+      border: 0.2em solid currentColor; border-top-color: transparent;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
       vertical-align: text-bottom;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -25,24 +24,24 @@
     <span class="spinner"></span> Loading balances…
   </div>
 
-  <script type="module">
-    import { Client } from 'https://cdn.jsdelivr.net/npm/xrpl@2.8.0/dist/npm/xrpl.mjs'
-
-    async function fetchBalances() {
+  <script>
+    (async () => {
       const balancesEl = document.getElementById('balances')
       const wallets = [
         'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe',
         'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T'
       ]
+
       try {
         console.log('Connecting to XRPL…')
-        const client = new Client('wss://s1.ripple.com')
+        // 2) Use the global xrpl.Client from the UMD build
+        const client = new xrpl.Client('wss://s1.ripple.com')
         await client.connect()
         console.log('Connected! Fetching balances…')
 
         let html = '<ul>'
         for (const acct of wallets) {
-          // 1) Fetch native XRP balance
+          // Native XRP balance
           const { result: info } = await client.request({
             command: 'account_info',
             account: acct,
@@ -51,7 +50,7 @@
           const xrpDrops = info.account_data.Balance
           const xrp = (Number(xrpDrops) / 1_000_000).toFixed(6)
 
-          // 2) Fetch issued-token lines
+          // Issued token lines
           const { result: lines } = await client.request({
             command: 'account_lines',
             account: acct,
@@ -63,14 +62,14 @@
             <ul>
               <li>XRP: ${xrp}</li>`
 
-          // 3) Only show RLUSD from your issuer
+          // Filter for RLUSD only
           for (const line of lines.lines) {
             if (line.currency === 'RLUSD' && line.account === 'rYourIssuerAddressHere') {
               html += `<li>RLUSD: ${line.balance}</li>`
             }
           }
 
-          html += `</ul></li>`
+          html += '</ul></li>'
         }
         html += '</ul>'
 
@@ -81,9 +80,7 @@
         console.error('Error fetching balances:', err)
         balancesEl.innerHTML = '⚠️ Error fetching balances. See console for details.'
       }
-    }
-
-    fetchBalances()
+    })()
   </script>
 </body>
 </html>
