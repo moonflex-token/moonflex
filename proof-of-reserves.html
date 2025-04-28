@@ -28,7 +28,7 @@
       <div><div class="value" id="totalMFX">—</div><div>MFX Total</div></div>
     </div>
     <div id="balancesWallets"><span class="spinner"></span> Fetching balances…</div>
-    <div class="info">These wallets are our <strong>market-making</strong> addresses for <strong>MFX/XRP</strong> pair on XRPL.</div>
+    <div class="info">These wallets are our <strong>market-making</strong> addresses for the <strong>MFX/XRP</strong> pair on XRPL.</div>
   </div>
 
   <!-- AMM Pool MFX/XRP Card -->
@@ -55,74 +55,73 @@
 
   <script>
     (async () => {
-      const wallets = ['rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe', 'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T'];
+      const wallets = [
+        'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe',
+        'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T'
+      ];
       const poolXrpAddr = 'rKy1cV5pQYkVEi8GSifUHcYB4Rxcufz1EF';
       const poolRlusdAddr = 'rLu93AUSPt7kFXTjo76Tum9nf19HtpnZRA';
       const issuerMFX = 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1';
       const issuerRLUSD = 'rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De';
 
-      let totalXRP = 0, totalMFX = 0;
+      // Elements
       const elWallets = document.getElementById('balancesWallets');
       const elPool1 = document.getElementById('balancesPool');
       const elPool2 = document.getElementById('balancesPool2');
 
-      try {
-        const client = new xrpl.Client('wss://s1.ripple.com');
-        await client.connect();
-
-        // Market Maker Wallets
-        let htmlW = '<ul>';
-        for (const w of wallets) {
-          const { result: info } = await client.request({ command:'account_info', account: w, ledger_index:'validated' });
-          const xrpBal = Number(info.account_data.Balance)/1e6;
-          totalXRP += xrpBal;
-          const { result: lines } = await client.request({ command:'account_lines', account: w, ledger_index:'validated' });
-          const mfxBal = Number((lines.lines.find(l=>l.currency==='MFX'&&l.account===issuerMFX)||{}).balance||0);
-          totalMFX += mfxBal;
-          htmlW += `<li><strong>${w}</strong><ul><li>XRP: ${xrpBal.toFixed(6)}</li><li>MFX: ${mfxBal.toFixed(4)}</li></ul></li>`;
-        }
-        htmlW += '</ul>';
-        elWallets.innerHTML = htmlW;
-        document.getElementById('totalXRP').textContent = totalXRP.toFixed(6);
-        document.getElementById('totalMFX').textContent = totalMFX.toFixed(4);
-
-        // AMM Pool MFX/XRP
-        const { result: p1Info } = await client.request({ command:'account_info', account: poolXrpAddr, ledger_index:'validated' });
-        const poolXRP = Number(p1Info.account_data.Balance)/1e6;
-        const { result: p1Lines } = await client.request({ command:'account_lines', account: poolXrpAddr, ledger_index:'validated' });
-        const poolMFX = Number((p1Lines.lines.find(l=>l.currency==='MFX'&&l.account===issuerMFX)||{}).balance||0);
-        elPool1.innerHTML = `<ul><li>XRP: ${poolXRP.toFixed(6)}</li><li>MFX: ${poolMFX.toFixed(4)}</li></ul>`;
-        document.getElementById('poolXRP').textContent = poolXRP.toFixed(6);
-        document.getElementById('poolMFX').textContent = poolMFX.toFixed(4);
-
-        // AMM Pool MFX/RLUSD via amm_info
-        const resp2 = await client.request({ command: 'amm_info', amm_account: poolRlusdAddr });
-        const data2 = resp2.result.amm || resp2.result;
-        let baseAmt = null, quoteAmt = null;
-        [data2.amount, data2.amount2].forEach(amt => {
-          if (amt && typeof amt === 'object') {
-            const curr = amt.currency || amt.currency_hex;
-            const iss = amt.issuer;
-            const val = parseFloat(amt.value || 0);
-            if (iss === issuerMFX && curr === 'MFX') baseAmt = val;
-            if (iss === issuerRLUSD && (curr === 'RLUSD' || curr === actualHex)) quoteAmt = val;
-          }
-        });
-        // actualHex from data response
-        const actualHex = data2.currency_hex || '';
-        if (baseAmt == null || quoteAmt == null) console.error('AMM parse error', data2);
-        elPool2.innerHTML = `<ul><li>MFX: ${baseAmt.toFixed(4)}</li><li>RLUSD: ${quoteAmt.toFixed(4)}</li></ul>`;
-        document.getElementById('pool2MFX').textContent = baseAmt.toFixed(4);
-        document.getElementById('pool2RLUSD').textContent = quoteAmt.toFixed(4);
-
-        await client.disconnect();
-      } catch(e) {
-        console.error(e);
-        elWallets.textContent = '⚠️ Error fetching wallet balances';
-        elPool1.textContent = '⚠️ Error fetching pool reserves';
-        elPool2.textContent = '⚠️ Error fetching pool reserves';
+      const client = new xrpl.Client('wss://s1.ripple.com');
+      await client.connect();
+      
+      // 1) Market Maker Wallets
+      let totalXRP = 0, totalMFX = 0;
+      let htmlW = '<ul>';
+      for (const w of wallets) {
+        const { result: info } = await client.request({ command:'account_info', account: w, ledger_index:'validated' });
+        const xrpBal = Number(info.account_data.Balance) / 1e6;
+        totalXRP += xrpBal;
+        const { result: lines } = await client.request({ command:'account_lines', account: w, ledger_index:'validated' });
+        const mfxBal = Number(lines.lines.find(l=>l.currency==='MFX' && l.account===issuerMFX)?.balance || 0);
+        totalMFX += mfxBal;
+        htmlW += `<li><strong>${w}</strong><ul><li>XRP: ${xrpBal.toFixed(6)}</li><li>MFX: ${mfxBal.toFixed(4)}</li></ul></li>`;
       }
-    })();
+      htmlW += '</ul>';
+      elWallets.innerHTML = htmlW;
+      document.getElementById('totalXRP').textContent = totalXRP.toFixed(6);
+      document.getElementById('totalMFX').textContent = totalMFX.toFixed(4);
+
+      // 2) AMM Pool MFX/XRP
+      const { result: p1Info } = await client.request({ command:'account_info', account: poolXrpAddr, ledger_index:'validated' });
+      const poolXRP = Number(p1Info.account_data.Balance) / 1e6;
+      const { result: p1Lines } = await client.request({ command:'account_lines', account: poolXrpAddr, ledger_index:'validated' });
+      const poolMFX = Number(p1Lines.lines.find(l=>l.currency==='MFX' && l.account===issuerMFX)?.balance || 0);
+      elPool1.innerHTML = `<ul><li>XRP: ${poolXRP.toFixed(6)}</li><li>MFX: ${poolMFX.toFixed(4)}</li></ul>`;
+      document.getElementById('poolXRP').textContent = poolXRP.toFixed(6);
+      document.getElementById('poolMFX').textContent = poolMFX.toFixed(4);
+
+      // 3) AMM Pool MFX/RLUSD via amm_info
+      const resp = await client.request({ command:'amm_info', amm_account: poolRlusdAddr });
+      const data = resp.result.amm || resp.result;
+      let baseAmt = null, quoteAmt = null;
+      [data.amount, data.amount2].forEach(amt => {
+        if (typeof amt === 'object') {
+          const curr = amt.currency || amt.currency_hex;
+          const issuer = amt.issuer;
+          const val = parseFloat(amt.value || 0);
+          if (issuer === issuerMFX && curr === 'MFX') baseAmt = val;
+          if (issuer === issuerRLUSD && (curr === 'RLUSD' || curr === data.currency_hex_quote)) quoteAmt = val;
+        }
+      });
+      elPool2.innerHTML = `<ul><li>MFX: ${baseAmt.toFixed(4)}</li><li>RLUSD: ${quoteAmt.toFixed(4)}</li></ul>`;
+      document.getElementById('pool2MFX').textContent = baseAmt.toFixed(4);
+      document.getElementById('pool2RLUSD').textContent = quoteAmt.toFixed(4);
+
+      await client.disconnect();
+    })().catch(err => {
+      console.error(err);
+      document.getElementById('balancesWallets').textContent = '⚠️ Error fetching wallet balances';
+      document.getElementById('balancesPool').textContent = '⚠️ Error fetching pool reserves';
+      document.getElementById('balancesPool2').textContent = '⚠️ Error fetching pool reserves';
+    });
   </script>
 </body>
 </html>
