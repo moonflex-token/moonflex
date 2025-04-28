@@ -32,10 +32,9 @@
     }
     .summary {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      justify-content: space-around;
       margin-bottom: 1.5rem;
+      flex-wrap: wrap;
     }
     .summary div {
       text-align: center;
@@ -77,12 +76,6 @@
       font-family: 'Orbitron', sans-serif;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-      /* Responsive adjustment */
-    @media (max-width: 768px) {
-      .summary .value {
-        font-size: 2rem;
-      }
-    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/xrpl@2.8.0/build/xrpl-latest-min.js"></script>
 </head>
@@ -172,7 +165,7 @@
           const mfx = mfxLine ? Number(mfxLine.balance) : 0;
           totalMFX += mfx;
 
-          htmlW += `<li><strong>${acct}</strong><ul><li>XRP: ${xrp.toFixed(6)}</li><li>MFX: ${mfx.toFixed(4)}</li></ul></li>`;
+          htmlW += <li><strong>${acct}</strong><ul><li>XRP: ${xrp.toFixed(6)}</li><li>MFX: ${mfx.toFixed(4)}</li></ul></li>;
         }
         htmlW += '</ul>';
         balancesWalletsEl.innerHTML = htmlW;
@@ -185,7 +178,7 @@
         const { result: poolLines } = await client.request({ command: 'account_lines', account: poolAddress, ledger_index: 'validated' });
         const poolMfxLine = poolLines.lines.find(l => l.currency === 'MFX' && l.account === issuerMFX);
         const poolMFX = poolMfxLine ? Number(poolMfxLine.balance) : 0;
-        balancesPoolEl.innerHTML = `<ul><li>XRP: ${poolXRP.toFixed(6)}</li><li>MFX: ${poolMFX.toFixed(4)}</li></ul>`;
+        balancesPoolEl.innerHTML = <ul><li>XRP: ${poolXRP.toFixed(6)}</li><li>MFX: ${poolMFX.toFixed(4)}</li></ul>;
         document.getElementById('poolXRP').textContent = poolXRP.toFixed(6);
         document.getElementById('poolMFX').textContent = poolMFX.toFixed(4);
 
@@ -206,7 +199,7 @@
 
         if (baseAmount === null || quoteAmount === null) throw new Error('Parsing AMM MFX/RLUSD failed.');
 
-        balancesPool2El.innerHTML = `<ul><li>RLUSD: ${quoteAmount.toFixed(4)}</li><li>MFX: ${baseAmount.toFixed(4)}</li></ul>`;
+        balancesPool2El.innerHTML = <ul><li>RLUSD: ${quoteAmount.toFixed(4)}</li><li>MFX: ${baseAmount.toFixed(4)}</li></ul>;
         document.getElementById('pool2MFX').textContent = baseAmount.toFixed(4);
         document.getElementById('pool2RLUSD').textContent = quoteAmount.toFixed(4);
 
