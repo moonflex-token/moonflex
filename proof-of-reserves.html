@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Proof of Reserves – MFX/XRP Market Makers & AMM Pool</title>
+  <title>Proof of Reserves – MFX/XRP Market Makers & AMM Pools</title>
   <style>
     body {
       font-family: sans-serif;
@@ -61,7 +61,7 @@
         <div>XRP Total</div>
       </div>
       <div>
-        <div class="value" id="totalMFX">—</div>
+        <div class="value" id="totalMFX">—</n/div>
         <div>MFX Total</div>
       </div>
     </div>
@@ -75,9 +75,9 @@
     </div>
   </div>
 
-  <!-- AMM Pool Card -->
+  <!-- AMM Pool MFX/XRP Card -->
   <div class="card">
-    <h2>AMM Pool Reserves</h2>
+    <h2>AMM Pool Reserves: MFX/XRP</h2>
     <div id="summaryPool" class="summary">
       <div>
         <div class="value" id="poolXRP">—</div>
@@ -94,7 +94,30 @@
     </div>
 
     <div class="info">
-      This address is our Automated Market Maker (AMM) pool for the MFX/XRP pair, showing current liquidity reserves.
+      This address is our Automated Market Maker (AMM) pool for the <strong>MFX/XRP</strong> pair, showing current liquidity reserves.
+    </div>
+  </div>
+
+  <!-- AMM Pool MFX/RLUSD Card -->
+  <div class="card">
+    <h2>AMM Pool Reserves: MFX/RLUSD</h2>
+    <div id="summaryPool2" class="summary">
+      <div>
+        <div class="value" id="pool2MFX">—</div>
+        <div>MFX in Pool</div>
+      </div>
+      <div>
+        <div class="value" id="pool2RLUSD">—</div>
+        <div>RLUSD in Pool</div>
+      </div>
+    </div>
+
+    <div id="balancesPool2">
+      <span class="spinner"></span> Fetching pool reserves…
+    </div>
+
+    <div class="info">
+      This address is our Automated Market Maker (AMM) pool for the <strong>MFX/RLUSD</strong> pair, showing current liquidity reserves.
     </div>
   </div>
 
@@ -105,11 +128,14 @@
         'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T'
       ];
       const poolAddress = 'rKy1cV5pQYkVEi8GSifUHcYB4Rxcufz1EF';
-      const issuer = 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1';
+      const pool2Address = 'rLu93AUSPt7kFXTjo76Tum9nf19HtpnZRA';
+      const issuerMFX = 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1';
+      const issuerRLUSD = 'rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De';
 
       let totalXRP = 0, totalMFX = 0;
       const balancesWalletsEl = document.getElementById('balancesWallets');
       const balancesPoolEl = document.getElementById('balancesPool');
+      const balancesPool2El = document.getElementById('balancesPool2');
 
       try {
         const client = new xrpl.Client('wss://s1.ripple.com');
@@ -123,7 +149,7 @@
           totalXRP += xrp;
 
           const { result: lines } = await client.request({ command: 'account_lines', account: acct, ledger_index: 'validated' });
-          const mfxLine = lines.lines.find(l => l.currency === 'MFX' && l.account === issuer);
+          const mfxLine = lines.lines.find(l => l.currency === 'MFX' && l.account === issuerMFX);
           const mfx = mfxLine ? Number(mfxLine.balance) : 0;
           totalMFX += mfx;
 
@@ -131,29 +157,38 @@
         }
         htmlW += '</ul>';
         balancesWalletsEl.innerHTML = htmlW;
-        await client.disconnect();
         document.getElementById('totalXRP').textContent = totalXRP.toFixed(6);
         document.getElementById('totalMFX').textContent = totalMFX.toFixed(4);
 
-        // --- AMM Pool Reserves ---
-        await client.connect();
-        // XRP
+        // --- AMM Pool MFX/XRP ---
+        await client.request({ command: 'ping' }); // reuse connection
         const { result: poolInfo } = await client.request({ command: 'account_info', account: poolAddress, ledger_index: 'validated' });
         const poolXRP = Number(poolInfo.account_data.Balance) / 1_000_000;
-        // MFX
         const { result: poolLines } = await client.request({ command: 'account_lines', account: poolAddress, ledger_index: 'validated' });
-        const poolMfxLine = poolLines.lines.find(l => l.currency === 'MFX' && l.account === issuer);
+        const poolMfxLine = poolLines.lines.find(l => l.currency === 'MFX' && l.account === issuerMFX);
         const poolMFX = poolMfxLine ? Number(poolMfxLine.balance) : 0;
-
         balancesPoolEl.innerHTML = `<ul><li>XRP: ${poolXRP.toFixed(6)}</li><li>MFX: ${poolMFX.toFixed(4)}</li></ul>`;
         document.getElementById('poolXRP').textContent = poolXRP.toFixed(6);
         document.getElementById('poolMFX').textContent = poolMFX.toFixed(4);
+
+        // --- AMM Pool MFX/RLUSD ---
+        const { result: pool2Info } = await client.request({ command: 'account_info', account: pool2Address, ledger_index: 'validated' });
+        const pool2XRP = Number(pool2Info.account_data.Balance) / 1_000_000;
+        const { result: pool2Lines } = await client.request({ command: 'account_lines', account: pool2Address, ledger_index: 'validated' });
+        const pool2MfxLine = pool2Lines.lines.find(l => l.currency === 'MFX' && l.account === issuerMFX);
+        const pool2MFX = pool2MfxLine ? Number(pool2MfxLine.balance) : 0;
+        const pool2RlusdLine = pool2Lines.lines.find(l => l.currency === 'RLUSD' && l.account === issuerRLUSD);
+        const pool2RLUSD = pool2RlusdLine ? Number(pool2RlusdLine.balance) : 0;
+        balancesPool2El.innerHTML = `<ul><li>MFX: ${pool2MFX.toFixed(4)}</li><li>RLUSD: ${pool2RLUSD.toFixed(4)}</li></ul>`;
+        document.getElementById('pool2MFX').textContent = pool2MFX.toFixed(4);
+        document.getElementById('pool2RLUSD').textContent = pool2RLUSD.toFixed(4);
 
         await client.disconnect();
       } catch (e) {
         console.error(e);
         balancesWalletsEl.textContent = '⚠️ Error fetching wallet balances; see console.';
         balancesPoolEl.textContent = '⚠️ Error fetching pool reserves; see console.';
+        balancesPool2El.textContent = '⚠️ Error fetching pool reserves; see console.';
       }
     })();
   </script>
