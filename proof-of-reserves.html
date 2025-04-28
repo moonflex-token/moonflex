@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Proof of Reserves - XRPL</title>
-    <script src="https://unpkg.com/xrpl/dist/xrpl-latest-min.js"></script>
+  <meta charset="UTF-8">
+  <title>Proof of Reserves - XRPL</title>
 </head>
 <body>
-    <h1>Proof of Reserves</h1>
-    <div id="balances"></div>
+  <h1>Proof of Reserves</h1>
+  <div id="balances">Loading…</div>
 
-    <script>
-        async function fetchBalances() {
-            const client = new xrpl.Client("wss://s1.ripple.com"); // Or use another public node
-            await client.connect()
+  <script type="module">
+    import { Client } from 'https://unpkg.com/xrpl/dist/npm/xrpl.mjs'
 
-            // Add the addresses you want to monitor
-            const wallets = [
-                "rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe",
-                "rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T"
-            ]
+    async function fetchBalances() {
+      try {
+        const client = new Client('wss://s1.ripple.com')
+        await client.connect()
 
-            let html = "<ul>"
+        const wallets = [
+          'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe',
+          'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T'
+        ]
 
-            for (let wallet of wallets) {
-                const account_lines = await client.request({
-                    command: "account_lines",
-                    account: wallet
-                })
-
-                html += `<li><strong>Wallet:</strong> ${wallet}<ul>`
-
-                for (let line of account_lines.result.lines) {
-                    html += `<li>${line.balance} ${line.currency} issued by ${line.account}</li>`
-                }
-
-                html += "</ul></li>"
-            }
-
-            html += "</ul>"
-
-            document.getElementById("balances").innerHTML = html
-
-            client.disconnect()
+        let html = '<ul>'
+        for (const wallet of wallets) {
+          // fetch issued-token balances
+          const resp = await client.request({
+            command: 'account_lines',
+            account: wallet
+          })
+          html += `<li><strong>${wallet}</strong><ul>`
+          for (const line of resp.result.lines) {
+            html += `<li>${line.balance} ${line.currency} (issuer ${line.account})</li>`
+          }
+          html += '</ul></li>'
         }
+        html += '</ul>'
 
-        fetchBalances()
-    </script>
+        document.getElementById('balances').innerHTML = html
+        await client.disconnect()
+      } catch (e) {
+        console.error(e)
+        document.getElementById('balances').textContent =
+          'Error fetching balances. Check console for details.'
+      }
+    }
+
+    fetchBalances()
+  </script>
 </body>
 </html>
