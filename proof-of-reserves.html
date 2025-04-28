@@ -114,8 +114,8 @@
   <div class="card">
     <h2>AMM Pool Reserves: MFX/RLUSD</h2>
     <div id="summaryPool2" class="summary">
-      <div><div class="value" id="pool2MFX">—</div><div>MFX in Pool</div></div>
       <div><div class="value" id="pool2RLUSD">—</div><div>RLUSD in Pool</div></div>
+      <div><div class="value" id="pool2MFX">—</div><div>MFX in Pool</div></div>
     </div>
 
     <div id="balancesPool2">
@@ -194,7 +194,7 @@
 
         if (baseAmount === null || quoteAmount === null) throw new Error('Parsing AMM MFX/RLUSD failed.');
 
-        balancesPool2El.innerHTML = `<ul><li>MFX: ${baseAmount.toFixed(4)}</li><li>RLUSD: ${quoteAmount.toFixed(4)}</li></ul>`;
+        balancesPool2El.innerHTML = `<ul><li>RLUSD: ${quoteAmount.toFixed(4)}</li><li>MFX: ${baseAmount.toFixed(4)}</li></ul>`;
         document.getElementById('pool2MFX').textContent = baseAmount.toFixed(4);
         document.getElementById('pool2RLUSD').textContent = quoteAmount.toFixed(4);
 
