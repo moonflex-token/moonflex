@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Proof of Reserves - XRPL</title>
+    <script src="https://unpkg.com/xrpl/dist/xrpl-latest-min.js"></script>
+</head>
+<body>
+    <h1>Proof of Reserves</h1>
+    <div id="balances"></div>
+
+    <script>
+        async function fetchBalances() {
+            const client = new xrpl.Client("wss://s1.ripple.com"); // Or use another public node
+            await client.connect()
+
+            // Add the addresses you want to monitor
+            const wallets = [
+                "rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe",
+                "rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T"
+            ]
+
+            let html = "<ul>"
+
+            for (let wallet of wallets) {
+                const account_lines = await client.request({
+                    command: "account_lines",
+                    account: wallet
+                })
+
+                html += `<li><strong>Wallet:</strong> ${wallet}<ul>`
+
+                for (let line of account_lines.result.lines) {
+                    html += `<li>${line.balance} ${line.currency} issued by ${line.account}</li>`
+                }
+
+                html += "</ul></li>"
+            }
+
+            html += "</ul>"
+
+            document.getElementById("balances").innerHTML = html
+
+            client.disconnect()
+        }
+
+        fetchBalances()
+    </script>
+</body>
+</html>
