@@ -2,85 +2,140 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Proof of Reserves – XRPL</title>
-  <!-- 1) Load the UMD build of xrpl.js from jsDelivr -->
-  <script src="https://cdn.jsdelivr.net/npm/xrpl@2.8.0/build/xrpl-latest-min.js"></script>
+  <title>Proof of Reserves – MFX/XRP Market Makers</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; }
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 2rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    h1, h2 {
+      margin-top: 0;
+    }
+    .summary {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 1.5rem;
+    }
+    .summary div {
+      text-align: center;
+    }
+    .summary .value {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    ul { list-style: none; padding-left: 0; }
+    li + li { margin-top: 0.5rem; }
+    .info {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 1rem;
+      border-top: 1px solid #eee;
+      padding-top: 1rem;
+    }
     .spinner {
-      display: inline-block; width: 1em; height: 1em;
-      border: 0.2em solid currentColor; border-top-color: transparent;
-      border-radius: 50%; animation: spin 0.6s linear infinite;
+      display: inline-block;
+      width: 1em; height: 1em;
+      border: 0.2em solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
       vertical-align: text-bottom;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    ul { list-style: none; padding-left: 0; }
-    li { margin-bottom: 0.5rem; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/xrpl@2.8.0/build/xrpl-latest-min.js"></script>
 </head>
 <body>
-  <h1>Proof of Flex</h1>
-  <div id="balances">
-    <span class="spinner"></span> Loading balances…
+  <div class="card">
+    <h1>Proof of Reserves</h1>
+    <div id="summary" class="summary">
+      <div>
+        <div class="value" id="totalXRP">—</div>
+        <div>XRP Total</div>
+      </div>
+      <div>
+        <div class="value" id="totalMFX">—</div>
+        <div>MFX Total</div>
+      </div>
+    </div>
+
+    <div id="balances">
+      <span class="spinner"></span> Fetching balances…
+    </div>
+
+    <div class="info">
+      These two wallets are our **traditional market-making** addresses for the **MFX/XRP** pair on the XRPL.  
+      They provide continuous buy-and-sell liquidity for MFX in exchange for XRP, helping maintain tight spreads and deep order books.
+    </div>
   </div>
 
   <script>
     (async () => {
-      const balancesEl = document.getElementById('balances')
       const wallets = [
         'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe',
         'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T'
-      ]
+      ];
+      const issuer = 'rYourMFXIssuerAddressHere';
+      let totalXRP = 0, totalMFX = 0;
+      const balancesEl = document.getElementById('balances');
 
       try {
-        console.log('Connecting to XRPL…')
-        // 2) Use the global xrpl.Client from the UMD build
-        const client = new xrpl.Client('wss://s1.ripple.com')
-        await client.connect()
-        console.log('Connected! Fetching balances…')
+        const client = new xrpl.Client('wss://s1.ripple.com');
+        await client.connect();
 
-        let html = '<ul>'
+        let html = '<ul>';
         for (const acct of wallets) {
-          // Native XRP balance
+          // 1) XRP balance
           const { result: info } = await client.request({
             command: 'account_info',
             account: acct,
             ledger_index: 'validated'
-          })
-          const xrpDrops = info.account_data.Balance
-          const xrp = (Number(xrpDrops) / 1_000_000).toFixed(6)
+          });
+          const xrp = Number(info.account_data.Balance) / 1_000_000;
+          totalXRP += xrp;
 
-          // Issued token lines
+          // 2) MFX token lines
           const { result: lines } = await client.request({
             command: 'account_lines',
             account: acct,
             ledger_index: 'validated'
-          })
+          });
+          const mfxLine = lines.lines.find(l => l.currency === 'MFX' && l.account === issuer);
+          const mfx = mfxLine ? Number(mfxLine.balance) : 0;
+          totalMFX += mfx;
 
-          html += `<li>
-            <strong>${acct}</strong>
-            <ul>
-              <li>XRP: ${xrp}</li>`
-
-          // Filter for RLUSD only
-          for (const line of lines.lines) {
-            if (line.currency === 'RLUSD' && line.account === 'rYourIssuerAddressHere') {
-              html += `<li>RLUSD: ${line.balance}</li>`
-            }
-          }
-
-          html += '</ul></li>'
+          html += `
+            <li>
+              <strong>${acct}</strong>
+              <ul>
+                <li>XRP: ${xrp.toFixed(6)}</li>
+                <li>MFX: ${mfx.toFixed(4)}</li>
+              </ul>
+            </li>`;
         }
-        html += '</ul>'
+        html += '</ul>';
 
-        balancesEl.innerHTML = html
-        await client.disconnect()
-        console.log('All done, disconnected.')
-      } catch (err) {
-        console.error('Error fetching balances:', err)
-        balancesEl.innerHTML = '⚠️ Error fetching balances. See console for details.'
+        // render per-wallet
+        balancesEl.innerHTML = html;
+        await client.disconnect();
+
+        // render totals
+        document.getElementById('totalXRP').textContent = totalXRP.toFixed(6);
+        document.getElementById('totalMFX').textContent = totalMFX.toFixed(4);
+      } catch (e) {
+        console.error(e);
+        balancesEl.textContent = '⚠️ Error fetching balances; see console.';
       }
-    })()
+    })();
   </script>
 </body>
 </html>
