@@ -61,7 +61,7 @@
         <div>XRP Total</div>
       </div>
       <div>
-        <div class="value" id="totalMFX">—</n/div>
+        <div class="value" id="totalMFX">—</div>
         <div>MFX Total</div>
       </div>
     </div>
@@ -131,6 +131,7 @@
       const pool2Address = 'rLu93AUSPt7kFXTjo76Tum9nf19HtpnZRA';
       const issuerMFX = 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1';
       const issuerRLUSD = 'rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De';
+      const rlusdHex = '524C555344000000000000000000000000000000';
 
       let totalXRP = 0, totalMFX = 0;
       const balancesWalletsEl = document.getElementById('balancesWallets');
@@ -161,7 +162,6 @@
         document.getElementById('totalMFX').textContent = totalMFX.toFixed(4);
 
         // --- AMM Pool MFX/XRP ---
-        await client.request({ command: 'ping' }); // reuse connection
         const { result: poolInfo } = await client.request({ command: 'account_info', account: poolAddress, ledger_index: 'validated' });
         const poolXRP = Number(poolInfo.account_data.Balance) / 1_000_000;
         const { result: poolLines } = await client.request({ command: 'account_lines', account: poolAddress, ledger_index: 'validated' });
@@ -172,12 +172,11 @@
         document.getElementById('poolMFX').textContent = poolMFX.toFixed(4);
 
         // --- AMM Pool MFX/RLUSD ---
-        const { result: pool2Info } = await client.request({ command: 'account_info', account: pool2Address, ledger_index: 'validated' });
-        const pool2XRP = Number(pool2Info.account_data.Balance) / 1_000_000;
-        const { result: pool2Lines } = await client.request({ command: 'account_lines', account: pool2Address, ledger_index: 'validated' });
-        const pool2MfxLine = pool2Lines.lines.find(l => l.currency === 'MFX' && l.account === issuerMFX);
+        const { result: pool2LinesResult } = await client.request({ command: 'account_lines', account: pool2Address, ledger_index: 'validated' });
+        const pool2MfxLine = pool2LinesResult.lines.find(l => l.currency === 'MFX' && l.account === issuerMFX);
         const pool2MFX = pool2MfxLine ? Number(pool2MfxLine.balance) : 0;
-        const pool2RlusdLine = pool2Lines.lines.find(l => l.currency === 'RLUSD' && l.account === issuerRLUSD);
+        // filter by hex code for RLUSD
+        const pool2RlusdLine = pool2LinesResult.lines.find(l => l.currency_hex === rlusdHex);
         const pool2RLUSD = pool2RlusdLine ? Number(pool2RlusdLine.balance) : 0;
         balancesPool2El.innerHTML = `<ul><li>MFX: ${pool2MFX.toFixed(4)}</li><li>RLUSD: ${pool2RLUSD.toFixed(4)}</li></ul>`;
         document.getElementById('pool2MFX').textContent = pool2MFX.toFixed(4);
