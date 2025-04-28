@@ -1,47 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Proof of Flex - XRPL</title>
+  <meta charset="UTF-8" />
+  <title>Proof of Reserves – XRPL</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    .spinner {
+      display: inline-block;
+      width: 1em; height: 1em;
+      border: 0.2em solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    ul { list-style: none; padding-left: 0; }
+    li { margin-bottom: 0.5rem; }
+  </style>
 </head>
 <body>
-  <h1>Proof of Flex</h1>
-  <div id="balances">Loading…</div>
+  <h1>Proof of Reserves</h1>
+  <div id="balances">
+    <span class="spinner"></span> Loading balances…
+  </div>
 
   <script type="module">
-    import { Client } from 'https://unpkg.com/xrpl/dist/npm/xrpl.mjs'
+    import { Client } from 'https://cdn.jsdelivr.net/npm/xrpl@2.8.0/dist/npm/xrpl.mjs'
 
     async function fetchBalances() {
+      const balancesEl = document.getElementById('balances')
+      const wallets = [
+        'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe',
+        'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T'
+      ]
       try {
+        console.log('Connecting to XRPL…')
         const client = new Client('wss://s1.ripple.com')
         await client.connect()
-
-        const wallets = [
-          'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe',
-          'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T'
-        ]
+        console.log('Connected! Fetching balances…')
 
         let html = '<ul>'
-        for (const wallet of wallets) {
-          // fetch issued-token balances
-          const resp = await client.request({
-            command: 'account_lines',
-            account: wallet
+        for (const acct of wallets) {
+          // 1) Fetch native XRP balance
+          const { result: info } = await client.request({
+            command: 'account_info',
+            account: acct,
+            ledger_index: 'validated'
           })
-          html += `<li><strong>${wallet}</strong><ul>`
-          for (const line of resp.result.lines) {
-            html += `<li>${line.balance} ${line.currency} (issuer ${line.account})</li>`
+          const xrpDrops = info.account_data.Balance
+          const xrp = (Number(xrpDrops) / 1_000_000).toFixed(6)
+
+          // 2) Fetch issued-token lines
+          const { result: lines } = await client.request({
+            command: 'account_lines',
+            account: acct,
+            ledger_index: 'validated'
+          })
+
+          html += `<li>
+            <strong>${acct}</strong>
+            <ul>
+              <li>XRP: ${xrp}</li>`
+
+          // 3) Only show RLUSD from your issuer
+          for (const line of lines.lines) {
+            if (line.currency === 'RLUSD' && line.account === 'rYourIssuerAddressHere') {
+              html += `<li>RLUSD: ${line.balance}</li>`
+            }
           }
-          html += '</ul></li>'
+
+          html += `</ul></li>`
         }
         html += '</ul>'
 
-        document.getElementById('balances').innerHTML = html
+        balancesEl.innerHTML = html
         await client.disconnect()
-      } catch (e) {
-        console.error(e)
-        document.getElementById('balances').textContent =
-          'Error fetching balances. Check console for details.'
+        console.log('All done, disconnected.')
+      } catch (err) {
+        console.error('Error fetching balances:', err)
+        balancesEl.innerHTML = '⚠️ Error fetching balances. See console for details.'
       }
     }
 
