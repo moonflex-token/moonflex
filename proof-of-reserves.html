@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Proof of Reserves – MFX/XRP Market Makers</title>
+  <title>Proof of Reserves – MFX/XRP Market Makers & AMM Pool</title>
   <style>
     body {
       font-family: sans-serif;
@@ -17,17 +17,13 @@
       padding: 1.5rem;
       margin-bottom: 2rem;
     }
-    h1, h2 {
-      margin-top: 0;
-    }
+    h1, h2 { margin-top: 0; }
     .summary {
       display: flex;
       justify-content: space-around;
       margin-bottom: 1.5rem;
     }
-    .summary div {
-      text-align: center;
-    }
+    .summary div { text-align: center; }
     .summary .value {
       font-size: 2rem;
       font-weight: bold;
@@ -55,9 +51,11 @@
   <script src="https://cdn.jsdelivr.net/npm/xrpl@2.8.0/build/xrpl-latest-min.js"></script>
 </head>
 <body>
+  <!-- Market Maker Wallets Card -->
   <div class="card">
     <h1>Proof of Reserves</h1>
-    <div id="summary" class="summary">
+    <h2>Traditional Market-Making Wallets</h2>
+    <div id="summaryWallets" class="summary">
       <div>
         <div class="value" id="totalXRP">—</div>
         <div>XRP Total</div>
@@ -68,13 +66,35 @@
       </div>
     </div>
 
-    <div id="balances">
+    <div id="balancesWallets">
       <span class="spinner"></span> Fetching balances…
     </div>
 
     <div class="info">
-      These two wallets are our **traditional market-making** addresses for the **MFX/XRP** pair on the XRPL.  
-      They provide continuous buy-and-sell liquidity for MFX in exchange for XRP, helping maintain tight spreads and deep order books.
+      These two wallets are our <strong>traditional market-making</strong> addresses for the <strong>MFX/XRP</strong> pair on the XRPL.
+    </div>
+  </div>
+
+  <!-- AMM Pool Card -->
+  <div class="card">
+    <h2>AMM Pool Reserves</h2>
+    <div id="summaryPool" class="summary">
+      <div>
+        <div class="value" id="poolXRP">—</div>
+        <div>XRP in Pool</div>
+      </div>
+      <div>
+        <div class="value" id="poolMFX">—</div>
+        <div>MFX in Pool</div>
+      </div>
+    </div>
+
+    <div id="balancesPool">
+      <span class="spinner"></span> Fetching pool reserves…
+    </div>
+
+    <div class="info">
+      This address is our Automated Market Maker (AMM) pool for the MFX/XRP pair, showing current liquidity reserves.
     </div>
   </div>
 
@@ -84,56 +104,56 @@
         'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe',
         'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T'
       ];
+      const poolAddress = 'rKy1cV5pQYkVEi8GSifUHcYB4Rxcufz1EF';
       const issuer = 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1';
+
       let totalXRP = 0, totalMFX = 0;
-      const balancesEl = document.getElementById('balances');
+      const balancesWalletsEl = document.getElementById('balancesWallets');
+      const balancesPoolEl = document.getElementById('balancesPool');
 
       try {
         const client = new xrpl.Client('wss://s1.ripple.com');
         await client.connect();
 
-        let html = '<ul>';
+        // --- Market Maker Wallets ---
+        let htmlW = '<ul>';
         for (const acct of wallets) {
-          // 1) XRP balance
-          const { result: info } = await client.request({
-            command: 'account_info',
-            account: acct,
-            ledger_index: 'validated'
-          });
+          const { result: info } = await client.request({ command: 'account_info', account: acct, ledger_index: 'validated' });
           const xrp = Number(info.account_data.Balance) / 1_000_000;
           totalXRP += xrp;
 
-          // 2) MFX token lines
-          const { result: lines } = await client.request({
-            command: 'account_lines',
-            account: acct,
-            ledger_index: 'validated'
-          });
+          const { result: lines } = await client.request({ command: 'account_lines', account: acct, ledger_index: 'validated' });
           const mfxLine = lines.lines.find(l => l.currency === 'MFX' && l.account === issuer);
           const mfx = mfxLine ? Number(mfxLine.balance) : 0;
           totalMFX += mfx;
 
-          html += `
-            <li>
-              <strong>${acct}</strong>
-              <ul>
-                <li>XRP: ${xrp.toFixed(6)}</li>
-                <li>MFX: ${mfx.toFixed(4)}</li>
-              </ul>
-            </li>`;
+          htmlW += `<li><strong>${acct}</strong><ul><li>XRP: ${xrp.toFixed(6)}</li><li>MFX: ${mfx.toFixed(4)}</li></ul></li>`;
         }
-        html += '</ul>';
-
-        // render per-wallet
-        balancesEl.innerHTML = html;
+        htmlW += '</ul>';
+        balancesWalletsEl.innerHTML = htmlW;
         await client.disconnect();
-
-        // render totals
         document.getElementById('totalXRP').textContent = totalXRP.toFixed(6);
         document.getElementById('totalMFX').textContent = totalMFX.toFixed(4);
+
+        // --- AMM Pool Reserves ---
+        await client.connect();
+        // XRP
+        const { result: poolInfo } = await client.request({ command: 'account_info', account: poolAddress, ledger_index: 'validated' });
+        const poolXRP = Number(poolInfo.account_data.Balance) / 1_000_000;
+        // MFX
+        const { result: poolLines } = await client.request({ command: 'account_lines', account: poolAddress, ledger_index: 'validated' });
+        const poolMfxLine = poolLines.lines.find(l => l.currency === 'MFX' && l.account === issuer);
+        const poolMFX = poolMfxLine ? Number(poolMfxLine.balance) : 0;
+
+        balancesPoolEl.innerHTML = `<ul><li>XRP: ${poolXRP.toFixed(6)}</li><li>MFX: ${poolMFX.toFixed(4)}</li></ul>`;
+        document.getElementById('poolXRP').textContent = poolXRP.toFixed(6);
+        document.getElementById('poolMFX').textContent = poolMFX.toFixed(4);
+
+        await client.disconnect();
       } catch (e) {
         console.error(e);
-        balancesEl.textContent = '⚠️ Error fetching balances; see console.';
+        balancesWalletsEl.textContent = '⚠️ Error fetching wallet balances; see console.';
+        balancesPoolEl.textContent = '⚠️ Error fetching pool reserves; see console.';
       }
     })();
   </script>
