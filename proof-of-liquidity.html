@@ -105,7 +105,7 @@
 
       If someone attempts to skyrocket the price, they would typically need to sweep the order book. In cases where significant liquidity is injected into the AMM pools, arbitrage bots may quickly intervene and sweep the MM, which would likely push the price higher.<br><br>
 
-      However, to mitigate this, we synchronize liquidity in real-time, prioritizing the prevention of arbitrage bots from draining our pools. If you perform a swap within the AMM, we immediately attempt to resynchronize the AMM price to reflect the MM price, ensuring that the market remains balanced and the risk of liquidity manipulation is minimized.<br><br>
+      However, to mitigate this, we synchronize the prices in real-time, adjusting liquidity by adding and removing MFX tokens from our AMM pools, prioritizing the prevention of arbitrage bots from draining our pools. If you perform a swap within the AMM, we immediately attempt to resynchronize the AMM price to reflect the MM price, ensuring that the market remains balanced and the risk of liquidity manipulation is minimized.<br><br>
 
       Using the MM price as an oracle is a common and standard practice for professional market makers (MMs) to ensure pricing accuracy, stability, and consistency across different systems.
     </div>
