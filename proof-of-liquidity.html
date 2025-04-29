@@ -84,7 +84,8 @@
       font-size: 0.85rem;
       cursor: pointer;
       margin: 1rem auto 0;
-      display: block;
+      float: right;            /* <-- push it to the right */
+      display: inline-block;   /* keep it only as wide as its content */
       transition: background 0.2s, color 0.2s;
     }
     .show-wallets-btn:hover {
