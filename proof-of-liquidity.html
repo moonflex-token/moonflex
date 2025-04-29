@@ -178,7 +178,7 @@
         const { result: poolLines } = await client.request({ command: 'account_lines', account: poolAddress, ledger_index: 'validated' });
         const poolMfxLine = poolLines.lines.find(l => l.currency === 'MFX' && l.account === issuerMFX);
         const poolMFX = poolMfxLine ? Number(poolMfxLine.balance) : 0;
-        balancesPoolEl.innerHTML = <ul><li>XRP: ${poolXRP.toFixed(6)}</li><li>MFX: ${poolMFX.toFixed(4)}</li></ul>;
+        balancesPoolEl.innerHTML = `<ul><li>XRP: ${poolXRP.toFixed(6)}</li><li>MFX: ${poolMFX.toFixed(4)}</li></ul>`;
         document.getElementById('poolXRP').textContent = poolXRP.toFixed(6);
         document.getElementById('poolMFX').textContent = poolMFX.toFixed(4);
 
