@@ -75,27 +75,28 @@
     body {
       font-family: 'Orbitron', sans-serif;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Initially hide the wallets section */
-    #balancesWallets {
+    .show-wallets-btn {
       display: none;
+      background-color: #ff6600;
+      color: #fff;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s;
     }
+    .show-wallets-btn:hover {
+      background-color: #e65c00;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/xrpl@2.8.0/build/xrpl-latest-min.js"></script>
 </head>
 <body>
   <h1 style="text-align: center;">MoonFlex Proof of Liquidity</h1>
-
   <!-- Market Maker Wallets Card -->
   <div class="card">
     <h2 style="text-align: center;">Traditional Market-Making Wallets: MFX/XRP</h2>
-    
-    <!-- Button to Show/Hide Wallets -->
-    <button id="showWalletsBtn" style="background-color: #ff6600; color: #fff; border: none; padding: 10px 20px; cursor: pointer;">
-      Show Wallets
-    </button>
-
     <div id="summaryWallets" class="summary">
       <div><div class="value" id="totalXRP">—</div><div>XRP Total</div></div>
       <div><div class="value" id="totalMFX">—</div><div>MFX Total</div></div>
@@ -108,6 +109,8 @@
     <div class="info">
       These wallets are our <strong>traditional market-making</strong> addresses for the <strong>MFX/XRP</strong> pair on the XRPL.
     </div>
+
+    <button id="showWalletsBtn" class="show-wallets-btn">Show Wallets</button>
   </div>
 
   <!-- AMM Pool MFX/XRP Card -->
@@ -145,18 +148,6 @@
   </div>
 
   <script>
-    // Toggle Wallets Visibility
-    document.getElementById('showWalletsBtn').addEventListener('click', function () {
-      const walletsSection = document.getElementById('balancesWallets');
-      if (walletsSection.style.display === 'none') {
-        walletsSection.style.display = 'block';
-        this.textContent = 'Hide Wallets'; // Change button text to "Hide Wallets"
-      } else {
-        walletsSection.style.display = 'none';
-        this.textContent = 'Show Wallets'; // Change button text back to "Show Wallets"
-      }
-    });
-
     (async () => {
       const wallets = [
         'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe', 
@@ -180,6 +171,7 @@
       const balancesWalletsEl = document.getElementById('balancesWallets');
       const balancesPoolEl = document.getElementById('balancesPool');
       const balancesPool2El = document.getElementById('balancesPool2');
+      const showWalletsBtn = document.getElementById('showWalletsBtn');
 
       try {
         const client = new xrpl.Client('wss://s1.ripple.com');
@@ -203,6 +195,9 @@
         balancesWalletsEl.innerHTML = htmlW;
         document.getElementById('totalXRP').textContent = totalXRP.toFixed(6);
         document.getElementById('totalMFX').textContent = totalMFX.toFixed(4);
+
+        // Show the "Show Wallets" button after loading is complete
+        showWalletsBtn.style.display = 'inline-block';
 
         // --- AMM Pool MFX/XRP ---
         const { result: poolInfo } = await client.request({ command: 'account_info', account: poolAddress, ledger_index: 'validated' });
