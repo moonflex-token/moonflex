@@ -73,15 +73,14 @@
       vertical-align: text-bottom;
     }
     .show-wallets-btn {
-      display: block;
+      display: inline-block;
       background: #ff6600;
       color: #fff;
-      padding: 1rem;
+      padding: 0.6rem 1.2rem;
       margin-top: 1rem;
       border: none;
-      border-radius: 16px;
+      border-radius: 8px;
       font-size: 1rem;
-      width: 100%;
       text-align: center;
       cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
@@ -95,7 +94,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/xrpl@2.8.0/build/xrpl-latest-min.js"></script>
 </head>
 <body>
   <h1 style="text-align: center;">MoonFlex Proof of Liquidity</h1>
@@ -211,7 +209,7 @@
         document.getElementById('poolXRP').textContent = poolXRP.toFixed(6);
         document.getElementById('poolMFX').textContent = poolMFX.toFixed(4);
 
-        // --- AMM Pool MFX/RLUSD (using amm_info) ---
+        // --- AMM Pool MFX/RLUSD ---
         const { result: ammInfo } = await client.request({ command: 'amm_info', amm_account: pool2Address });
         const data = ammInfo.amm || ammInfo;
 
@@ -239,6 +237,18 @@
         balancesPoolEl.textContent = '⚠️ Error fetching pool reserves; see console.';
         balancesPool2El.textContent = '⚠️ Error fetching pool reserves; see console.';
       }
+
+      // Show/Hide Wallets Toggle
+      document.getElementById('showWalletsBtn').addEventListener('click', () => {
+        const walletsEl = document.getElementById('balancesWallets');
+        if (walletsEl.style.display === 'none') {
+          walletsEl.style.display = 'block';
+          document.getElementById('showWalletsBtn').textContent = 'Hide Wallets';
+        } else {
+          walletsEl.style.display = 'none';
+          document.getElementById('showWalletsBtn').textContent = 'Show Wallets';
+        }
+      });
     })();
   </script>
 </body>
