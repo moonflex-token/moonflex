@@ -84,8 +84,7 @@
       font-size: 0.85rem;
       cursor: pointer;
       margin: 1rem auto 0;
-      float: left;            /* <-- push it to the left */
-      display: inline-block;  /* Ensures the button stays next to the loading spinner *
+      display: block;
       transition: background 0.2s, color 0.2s;
     }
     .show-wallets-btn:hover {
@@ -110,6 +109,7 @@
       <!-- initial loading state -->
       <div id="balancesWalletsLoading">
         <span class="spinner"></span> Fetching balances…
+      </div>
       <!-- populated list, hidden until user clicks -->
       <div id="balancesWallets" style="display: none;"></div>
       <!-- will show after fetch completes -->
