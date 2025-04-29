@@ -103,9 +103,9 @@
     <div class="info" style="text-align: center; margin: 0 auto; max-width: 1000px;">
       We manage the entire market using the price from our traditional Market Maker (MM) system as the oracle, ensuring that the prices in our two Automated Market Maker (AMM) pools are consistently synchronized with the MM price.<br><br>
 
-      If someone attempts to <span style="color: #ff6600;">skyrocket the price</span>, they would typically need to sweep the order book. In cases where significant liquidity is injected into the AMM pools, arbitrage bots may quickly intervene and sweep the MM, which would likely push the price higher.<br><br>
+      If someone attempts to <span style="color: #ff6600;">skyrocket the price</span>, they would typically need to sweep the order book. In cases where significant liquidity is injected into the AMM pools, arbitrage bots may quickly intervene and <span style="color: #ff6600;">sweep the MM</span>, which would likely <span style="color: #ff6600;">push the price higher.</span><br><br>
 
-      However, to mitigate this, we synchronize the prices in real-time, adjusting liquidity by adding and removing MFX tokens from our AMM pools, prioritizing the prevention of arbitrage bots from draining our pools. If you perform a swap within the AMM, we immediately attempt to resynchronize the AMM price to reflect the MM price, ensuring that the market remains balanced and the risk of liquidity manipulation is minimized.<br><br>
+      However, to mitigate this, we synchronize the prices in <span style="color: #ff6600;">real-time</span>, adjusting liquidity by adding and removing MFX tokens from our AMM pools, prioritizing the prevention of arbitrage bots from draining our pools. If you perform a swap within the AMM, we immediately attempt to resynchronize the AMM price to reflect the MM price, ensuring that the market remains balanced and the risk of liquidity manipulation is minimized.<br><br>
 
       Using the MM price as an oracle is a common and standard practice for professional market makers (MMs) to ensure pricing accuracy, stability, and consistency across different systems.
     </div>
