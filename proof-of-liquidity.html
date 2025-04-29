@@ -124,31 +124,31 @@
 
   <!-- AMM Pool MFX/XRP Card -->
   <div class="card">
-    <h2 style="text-align: center;">AMM Pool Reserves: MFX/XRP</h2>
+    <h2 style="text-align: center;">AMM Pool: MFX/XRP</h2>
     <div id="summaryPool" class="summary">
       <div><div class="value" id="poolXRP">—</div><div>XRP in Pool</div></div>
       <div><div class="value" id="poolMFX">—</div><div>MFX in Pool</div></div>
     </div>
     <div id="balancesPool">
-      <span class="spinner"></span> Fetching pool reserves…
+      <span class="spinner"></span> Fetching pool liquidity…
     </div>
     <div class="info">
-      This address is our Automated Market Maker (AMM) pool for the <strong>MFX/XRP</strong> pair, showing current liquidity reserves.
+      This address is our Automated Market Maker (AMM) pool for the <strong>MFX/XRP</strong> pair, showing current liquidity.
     </div>
   </div>
 
   <!-- AMM Pool MFX/RLUSD Card -->
   <div class="card">
-    <h2 style="text-align: center;">AMM Pool Reserves: MFX/RLUSD</h2>
+    <h2 style="text-align: center;">AMM Pool: MFX/RLUSD</h2>
     <div id="summaryPool2" class="summary">
       <div><div class="value" id="pool2RLUSD">—</div><div>RLUSD in Pool</div></div>
       <div><div class="value" id="pool2MFX">—</div><div>MFX in Pool</div></div>
     </div>
     <div id="balancesPool2">
-      <span class="spinner"></span> Fetching pool reserves…
+      <span class="spinner"></span> Fetching pool liquidity…
     </div>
     <div class="info">
-      This address is our Automated Market Maker (AMM) pool for the <strong>MFX/RLUSD</strong> pair, showing current liquidity reserves.
+      This address is our Automated Market Maker (AMM) pool for the <strong>MFX/RLUSD</strong> pair, showing current liquidity.
     </div>
   </div>
 
@@ -256,8 +256,8 @@
       } catch (e) {
         console.error(e);
         loadingEl.textContent = '⚠️ Error fetching wallet balances; see console.';
-        poolEl.textContent    = '⚠️ Error fetching pool reserves; see console.';
-        pool2El.textContent   = '⚠️ Error fetching pool reserves; see console.';
+        poolEl.textContent    = '⚠️ Error fetching pool liquidity; see console.';
+        pool2El.textContent   = '⚠️ Error fetching pool liquidity; see console.';
       }
     })();
   </script>
