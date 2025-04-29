@@ -72,32 +72,31 @@
       animation: spin 0.6s linear infinite;
       vertical-align: text-bottom;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* small Show/Hide button */
     .show-wallets-btn {
-      display: inline-block;
-      background: #ff6600;
-      color: #fff;
-      padding: 0.6rem 1.2rem;
-      margin-top: 1rem;
-      border: none;
+      background: #111;
+      border: 1px solid #ff6600;
+      color: #ff6600;
+      padding: 0.3rem 0.6rem;
       border-radius: 8px;
-      font-size: 1rem;
-      text-align: center;
+      font-size: 0.85rem;
       cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
+      margin-left: 1rem;
+      vertical-align: middle;
+      transition: background 0.2s, color 0.2s;
     }
     .show-wallets-btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 20px #ff660080;
+      background: #ff6600;
+      color: #111;
     }
-    body {
-      font-family: 'Orbitron', sans-serif;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/xrpl@2.8.0/build/xrpl-latest-min.js"></script>
 </head>
 <body>
   <h1 style="text-align: center;">MoonFlex Proof of Liquidity</h1>
-  
+
   <!-- Market Maker Wallets Card -->
   <div class="card">
     <h2 style="text-align: center;">Traditional Market-Making Wallets: MFX/XRP</h2>
@@ -106,11 +105,14 @@
       <div><div class="value" id="totalMFX">—</div><div>MFX Total</div></div>
     </div>
 
-    <div id="balancesWallets">
-      <span class="spinner"></span> Fetching balances…
+    <!-- wrap loading + button + hidden balances -->
+    <div id="balancesWalletsContainer">
+      <div id="balancesWalletsLoading">
+        <span class="spinner"></span> Fetching balances…
+        <button id="showWalletsBtn" class="show-wallets-btn" disabled>Show</button>
+      </div>
+      <div id="balancesWallets" style="display: none;"></div>
     </div>
-
-    <button class="show-wallets-btn" id="showWalletsBtn">Show Wallets</button>
 
     <div class="info">
       These wallets are our <strong>traditional market-making</strong> addresses for the <strong>MFX/XRP</strong> pair on the XRPL.
@@ -124,11 +126,9 @@
       <div><div class="value" id="poolXRP">—</div><div>XRP in Pool</div></div>
       <div><div class="value" id="poolMFX">—</div><div>MFX in Pool</div></div>
     </div>
-
     <div id="balancesPool">
       <span class="spinner"></span> Fetching pool reserves…
     </div>
-
     <div class="info">
       This address is our Automated Market Maker (AMM) pool for the <strong>MFX/XRP</strong> pair, showing current liquidity reserves.
     </div>
@@ -141,11 +141,9 @@
       <div><div class="value" id="pool2RLUSD">—</div><div>RLUSD in Pool</div></div>
       <div><div class="value" id="pool2MFX">—</div><div>MFX in Pool</div></div>
     </div>
-
     <div id="balancesPool2">
       <span class="spinner"></span> Fetching pool reserves…
     </div>
-
     <div class="info">
       This address is our Automated Market Maker (AMM) pool for the <strong>MFX/RLUSD</strong> pair, showing current liquidity reserves.
     </div>
@@ -154,15 +152,15 @@
   <script>
     (async () => {
       const wallets = [
-        'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe', 
+        'rfnuwVEGrnsdAF9fqwYCuowAj7ZpJzkQNe',
         'rw8oU4Urf8GRJ4rR2yhA7EcsBWja6GGi3T',
-        'rUauAFxKekhMSNQ9T6WXfVLMebJfV9KjkU', 
+        'rUauAFxKekhMSNQ9T6WXfVLMebJfV9KjkU',
         'rLfsvBhy14eGMaDVfA63UmF5d1Qg2UC7yG',
-        'rK39DwrRvntc5sSxW1a9AdwZLFxg1JQbDC', 
+        'rK39DwrRvntc5sSxW1a9AdwZLFxg1JQbDC',
         'rhSMF3SK4RNsrcJkMG4TdzvWvvGkEKsHWC',
-        'rheQY9b3vhwCsDKnafxLuMHjABFYDQgZrj', 
+        'rheQY9b3vhwCsDKnafxLuMHjABFYDQgZrj',
         'rfkkNjMCvNunF9ivbgGUHCRfjzq1iL4pnY',
-        'rJwwGGk3MQvk3FUennyQ1NBpapMUNKkhob', 
+        'rJwwGGk3MQvk3FUennyQ1NBpapMUNKkhob',
         'rNt1e5TQaduxLUmBzigT2Ti5Z1JkswSHbq'
       ];
       const poolAddress = 'rKy1cV5pQYkVEi8GSifUHcYB4Rxcufz1EF';
@@ -173,8 +171,8 @@
 
       let totalXRP = 0, totalMFX = 0;
       const balancesWalletsEl = document.getElementById('balancesWallets');
-      const balancesPoolEl = document.getElementById('balancesPool');
-      const balancesPool2El = document.getElementById('balancesPool2');
+      const balancesPoolEl    = document.getElementById('balancesPool');
+      const balancesPool2El   = document.getElementById('balancesPool2');
 
       try {
         const client = new xrpl.Client('wss://s1.ripple.com');
@@ -183,72 +181,103 @@
         // --- Market Maker Wallets ---
         let htmlW = '<ul>';
         for (const acct of wallets) {
-          const { result: info } = await client.request({ command: 'account_info', account: acct, ledger_index: 'validated' });
+          const { result: info } = await client.request({
+            command: 'account_info',
+            account: acct,
+            ledger_index: 'validated'
+          });
           const xrp = Number(info.account_data.Balance) / 1_000_000;
           totalXRP += xrp;
 
-          const { result: lines } = await client.request({ command: 'account_lines', account: acct, ledger_index: 'validated' });
+          const { result: lines } = await client.request({
+            command: 'account_lines',
+            account: acct,
+            ledger_index: 'validated'
+          });
           const mfxLine = lines.lines.find(l => l.currency === 'MFX' && l.account === issuerMFX);
           const mfx = mfxLine ? Number(mfxLine.balance) : 0;
           totalMFX += mfx;
 
-          htmlW += `<li><strong>${acct}</strong><ul><li>XRP: ${xrp.toFixed(6)}</li><li>MFX: ${mfx.toFixed(4)}</li></ul></li>`;
+          htmlW += `<li><strong>${acct}</strong>
+                      <ul>
+                        <li>XRP: ${xrp.toFixed(6)}</li>
+                        <li>MFX: ${mfx.toFixed(4)}</li>
+                      </ul>
+                    </li>`;
         }
         htmlW += '</ul>';
+
         balancesWalletsEl.innerHTML = htmlW;
         document.getElementById('totalXRP').textContent = totalXRP.toFixed(6);
         document.getElementById('totalMFX').textContent = totalMFX.toFixed(4);
 
+        // enable & wire up the Show button
+        const btn = document.getElementById('showWalletsBtn');
+        btn.disabled = false;
+        btn.addEventListener('click', () => {
+          if (balancesWalletsEl.style.display === 'none') {
+            balancesWalletsEl.style.display = 'block';
+            btn.textContent = 'Hide';
+          } else {
+            balancesWalletsEl.style.display = 'none';
+            btn.textContent = 'Show';
+          }
+        });
+
         // --- AMM Pool MFX/XRP ---
-        const { result: poolInfo } = await client.request({ command: 'account_info', account: poolAddress, ledger_index: 'validated' });
+        const { result: poolInfo } = await client.request({
+          command: 'account_info',
+          account: poolAddress,
+          ledger_index: 'validated'
+        });
         const poolXRP = Number(poolInfo.account_data.Balance) / 1_000_000;
-        const { result: poolLines } = await client.request({ command: 'account_lines', account: poolAddress, ledger_index: 'validated' });
+        const { result: poolLines } = await client.request({
+          command: 'account_lines',
+          account: poolAddress,
+          ledger_index: 'validated'
+        });
         const poolMfxLine = poolLines.lines.find(l => l.currency === 'MFX' && l.account === issuerMFX);
-        const poolMFX = poolMfxLine ? Number(poolMfxLine.balance) : 0;
+        const poolMFX     = poolMfxLine ? Number(poolMfxLine.balance) : 0;
         balancesPoolEl.innerHTML = `<ul><li>XRP: ${poolXRP.toFixed(6)}</li><li>MFX: ${poolMFX.toFixed(4)}</li></ul>`;
         document.getElementById('poolXRP').textContent = poolXRP.toFixed(6);
         document.getElementById('poolMFX').textContent = poolMFX.toFixed(4);
 
         // --- AMM Pool MFX/RLUSD ---
-        const { result: ammInfo } = await client.request({ command: 'amm_info', amm_account: pool2Address });
+        const { result: ammInfo } = await client.request({
+          command: 'amm_info',
+          amm_account: pool2Address
+        });
         const data = ammInfo.amm || ammInfo;
 
         let baseAmount = null, quoteAmount = null;
         [data.amount, data.amount2].forEach(amt => {
           if (typeof amt === 'object') {
-            const curr = amt.currency || amt.currency_hex;
+            const curr   = amt.currency || amt.currency_hex;
             const issuer = amt.issuer;
-            const val = parseFloat(amt.value || amt.amount || 0);
-            if (issuer === issuerMFX && (curr === 'MFX')) baseAmount = val;
+            const val    = parseFloat(amt.value || amt.amount || 0);
+            if (issuer === issuerMFX && curr === 'MFX') baseAmount = val;
             if (issuer === issuerRLUSD && (curr === 'RLUSD' || curr === rlusdHex)) quoteAmount = val;
           }
         });
 
-        if (baseAmount === null || quoteAmount === null) throw new Error('Parsing AMM MFX/RLUSD failed.');
+        if (baseAmount === null || quoteAmount === null) {
+          throw new Error('Parsing AMM MFX/RLUSD failed.');
+        }
 
-        balancesPool2El.innerHTML = `<ul><li>RLUSD: ${quoteAmount.toFixed(4)}</li><li>MFX: ${baseAmount.toFixed(4)}</li></ul>`;
-        document.getElementById('pool2MFX').textContent = baseAmount.toFixed(4);
+        balancesPool2El.innerHTML = `<ul>
+          <li>RLUSD: ${quoteAmount.toFixed(4)}</li>
+          <li>MFX:   ${baseAmount.toFixed(4)}</li>
+        </ul>`;
         document.getElementById('pool2RLUSD').textContent = quoteAmount.toFixed(4);
+        document.getElementById('pool2MFX').textContent   = baseAmount.toFixed(4);
 
         await client.disconnect();
       } catch (e) {
         console.error(e);
-        balancesWalletsEl.textContent = '⚠️ Error fetching wallet balances; see console.';
-        balancesPoolEl.textContent = '⚠️ Error fetching pool reserves; see console.';
-        balancesPool2El.textContent = '⚠️ Error fetching pool reserves; see console.';
+        document.getElementById('balancesWalletsLoading').textContent = '⚠️ Error fetching wallet balances; see console.';
+        balancesPoolEl.textContent    = '⚠️ Error fetching pool reserves; see console.';
+        balancesPool2El.textContent   = '⚠️ Error fetching pool reserves; see console.';
       }
-
-      // Show/Hide Wallets Toggle
-      document.getElementById('showWalletsBtn').addEventListener('click', () => {
-        const walletsEl = document.getElementById('balancesWallets');
-        if (walletsEl.style.display === 'none') {
-          walletsEl.style.display = 'block';
-          document.getElementById('showWalletsBtn').textContent = 'Hide Wallets';
-        } else {
-          walletsEl.style.display = 'none';
-          document.getElementById('showWalletsBtn').textContent = 'Show Wallets';
-        }
-      });
     })();
   </script>
 </body>
