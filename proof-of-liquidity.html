@@ -156,7 +156,7 @@
   <div class="card">
     <h2 style="text-align: center;">Market and Liquidity Information</h2>
     <div class="info">
-      We manage the market with a price oracle from the traditional MM and the two AMM pool prices are synced to the MM price. If someone wants to make the price skyrocket, they would need to preferably sweep the order book. If liquidity is injected into the AMM's pool, arbitrage bots will step in, and the price will likely move. However, we sync liquidity as fast as possible to especially avoid arbitrage bots from draining our liquidity.
+      We manage our market using a price oracle derived from the traditional Market Maker (MM) system, ensuring that the prices in our two Automated Market Maker (AMM) pools are consistently synchronized with the MM price. If someone attempts to skyrocket the price, they would typically need to sweep the order book. In cases where significant liquidity is injected into the AMM pools, arbitrage bots may quickly intervene and sweep the MM, which would likely push the price higher. However, to mitigate this, we synchronize liquidity in real-time, prioritizing the prevention of arbitrage bots from draining our pools. If you perform a swap within the AMM, we immediately attempt to resynchronize the AMM price to reflect the MM price, ensuring that the market remains balanced and the risk of price manipulation is minimized. Using the MM price as an oracle is a common and standard practice to ensure pricing accuracy, stability, and consistency across different systems.
     </div>
   </div>
 
