@@ -152,6 +152,14 @@
     </div>
   </div>
 
+    <!-- Market and Liquidity Information Card -->
+  <div class="card">
+    <h2 style="text-align: center;">Market and Liquidity Information</h2>
+    <div class="info">
+      We manage the market with a price oracle from the traditional MM and the two AMM pool prices are synced to the MM price. If someone wants to make the price skyrocket, they would need to preferably sweep the order book. If liquidity is injected into the AMM's pool, arbitrage bots will step in, and the price will likely move. However, we sync liquidity as fast as possible to especially avoid arbitrage bots from draining our liquidity.
+    </div>
+  </div>
+
   <script>
     (async () => {
       const wallets = [
