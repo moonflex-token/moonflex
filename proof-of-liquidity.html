@@ -165,7 +165,7 @@
           const mfx = mfxLine ? Number(mfxLine.balance) : 0;
           totalMFX += mfx;
 
-          htmlW += <li><strong>${acct}</strong><ul><li>XRP: ${xrp.toFixed(6)}</li><li>MFX: ${mfx.toFixed(4)}</li></ul></li>;
+          htmlW += `<li><strong>${acct}</strong><ul><li>XRP: ${xrp.toFixed(6)}</li><li>MFX: ${mfx.toFixed(4)}</li></ul></li>`;
         }
         htmlW += '</ul>';
         balancesWalletsEl.innerHTML = htmlW;
