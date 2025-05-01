@@ -1,6 +1,7 @@
 [[ISSUERS]]
 address = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"
 name = "MoonFlex"
+domain = "6d6f6f6e666c65782e78797a"  # hex-encoded moonflex.xyz
 
 [[TOKENS]]
 issuer = "rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1"
@@ -17,3 +18,8 @@ title = "Official Website"
 [[TOKENS.WEBLINKS]]
 url = "https://x.com/moonflextoken"
 type = "socialmedia"
+
+[[TOKENS.WEBLINKS]]
+url = "https://www.gravatar.com/avatar/1c69f581bd738997224fae7786564da7"
+type = "gravatar"
+title = "Gravatar"
