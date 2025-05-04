@@ -288,18 +288,18 @@
                 // --- AMM Pool MFX/SOLO---
         const { result: ammInfo2 } = await client.request({ command: 'amm_info', amm_account: pool3Address });
         const data2 = ammInfo2.amm || ammInfo2;
-        let base2 = null, quote = null;
+        let base2 = null, quote2 = null;
         [data2.amount, data2.amount2].forEach(amt => {
           if (typeof amt === 'object') {
             const curr = amt.currency || amt.currency_hex;
             const val  = parseFloat(amt.value || amt.amount || 0);
             if (amt.issuer === issuerMFX && curr === 'MFX') base2 = val;
-            if (amt.issuer === issuerSOLO && (curr === 'SOLO' || curr === soloHex)) quote = val;
+            if (amt.issuer === issuerSOLO && (curr === 'SOLO' || curr === soloHex)) quote2 = val;
           }
         });
-        if (base2 == null || quote == null) throw new Error('Parsing AMM MFX/RLUSD failed.');
-        pool3El.innerHTML = `<ul><li>SOLO: ${quote.toFixed(4)}</li><li>MFX: ${base2.toFixed(4)}</li></ul>`;
-        document.getElementById('pool3SOLO').textContent = quote.toFixed(4);
+        if (base2 == null || quote2 == null) throw new Error('Parsing AMM MFX/RLUSD failed.');
+        pool3El.innerHTML = `<ul><li>SOLO: ${quote2.toFixed(4)}</li><li>MFX: ${base2.toFixed(4)}</li></ul>`;
+        document.getElementById('pool3SOLO').textContent = quote2.toFixed(4);
         document.getElementById('pool3MFX').textContent   = base2.toFixed(4);
 
         await client.disconnect();
