@@ -164,6 +164,20 @@
       This address <span style="color: #ff6600;">rLu93AUSPt7kFXTjo76Tum9nf19HtpnZRA </span> is our Automated Market Maker (AMM) pool for the <strong>MFX/RLUSD</strong> pair, showing current liquidity.
     </div>
   </div>
+    <!-- AMM Pool MFX/SOLO Card -->
+  <div class="card">
+    <h2 style="text-align: center;">AMM Pool: MFX/SOLO</h2>
+    <div id="summaryPool3" class="summary">
+      <div><div class="value" id="pool2RLUSD">—</div><div>SOLO in Pool</div></div>
+      <div><div class="value" id="pool2MFX">—</div><div>MFX in Pool</div></div>
+    </div>
+    <div id="balancesPool3">
+      <span class="spinner"></span> Fetching pool liquidity…
+    </div>
+    <div class="info">
+      This address <span style="color: #ff6600;">rnLn791zr3wh1o1FbwAuQ5HQJWUWvNJd5m </span> is our Automated Market Maker (AMM) pool for the <strong>MFX/SOLO</strong> pair, showing current liquidity.
+    </div>
+  </div>
   <!-- Footer Text -->
   <div style="text-align: center; margin-top: 20px;">
   <br>© 2025 MoonFlex. All rights reserved.
@@ -183,9 +197,12 @@
       ];
       const poolAddress   = 'rKy1cV5pQYkVEi8GSifUHcYB4Rxcufz1EF';
       const pool2Address  = 'rLu93AUSPt7kFXTjo76Tum9nf19HtpnZRA';
+      const pool3Address  = 'rnLn791zr3wh1o1FbwAuQ5HQJWUWvNJd5m';
       const issuerMFX     = 'rfUhMQYijKvStp96CUxDNp8ukYJAebNrJ1';
       const issuerRLUSD   = 'rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De';
       const rlusdHex      = '524C555344000000000000000000000000000000';
+      const issuerSOLO   = 'rsoLo2S1kiGeCcn6hCUXVrCpGMWLrRrLZz';
+      const soloHex      = '534F4C4F00000000000000000000000000000000';
 
       let totalXRP = 0, totalMFX = 0;
       const loadingEl = document.getElementById('balancesWalletsLoading');
@@ -193,6 +210,7 @@
       const btn       = document.getElementById('showWalletsBtn');
       const poolEl    = document.getElementById('balancesPool');
       const pool2El   = document.getElementById('balancesPool2');
+      const pool3El   = document.getElementById('balancesPool3');
 
       try {
         const client = new xrpl.Client('wss://s1.ripple.com');
@@ -267,12 +285,30 @@
         document.getElementById('pool2RLUSD').textContent = quote.toFixed(4);
         document.getElementById('pool2MFX').textContent   = base.toFixed(4);
 
+                // --- AMM Pool MFX/SOLO---
+        const { result: ammInfo } = await client.request({ command: 'amm_info', amm_account: pool3Address });
+        const data = ammInfo.amm || ammInfo;
+        let base = null, quote = null;
+        [data.amount, data.amount2].forEach(amt => {
+          if (typeof amt === 'object') {
+            const curr = amt.currency || amt.currency_hex;
+            const val  = parseFloat(amt.value || amt.amount || 0);
+            if (amt.issuer === issuerMFX && curr === 'MFX') base = val;
+            if (amt.issuer === issuerSOLO && (curr === 'SOLO' || curr === soloHex)) quote = val;
+          }
+        });
+        if (base == null || quote == null) throw new Error('Parsing AMM MFX/RLUSD failed.');
+        pool3El.innerHTML = `<ul><li>SOLO: ${quote.toFixed(4)}</li><li>MFX: ${base.toFixed(4)}</li></ul>`;
+        document.getElementById('pool3SOLO').textContent = quote.toFixed(4);
+        document.getElementById('pool3MFX').textContent   = base.toFixed(4);
+
         await client.disconnect();
       } catch (e) {
         console.error(e);
         loadingEl.textContent = '⚠️ Error fetching wallet balances; see console.';
         poolEl.textContent    = '⚠️ Error fetching pool liquidity; see console.';
         pool2El.textContent   = '⚠️ Error fetching pool liquidity; see console.';
+        pool3El.textContent   = '⚠️ Error fetching pool liquidity; see console.';
       }
     })();
   </script>
