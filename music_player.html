@@ -62,51 +62,75 @@
     </style>
 </head>
 <body>
+    <!-- … -->
     <div id="music-player">
         <audio id="audio-player" controls autoplay></audio>
         <div id="player-info">
             <div class="song-title" id="song-title">Forever, Laura (feat. Michael Saylor)</div>
-            <div class="author-credit">
-                <span>By <a href="https://x.com/TheCryptoBubble" target="_blank">Lil Bubble</a></span>
-            </div>
+            <!-- give this an id and leave it empty for JS to fill/hide -->
+            <div class="author-credit" id="author-credit"></div>
         </div>
     </div>
-
+    <!-- … -->
     <script>
-        // Playlist array
+        // Playlist array with author/link and a hideAuthor flag
         const playlist = [
             {
                 title: "Forever, Laura (feat. Michael Saylor)",
-                src: "music/Forever, Laura (feat. Michael Saylor).mp3"
+                src: "music/Forever, Laura (feat. Michael Saylor).mp3",
+                author: "Lil Bubble",
+                link: "https://x.com/TheCryptoBubble",
+                hideAuthor: false
             },
             {
                 title: "One Chair (feat. Michael Saylor)",
-                src: "music/One Chair (feat. Michael Saylor).mp3"
+                src: "music/One Chair (feat. Michael Saylor).mp3",
+                author: "Lil Bubble",
+                link: "https://x.com/TheCryptoBubble",
+                hideAuthor: false
             },
             {
-                title: "Going Up (feat. Michael Saylor))",
-                src: "music/Going Up (feat. Michael Saylor).mp3"
+                title: "Going Up (feat. Michael Saylor)",
+                src: "music/Going Up (feat. Michael Saylor).mp3",
+                author: "Lil Bubble",
+                link: "https://x.com/TheCryptoBubble",
+                hideAuthor: false
+            },
+            {
+                title: "El Éxtasis Del Oro – L'Estasi Dell'Oro",
+                src: "music/El Éxtasis Del Oro - L'Estasi Dell'Oro.mp3",
+                author: "",       // no author
+                link: "",
+                hideAuthor: true  // hide the credit entirely
             }
         ];
 
-        let currentSongIndex = 0; // Start with the first song
+        let currentSongIndex = 0;
         const audioPlayer = document.getElementById("audio-player");
         const songTitleElement = document.getElementById("song-title");
+        const authorCreditElement = document.getElementById("author-credit");
 
-        // Function to load a song
         function loadSong(index) {
             const song = playlist[index];
             audioPlayer.src = song.src;
             songTitleElement.textContent = song.title;
+
+            if (song.hideAuthor) {
+                authorCreditElement.style.display = "none";
+            } else {
+                authorCreditElement.style.display = "block";
+                authorCreditElement.innerHTML =
+                    `By <a href="${song.link}" target="_blank">${song.author}</a>`;
+            }
+
             audioPlayer.play();
         }
 
-        // Load the first song initially
+        // initial load
         loadSong(currentSongIndex);
 
-        // Play the next song when the current one ends
         audioPlayer.addEventListener("ended", () => {
-            currentSongIndex = (currentSongIndex + 1) % playlist.length; // Loop back to the start
+            currentSongIndex = (currentSongIndex + 1) % playlist.length;
             loadSong(currentSongIndex);
         });
     </script>
