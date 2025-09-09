@@ -26,35 +26,46 @@
          gtag('config', 'G-MB6CSJW0TE');
       </script>
       <style>
-         /* Project Closed Overlay */
-#project-closed-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: black;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* very high to sit on top */
-  flex-direction: column;
-  text-align: center;
-  font-family: Arial, sans-serif;
-}
+  /* Project Closed Overlay */
+  #project-closed-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: #ff6600; /* Using your site's orange */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Very high to cover all content */
+    flex-direction: column;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif; /* Matches your site */
+    padding: 20px;
+  }
 
-#project-closed-overlay h1 {
-  font-size: 3em;
-  color: red;
-  margin-bottom: 20px;
-}
+  #project-closed-overlay h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: #ff6600; /* Headline in orange */
+  }
 
-#project-closed-overlay p {
-  font-size: 1.5em;
-  max-width: 600px;
-  line-height: 1.5;
-}
+  #project-closed-overlay p {
+    font-size: 1.5em;
+    max-width: 700px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 768px) {
+    #project-closed-overlay h1 {
+      font-size: 2em;
+    }
+    #project-closed-overlay p {
+      font-size: 1.2em;
+    }
+  }
+</style>
 
          /* Add the styles for the mobile hamburger menu */
          nav {
